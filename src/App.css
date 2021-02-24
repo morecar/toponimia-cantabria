@@ -1,38 +1,58 @@
-.App {
-  text-align: center;
+body { padding-top: 60px; }
+
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.leaflet-container{
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.navbar .form-inline {
+  padding-top: 2px;
+  min-width: 500px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.navbar .form-inline input {
+  padding-bottom: 2px;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar .form-inline input {
+  min-width: 500px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.navbar img {
+  margin-top: -8px;
+  height: 40px;
+}
+
+.tagsContainer{
+  box-shadow: none;
+  background-color: transparent;
+  border: none;
+}
+
+.tagsContainer::before{
+  box-shadow: none;
+  background-color: transparent;
+  border: none;
+}
+
+.main-brand {
+  padding-top: 0px;
+  font-size: 1.75em;
+  font-family: 'Lobster', cursive;;
+}
+
+#settings.nav-item  {
+  color: darkgray;
+  padding-left: 10px;
+  padding-top: 4px;
 }

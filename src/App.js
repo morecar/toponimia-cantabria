@@ -1,25 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import React from 'react';
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+
+import ResultsPage from './components/ResultsPage'
+import CaptureMap from './components/CaptureMap'
+
+import {ROUTE_HOME, ROUTE_CAPTURE} from './staticData/localization.js'
+
+export default function App(props) {
+    return (
+        <Router>
+            <Switch>
+                <Route path={ROUTE_CAPTURE} children={<CaptureMap pointRepository={props.repository} {...props} />} />
+                <Route path={ROUTE_HOME} children={<ResultsPage pointRepository={props.repository} searchBoxContents={""} {...props} />} />
+            </Switch>
+        </Router>
+    )
 }
 
-export default App;
+
+
+
