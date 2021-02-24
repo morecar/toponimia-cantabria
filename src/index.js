@@ -1,17 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+
+import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { GOOGLE_DOC_ID, GOOGLE_SHEET_ID, GOOGLE_SHEETS_API_KEY } from './staticData/googleCredentials'
+import { buildRepositoryFrom } from './model/pointRepositoryFactory'
+
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ConfigService from './model/configService'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const doc = new GoogleSpreadsheet(GOOGLE_DOC_ID);
+async function login() {
+  await doc.useApiKey(GOOGLE_SHEETS_API_KEY)
+  console.log("Authentication: API key");
+}
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+async function loadData() {
+  await doc.loadInfo(); 
+  console.log(`Datasource: loaded document ${doc.title}`);
+
+  return await doc.sheetsById[GOOGLE_SHEET_ID]
+}
+
+function startApp(repository) {
+  var config = new ConfigService()
+  ReactDOM.render(
+    // <React.StrictMode>
+      <App config={config} repository={repository}/>,
+    // </React.StrictMode>,
+    document.getElementById('root')
+  );
+}
+
+login().then(loadData().then(sheet => buildRepositoryFrom(sheet)).then(repository => startApp(repository)))
+
