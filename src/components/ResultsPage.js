@@ -51,10 +51,11 @@ export default class ResultsPage extends Component {
         <Navbar fixed="top"  bg="dark" expand="lg" variant="dark">
           <Navbar.Brand>
             <img src="./unicorn.png" alt={BRAND_ALT[this.props.config.language]}/>
-          </Navbar.Brand>          
+          </Navbar.Brand> 
+          <Navbar.Brand className={'main-brand'}>{BRAND_NAME[this.props.config.language]}</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />        
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Navbar.Brand className={'main-brand'}>{BRAND_NAME[this.props.config.language]}</Navbar.Brand>
               <SearchBar onSearch={this.updateResults.bind(this)} tags={this.props.pointRepository.getAllTags()} {...this.props}/>
               <NavItem id="settings">
               <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsTooltip  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>}> 
