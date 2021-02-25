@@ -1,5 +1,7 @@
 export const GOOGLE_SHEETS_API_KEY = 'REDACTED_API_KEY'
 
 export const GOOGLE_DOC_ID = 'REDACTED_DOC_ID'
-export const GOOGLE_SHEET_ID = '0'
+export const GOOGLE_DB_SHEET_TITLE = 'DB'
+export const GOOGLE_INFO_SHEET_TITLE = 'INFO'
+export const GOOGLE_INFO_SHEET_CELL = 'A1'
 
