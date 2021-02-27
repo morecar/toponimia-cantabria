@@ -5,4 +5,5 @@ export const NEW_MS = {ast: 'Nuivu', esp: 'Nuevo'}
 export const BRAND_NAME = {ast: "L'Unicurniu", esp: "L'Unicurniu"}
 export const BRAND_ALT = {ast: 'Imagin de cabeza di unicurniu', esp: 'Imagen de cabeza de unicornio'}
 
-export const SEARCH_PLACEHOLDER = {ast: 'Búsqueda con regexp…', esp: 'Búsqueda con regexp…'}
+export const SEARCH_PLACEHOLDER = {ast: 'Iscribi la tu búsqueda…', esp: 'Escribe tu búsqueda…'}
+export const SEARCH_REGEX_PLACEHOLDER = {ast: 'Búsqueda con regexp…', esp: 'Búsqueda con regexp…'}

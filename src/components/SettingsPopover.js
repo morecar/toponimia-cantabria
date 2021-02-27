@@ -3,7 +3,7 @@ import React, { Component} from 'react';
 import Form from 'react-bootstrap/Form'
 import Popover from 'react-bootstrap/Popover'
 
-export default class SettingsTooltip extends Component {
+export default class SettingsPopover extends Component {
 
 
     handleToggleChanged(event) {
@@ -30,6 +30,7 @@ export default class SettingsTooltip extends Component {
                                                     ? Array.from(new Set(this.props.config.resultsTypes).add('poly'))
                                                     : this.props.config.resultsTypes.filter(e => e!=='poly')
 
+        if(event.target.id === 'toggle-regex') this.props.config.searchUseRegex = event.target.checked
         if(event.target.id === 'toggle-underdoth') this.props.config.searchAutocompleteUnderdoth = event.target.checked
         if(event.target.id === 'toggle-tag-auto') this.props.config.searchAutocompleteTags = event.target.checked   
         if(event.target.id === 'toggle-tag-palette') this.props.config.searchDisplayTagPalette = event.target.checked  
@@ -70,6 +71,7 @@ export default class SettingsTooltip extends Component {
                     </Form.Group>
                     <Form.Group onChange={this.handleToggleChanged.bind(this)}>
                         <Form.Label><b>Otrus</b></Form.Label>
+                        <Form.Check defaultChecked={this.props.config.searchUseRegex} type='switch' id='toggle-regex' label='Búsqueda con regex' />
                         <Form.Check defaultChecked={this.props.config.searchAutocompleteUnderdoth} type='switch' id='toggle-underdoth' label='Detectar hachi supuntiá (h.→ḥ)'/>
                         <Form.Check defaultChecked={this.props.config.searchAutocompleteTags} type='switch' id='toggle-tag-auto' label='Autucompletar etiquetas' disabled/>
                         <Form.Check defaultChecked={this.props.config.searchDisplayTagPalette} type='switch' id='toggle-tag-palette' label='Veyer paleta etiquetas' disabled/>

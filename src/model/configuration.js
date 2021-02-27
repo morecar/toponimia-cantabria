@@ -6,6 +6,7 @@ const DEFAULT_CONFIG = {
     results_title: 'never',
     results_tags: 'search',
     results_types: ['point'],
+    search_use_regex: true,
     search_autocomplete_underdoth: true,
     search_autocomplete_tags: false,
     search_display_tag_palette: false
@@ -91,6 +92,15 @@ export default class ConfigService {
 
     set searchDisplayTagPalette(newSearchDisplayTagPalette) {
         this._config.search_display_tag_palette = newSearchDisplayTagPalette;
+        this.writeToLocalStorage()
+    }
+
+    get searchUseRegex() {
+        return this._config.search_use_regex
+    }
+
+    set searchUseRegex(newSearchUseRegex) {
+        this._config.search_use_regex = newSearchUseRegex;
         this.writeToLocalStorage()
     }
 }
