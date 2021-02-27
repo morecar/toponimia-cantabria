@@ -3,7 +3,7 @@ import React, { Component} from 'react';
 import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl'
 
-import {SEARCH_PLACEHOLDER} from '../staticData/localization'
+import {SEARCH_PLACEHOLDER, SEARCH_REGEX_PLACEHOLDER} from '../staticData/localization'
 
 export default class SearchBar extends Component {
     constructor(props) {
@@ -34,7 +34,7 @@ export default class SearchBar extends Component {
         return (
             <div>
                 <Form inline onSubmit={this.handleSearch.bind(this)}>
-                    <FormControl type="text" onChange={this.handleChange.bind(this)} placeholder={SEARCH_PLACEHOLDER[this.props.config.language]} ref={this.searchBar}/>
+                    <FormControl type="text" onChange={this.handleChange.bind(this)} placeholder={this.props.regex?SEARCH_REGEX_PLACEHOLDER[this.props.config.language]:SEARCH_PLACEHOLDER[this.props.config.language]} ref={this.searchBar}/>
                 </Form>
             </div>
         )

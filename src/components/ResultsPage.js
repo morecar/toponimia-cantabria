@@ -4,7 +4,7 @@ import {Container, Navbar, Nav, NavItem, OverlayTrigger} from 'react-bootstrap';
 import {Toggles} from 'react-bootstrap-icons';
 
 import SearchBar from './SearchBar'
-import SettingsTooltip from './SettingsTooltip'
+import SettingsPopover from './SettingsPopover'
 
 import {BRAND_ALT, BRAND_NAME} from '../staticData/localization'
 import ResultsMap from './ResultsMap';
@@ -18,16 +18,16 @@ export default class ResultsPage extends Component {
       displayLines: (this.props.config.resultsTypes.includes('line')),
       displayPolys: (this.props.config.resultsTypes.includes('poly')),
       displayPoints: (this.props.config.resultsTypes.includes('point')),
-      retultsToDisplay: this.props.repository.search(this.props.searchBoxContents)
+      retultsToDisplay: this.props.repository.search(this.props.searchBoxContents),
+      useRegex: this.props.config.searchUseRegex
     }
   }
 
   updateResults(searchString) {
-    console.log(`searchstring=${searchString} => search=${searchString ? true : false}`)
     this.setState( {
       search: searchString ? true : false,
       displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && searchString ? true : false),
-      retultsToDisplay: this.props.repository.search(searchString, false)
+      retultsToDisplay: this.props.repository.search(searchString, this.props.config.searchUseRegex)
     })
   }
 
@@ -38,6 +38,7 @@ export default class ResultsPage extends Component {
         displayLines: (this.props.config.resultsTypes.includes('line')),
         displayPolys: (this.props.config.resultsTypes.includes('poly')),
         displayPoints: (this.props.config.resultsTypes.includes('point')),
+        useRegex: this.props.config.searchUseRegex
       }
     )
   }
@@ -56,9 +57,9 @@ export default class ResultsPage extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />        
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <SearchBar onSearch={this.updateResults.bind(this)} tags={this.props.repository.getAllTags()} {...this.props}/>
+              <SearchBar onSearch={this.updateResults.bind(this)} tags={this.props.repository.getAllTags()} regex={this.state.useRegex} {...this.props}/>
               <NavItem id="settings">
-              <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsTooltip  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>}> 
+              <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsPopover  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>}> 
                   <Toggles style={{'fontSize': 'xx-large'}}/>
               </OverlayTrigger>
               </NavItem>
