@@ -2,14 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from './App';
-import ConfigService from './model/configService'
-
+import Configuration from './model/configuration'
+import GSpreadsheet from './model/gSpreadsheet'
 import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/pointRepositoryFactory'
-import { connectToSpreadSheet } from './model/googleSheetsClient'
-
 
 function startApp(repository) {
-  var config = new ConfigService()
+  var config = Configuration.readFromLocalStorage()
   ReactDOM.render(
     // <React.StrictMode>
       <App config={config} repository={repository}/>,
@@ -18,5 +16,5 @@ function startApp(repository) {
   );
 }
 
-connectToSpreadSheet().then(buildRepositoryFromSheet, buildRepositoryFromLocalStorage).then(startApp)
+GSpreadsheet.load().then(buildRepositoryFromSheet, buildRepositoryFromLocalStorage).then(startApp)
 
