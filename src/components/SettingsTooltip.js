@@ -38,9 +38,9 @@ export default class SettingsTooltip extends Component {
     }
 
     render() {
-        const { pointRepository, searchBoxContents, onSettingsUpdated, ...popOverProps} = this.props
+        const { repository, searchBoxContents, onSettingsUpdated, ...popOverProps} = this.props
         return (         
-              <Popover {...popOverProps} onClick={(event)=>{}}>
+              <Popover {...popOverProps}>
                 <Popover.Content>
                   <Form>
                     <Form.Group onChange={this.handleToggleChanged.bind(this)}>

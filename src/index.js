@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import Configuration from './model/configuration'
 import GSpreadsheet from './model/gSpreadsheet'
-import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/pointRepositoryFactory'
+import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/topoRepository'
 
 function startApp(repository) {
   var config = Configuration.readFromLocalStorage()

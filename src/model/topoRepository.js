@@ -1,4 +1,4 @@
-import PointRepository from './pointRepository'
+import _ from 'lodash'
 
 export async function buildRepositoryFromSheet(spreadsheet) {
     if (shouldReload(spreadsheet.hash)) 
@@ -8,7 +8,7 @@ export async function buildRepositoryFromSheet(spreadsheet) {
 }
 
 export function buildRepositoryFromLocalStorage () {
-    return new PointRepository(JSON.parse(localStorage.getItem("localIndex")))
+    return new TopoRepository(JSON.parse(localStorage.getItem("localIndex")))
 }
 
 async function reloadLocalDatabase(newHash, googleSheet) {
@@ -28,4 +28,33 @@ function shouldReload(newHash) {
 
     console.log(`Database: current is ${currentHash}, reload=${reload}`)
     return reload
+}
+
+export default class TopoRepository {
+
+    constructor(database) {
+        this.database = _(database).orderBy(['title'])
+    }
+
+    search(pattern, sanitizeInput=true) {
+        var searchPattern = sanitizeInput ? this.preprocessPattern(pattern) : pattern
+        let regex = RegExp(searchPattern, 'i')
+
+        return this.database.filter(entry => regex.test(entry.title)).value()
+    }
+
+    getAllTags() {
+        let tags = new Set()
+        this.database.map(entry => entry.tags).forEach(tag => tags.add(tag))
+        return Array.from(tags)
+    }
+
+    preprocessPattern(pattern){
+        var temp = pattern.replace("a", "([áa])")
+                            .replace("e", "([ée])")
+                            .replace("i", "([íi])")
+                            .replace("o", "([óo])")
+                            .replace("u", "([úu])")
+        return temp;
+    }
 }

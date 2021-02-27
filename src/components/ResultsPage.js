@@ -18,7 +18,7 @@ export default class ResultsPage extends Component {
       displayLines: (this.props.config.resultsTypes.includes('line')),
       displayPolys: (this.props.config.resultsTypes.includes('poly')),
       displayPoints: (this.props.config.resultsTypes.includes('point')),
-      retultsToDisplay: this.props.pointRepository.search(this.props.searchBoxContents)
+      retultsToDisplay: this.props.repository.search(this.props.searchBoxContents)
     }
   }
 
@@ -27,7 +27,7 @@ export default class ResultsPage extends Component {
     this.setState( {
       search: searchString ? true : false,
       displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && searchString ? true : false),
-      retultsToDisplay: this.props.pointRepository.search(searchString, false)
+      retultsToDisplay: this.props.repository.search(searchString, false)
     })
   }
 
@@ -56,7 +56,7 @@ export default class ResultsPage extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />        
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <SearchBar onSearch={this.updateResults.bind(this)} tags={this.props.pointRepository.getAllTags()} {...this.props}/>
+              <SearchBar onSearch={this.updateResults.bind(this)} tags={this.props.repository.getAllTags()} {...this.props}/>
               <NavItem id="settings">
               <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsTooltip  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>}> 
                   <Toggles style={{'fontSize': 'xx-large'}}/>
