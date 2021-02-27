@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import ConfigService from './model/configService'
 
-import { buildRepositoryFromSheet } from './model/pointRepositoryFactory'
+import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/pointRepositoryFactory'
 import { connectToSpreadSheet } from './model/googleSheetsClient'
 
 
@@ -18,5 +18,5 @@ function startApp(repository) {
   );
 }
 
-connectToSpreadSheet().then(buildRepositoryFromSheet).then(startApp)
+connectToSpreadSheet().then(buildRepositoryFromSheet, buildRepositoryFromLocalStorage).then(startApp)
 
