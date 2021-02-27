@@ -3,7 +3,7 @@ import { GOOGLE_DOC_ID, GOOGLE_DB_SHEET_TITLE, GOOGLE_INFO_SHEET_TITLE, GOOGLE_I
 
 const doc = new GoogleSpreadsheet(GOOGLE_DOC_ID);
 
-export async function connectToSpreadSheet(){
+export async function connectToSpreadSheet() {
     await doc.useApiKey(GOOGLE_SHEETS_API_KEY)
     return fetchSpreadSheet()
 }
