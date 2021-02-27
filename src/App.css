@@ -16,12 +16,7 @@ body { padding-top: 60px; }
 }
 
 .navbar .form-inline {
-  padding-top: 2px;
   min-width: 500px;
-}
-
-.navbar .form-inline input {
-  padding-bottom: 2px;
 }
 
 .navbar .form-inline input {
