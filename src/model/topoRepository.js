@@ -13,7 +13,7 @@ export function buildRepositoryFromLocalStorage () {
 
 async function reloadLocalDatabase(newHash, googleSheet) {
     return googleSheet.getRows().then(rows => {
-        const remotedb = rows.map(row => ({ title: row.name, type: row.type, coordinates: row.coordinates.trim().split(';').map(pair => pair.trim().split(',').map(parseFloat)), tags: row.tags.split(',')}))
+        const remotedb = rows.map(row => ({ hash: row.hash, title: row.name, type: row.type, coordinates: row.coordinates.trim().split(';').map(pair => pair.trim().split(',').map(parseFloat)), tags: row.tags.split(',')}))
         localStorage.setItem("localIndex", JSON.stringify(remotedb))
         localStorage.setItem("localIndexHash", newHash)
 
@@ -39,7 +39,7 @@ export default class TopoRepository {
     search(pattern, useRegex = true, matchMissingAccents = true) {
         var searchPattern = useRegex ? pattern : pattern.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') 
         searchPattern = matchMissingAccents ? this.accountForMissingAccents(searchPattern) : searchPattern
-        
+
         let regex = RegExp(searchPattern, 'i')
 
         return this.database.filter(entry => regex.test(entry.title)).value()
@@ -53,10 +53,10 @@ export default class TopoRepository {
 
     accountForMissingAccents(pattern){
         var temp = pattern.replace("a", "([áa])")
-                            .replace("e", "([ée])")
-                            .replace("i", "([íi])")
-                            .replace("o", "([óo])")
-                            .replace("u", "([úu])")
+                          .replace("e", "([ée])")
+                          .replace("i", "([íi])")
+                          .replace("o", "([óo])")
+                          .replace("u", "([úu])")
         return temp;
     }
 }
