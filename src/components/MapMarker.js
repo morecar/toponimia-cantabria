@@ -1,6 +1,6 @@
 import { Marker, Popup} from 'react-leaflet'
 
-import { generatePath } from "react-router"
+import { Link, generatePath } from "react-router-dom"
 
 import { ROUTE_RESULT_PATTERN } from '../staticData/localization'
 
@@ -9,7 +9,7 @@ import TagsContainer from './TagsContainer'
 export default function MapMarker(props) {
     return (
         <Marker position={props.position}>
-            <Popup><a href={generatePath(ROUTE_RESULT_PATTERN, {hash: props.hash})}>{props.title}</a></Popup>
+            <Popup><Link to={generatePath(ROUTE_RESULT_PATTERN, {hash: props.hash})}>{props.title}</Link></Popup>
             {props.displayTags?<TagsContainer tags={props.tags}/>:null}
         </Marker>
     );

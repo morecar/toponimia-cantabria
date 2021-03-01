@@ -23,7 +23,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "export PUBLIC_URL=http://localhost:3000/ && react-scripts start",
+    "start": "export PUBLIC_URL=http://localhost:3000/toponimia-cantabria && react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "predeploy": "yarn build",

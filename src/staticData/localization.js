@@ -1,4 +1,4 @@
-export const ROUTE_HOME = '/'
+export const ROUTE_HOME = ''
 export const ROUTE_CAPTURE = '/nuivu'
 export const ROUTE_SEARCH = '/busqueda'
 export const ROUTE_RESULT = '/palabra'
