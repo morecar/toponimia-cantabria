@@ -8,17 +8,20 @@ import {
   Route
 } from "react-router-dom";
 
-import ResultsPage from './components/ResultsPage'
-import CaptureMap from './components/CaptureMap'
+import ResultsRoute from './components/routing/ResultsRoute'
+import CaptureRoute from './components/routing/CaptureRoute'
+import HomeRoute from './components/routing/HomeRoute'
 
-import {ROUTE_HOME, ROUTE_CAPTURE} from './staticData/localization.js'
+import {ROUTE_HOME, ROUTE_CAPTURE, ROUTE_SEARCH, ROUTE_RESULT} from './staticData/localization.js'
 
 export default function App(props) {
     return (
         <Router>
             <Switch>
-                <Route path={ROUTE_CAPTURE} children={<CaptureMap repository={props.repository} {...props} />} />
-                <Route path={ROUTE_HOME} children={<ResultsPage repository={props.repository} searchBoxContents={""} {...props} />} />
+                <Route path={ROUTE_CAPTURE} children={<CaptureRoute {...props} />} />
+                <Route path={ROUTE_SEARCH} children={<ResultsRoute {...props} />} />
+                <Route path={ROUTE_RESULT} children={<ResultsRoute {...props} />} />
+                <Route path={ROUTE_HOME} children={<HomeRoute {...props} />} />
             </Switch>
         </Router>
     )

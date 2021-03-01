@@ -16,7 +16,7 @@ function LocationMarker(props) {
   })
 }
 
-export default class CaptureMap extends Component {
+export default class CapturePage extends Component {
   constructor(props) {
     super(props);
     this.searchBoxRef = React.createRef()

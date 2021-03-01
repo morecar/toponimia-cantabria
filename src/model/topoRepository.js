@@ -36,27 +36,24 @@ export default class TopoRepository {
         this.database = _(database).orderBy(['title'])
     }
 
-    search(pattern, useRegex = true, matchMissingAccents = true) {
-        var searchPattern = useRegex ? pattern : pattern.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') 
-        searchPattern = matchMissingAccents ? this.accountForMissingAccents(searchPattern) : searchPattern
+    getFromQueryString(queryString, regex = true) {
+        if(regex) {
+            let queryRegex = RegExp(queryString, 'i')
 
-        let regex = RegExp(searchPattern, 'i')
+            return this.database.filter(entry => queryRegex.test(entry.title)).value()
+        } else {
+            return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase()))
+        }
+    }
 
-        return this.database.filter(entry => regex.test(entry.title)).value()
+    getFromId(wordId) {
+        const result = this.database.filter(entry => entry.hash === wordId).value()
+        return result?.[0] ?? undefined
     }
     
     getAllTags() {
         let tags = new Set()
         this.database.map(entry => entry.tags).forEach(tag => tags.add(tag))
         return Array.from(tags)
-    }
-
-    accountForMissingAccents(pattern){
-        var temp = pattern.replace("a", "([áa])")
-                          .replace("e", "([ée])")
-                          .replace("i", "([íi])")
-                          .replace("o", "([óo])")
-                          .replace("u", "([úu])")
-        return temp;
     }
 }
