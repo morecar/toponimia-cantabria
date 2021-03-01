@@ -9,25 +9,41 @@ import SettingsPopover from './SettingsPopover'
 import {BRAND_ALT, BRAND_NAME} from '../staticData/localization'
 import ResultsMap from './ResultsMap';
 
+function buildResults(props) {
+  if(!props.search) {
+    return {queryString:"",  queryResults: props.repository.getFromQueryString("")}
+  }
+
+  if(props.wordId) {
+    const singleResult = props.repository.getFromId(props.wordId) ?? {queryString: "", queryResults: []}
+    return {queryString: singleResult.title, queryResults: [singleResult]}
+  }
+
+  return {queryString: props.queryString,  queryResults: props.repository.getFromQueryString(props.queryString)}
+}
+
 export default class ResultsPage extends Component {
   constructor(props) {
-    super(props);
+    super(props);    
+    const {queryString, queryResults} = buildResults(props)
     this.state = {
-      search: this.props.searchBoxContents ? true : false,
-      displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && this.props.searchBoxContents),
-      displayLines: (this.props.config.resultsTypes.includes('line')),
-      displayPolys: (this.props.config.resultsTypes.includes('poly')),
-      displayPoints: (this.props.config.resultsTypes.includes('point')),
-      retultsToDisplay: this.props.repository.search(this.props.searchBoxContents),
-      useRegex: this.props.config.searchUseRegex
+      //Displayed content
+      queryString: queryString,
+      queryResults: queryResults,
+      //Results from settings
+      displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && props.search),
+      displayLines: (props.config.resultsTypes.includes('line')),
+      displayPolys: (props.config.resultsTypes.includes('poly')),
+      displayPoints: (props.config.resultsTypes.includes('point')),
+      useRegex: props.config.searchUseRegex
     }
   }
 
-  updateResults(searchString) {
+  updateResults(newQueryString) {
     this.setState( {
-      search: searchString ? true : false,
-      displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && searchString ? true : false),
-      retultsToDisplay: this.props.repository.search(searchString, this.props.config.searchUseRegex)
+      queryString: newQueryString,
+      queryResults: this.props.repository.getFromQueryString(newQueryString, this.props.config.searchUseRegex),
+      displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && newQueryString ? true : false)
     })
   }
 
@@ -44,9 +60,9 @@ export default class ResultsPage extends Component {
   }
 
   render() {
-    const points = this.state.displayPoints ? this.state.retultsToDisplay.filter(point => point.type === 'point') : []
-    const polys = this.state.displayPolys ? this.state.retultsToDisplay.filter(point => point.type === 'poly') : []
-    const lines = this.state.displayLines ? this.state.retultsToDisplay.filter(point => point.type === 'line') : []
+    const points = this.state.displayPoints ? this.state.queryResults.filter(point => point.type === 'point') : []
+    const polys = this.state.displayPolys ? this.state.queryResults.filter(point => point.type === 'poly') : []
+    const lines = this.state.displayLines ? this.state.queryResults.filter(point => point.type === 'line') : []
     return (
       <Container>
         <Navbar fixed="top"  bg="dark" expand="lg" variant="dark">
@@ -57,9 +73,9 @@ export default class ResultsPage extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />        
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <SearchBar onSearch={this.updateResults.bind(this)} tags={this.props.repository.getAllTags()} regex={this.state.useRegex} {...this.props}/>
+              <SearchBar onSearch={this.updateResults.bind(this)} value={this.state.queryString} tags={this.props.repository.getAllTags()} regex={this.state.useRegex} {...this.props}/>
               <NavItem id="settings">
-              <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsPopover  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>}> 
+              <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsPopover  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>} rootClose> 
                   <Toggles style={{'fontSize': 'xx-large'}}/>
               </OverlayTrigger>
               </NavItem>
