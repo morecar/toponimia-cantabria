@@ -10,7 +10,7 @@ export default function MapMarker(props) {
     return (
         <Marker position={props.position}>
             <Popup><Link to={generatePath(ROUTE_RESULT_PATTERN, {hash: props.hash})}>{props.title}</Link></Popup>
-            {props.displayTags?<TagsContainer tags={props.tags}/>:null}
+            {props.displayTags?<TagsContainer tags={props.tags} loc={props.loc}/>:null}
         </Marker>
     );
   }

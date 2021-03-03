@@ -20,14 +20,14 @@ export default function ResultsMap(props) {
           />
           {
             Object.keys(props.points).map(function(key) {
-              return <MapMarker displayTags={props.displayTags} key={props.points[key].hash} position={props.points[key].coordinates[0]} {...props.points[key]}/>
+              return <MapMarker displayTags={props.displayTags} key={props.points[key].hash} position={props.points[key].coordinates[0]} {...props.points[key]} loc={props.loc}/>
             })
           }
           {
             Object.keys(props.polys).map(function(key) {
               return <div key={key}>
                       <Polygon pathOptions={blackOptions} positions={props.polys[key].coordinates} />
-                      <MapMarker displayTags={props.displayTags} key={props.polys[key].hash} position={getCentroid(props.polys[key].coordinates)} {...props.polys[key]}/>
+                      <MapMarker displayTags={props.displayTags} key={props.polys[key].hash} position={getCentroid(props.polys[key].coordinates)} {...props.polys[key]} loc={props.loc}/>
                     </div>
             })
           }
@@ -35,7 +35,7 @@ export default function ResultsMap(props) {
             Object.keys(props.lines).map(function(key) {
               return <div key={key}>
                       <Polyline pathOptions={blackOptions} positions={props.lines[key].coordinates} />
-                      <MapMarker displayTags={props.displayTags} key={props.lines[key].hash} position={getCentroid(props.lines[key].coordinates)} {...props.lines[key]}/>
+                      <MapMarker displayTags={props.displayTags} key={props.lines[key].hash} position={getCentroid(props.lines[key].coordinates)} {...props.lines[key]} loc={props.loc}/>
                     </div>
             })
           }
