@@ -1,20 +1,8 @@
-
-const CONFIG_LOCALSTORAGE_KEY = "config"
-
-const DEFAULT_CONFIG = {
-    lang: 'ast',
-    results_title: 'never',
-    results_tags: 'search',
-    results_types: ['point'],
-    search_use_regex: true,
-    search_autocomplete_underdoth: true,
-    search_autocomplete_tags: false,
-    search_display_tag_palette: false
-  }
+import {CONFIG_LOCALSTORAGE_KEY, CONFIG_DEFAULT} from '../resources/constants'
 
 export default class ConfigService {
     constructor(config) {
-        Object.entries(DEFAULT_CONFIG).forEach(([key, defaultValue]) => (config[key] = config[key]??defaultValue))
+        Object.entries(CONFIG_DEFAULT).forEach(([key, defaultValue]) => (config[key] = config[key]??defaultValue))
 
         this.config = config
     }
@@ -32,12 +20,12 @@ export default class ConfigService {
         this.writeToLocalStorage()
     }
 
-    get language() {
-        return this._config.lang
+    get locale() {
+        return this._config.locale
     }
 
-    set language(newLanguage) {
-        this._config.lang = newLanguage;
+    set locale(newLocale) {
+        this._config.locale = newLocale;
         this.writeToLocalStorage()
     }
 

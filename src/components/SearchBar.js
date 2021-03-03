@@ -4,7 +4,7 @@ import {generatePath} from 'react-router'
 import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl'
 
-import {ROUTE_SEARCH_PATTERN, ROUTE_HOME, SEARCH_PLACEHOLDER, SEARCH_REGEX_PLACEHOLDER} from '../staticData/localization'
+import {ROUTE_SEARCH_PATTERN, ROUTE_HOME} from '../resources/routes'
 
 export default class SearchBar extends Component {
     constructor(props) {
@@ -38,7 +38,7 @@ export default class SearchBar extends Component {
     render() {
         return (
             <Form inline onSubmit={this.handleSearch.bind(this)}>
-                <FormControl type="text" defaultValue={this.props.value} onChange={this.handleChange.bind(this)} placeholder={this.props.regex?SEARCH_REGEX_PLACEHOLDER[this.props.config.language]:SEARCH_PLACEHOLDER[this.props.config.language]} ref={this.searchBar}/>
+                <FormControl type="text" defaultValue={this.props.value} onChange={this.handleChange.bind(this)} placeholder={this.props.regex?this.props.loc.get("search_regex_placeholder"):this.props.loc.get("search_placeholder")} ref={this.searchBar}/>
             </Form>
             )
         }

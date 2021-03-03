@@ -6,8 +6,8 @@ import {Toggles} from 'react-bootstrap-icons';
 import SearchBar from './SearchBar'
 import SettingsPopover from './SettingsPopover'
 
-import {BRAND_ALT, BRAND_NAME} from '../staticData/localization'
 import ResultsMap from './ResultsMap';
+import LanguageSelector from './LanguageSelector';
 
 function buildResults(props) {
   if(!props.search) {
@@ -27,6 +27,7 @@ export default class ResultsPage extends Component {
     super(props);    
     const {queryString, queryResults} = buildResults(props)
     this.state = {
+      locale: this.props.loc.locale,
       //Displayed content
       queryString: queryString,
       queryResults: queryResults,
@@ -59,27 +60,37 @@ export default class ResultsPage extends Component {
     )
   }
 
+  handleChangeLanguage(event) {
+    if(this.props.loc.availableLocales.includes(event.target.id)) {
+      this.props.loc.locale = event.target.id
+      this.setState( {locale: event.target.id})
+    }
+  }
+
   render() {
     const points = this.state.displayPoints ? this.state.queryResults.filter(point => point.type === 'point') : []
     const polys = this.state.displayPolys ? this.state.queryResults.filter(point => point.type === 'poly') : []
     const lines = this.state.displayLines ? this.state.queryResults.filter(point => point.type === 'line') : []
+
     return (
       <Container>
         <Navbar fixed="top"  bg="dark" expand="lg" variant="dark">
           <Navbar.Brand>
-            <img src="./unicorn.png" alt={BRAND_ALT[this.props.config.language]}/>
+            <img src="./unicorn.png" alt={this.props.loc.get("brand_alt")}/>
           </Navbar.Brand> 
-          <Navbar.Brand className={'main-brand'}>{BRAND_NAME[this.props.config.language]}</Navbar.Brand>
+          <Navbar.Brand className={'main-brand'}>{this.props.loc.get("brand_name")}</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />        
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               <SearchBar onSearch={this.updateResults.bind(this)} value={this.state.queryString} tags={this.props.repository.getAllTags()} regex={this.state.useRegex} {...this.props}/>
-              <NavItem id="settings">
+
+            </Nav>
+            <LanguageSelector onLanguageChanged={this.handleChangeLanguage.bind(this)} title={this.props.loc.get(this.state.locale)} {...this.props} />
+            <NavItem id="settings">
               <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsPopover  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>} rootClose> 
                   <Toggles style={{'fontSize': 'xx-large'}}/>
               </OverlayTrigger>
-              </NavItem>
-            </Nav>
+              </NavItem>  
           </Navbar.Collapse>
         </Navbar>
         <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} {...this.props}/>

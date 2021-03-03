@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Polyline, Polygon} from 'react-leaflet'
 
 import MapMarker from './MapMarker';
 
-import {CENTER_CANTABRIA} from '../staticData/constants'
+import {CENTER_CANTABRIA} from '../resources/constants'
 
 function getCentroid(arr) { 
     return arr.reduce(function (x,y) {

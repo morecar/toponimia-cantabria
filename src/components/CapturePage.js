@@ -1,20 +1,20 @@
 import React, { Component} from 'react';
 
 import Container from 'react-bootstrap/Container'
-import Navbar from 'react-bootstrap/Navbar'
-import { MapContainer, TileLayer, Marker, useMapEvents, Polyline } from 'react-leaflet'
+// import Navbar from 'react-bootstrap/Navbar'
+// import { MapContainer, TileLayer, Marker, useMapEvents, Polyline } from 'react-leaflet'
 
-import {CENTER_CANTABRIA} from '../staticData/constants'
+// import {CENTER_CANTABRIA} from '../resources/constants'
 
 
-function LocationMarker(props) {
-  useMapEvents({
-    click(event) {
-      const { lat, lng } = event.latlng;
-      props.onClick([lat, lng])
-    }
-  })
-}
+// function LocationMarker(props) {
+//   useMapEvents({
+//     click(event) {
+//       const { lat, lng } = event.latlng;
+//       props.onClick([lat, lng])
+//     }
+//   })
+// }
 
 export default class CapturePage extends Component {
   constructor(props) {
@@ -33,12 +33,12 @@ export default class CapturePage extends Component {
 
 
   render() {
-    const blackOptions = { color: 'black' }
-    const limeOptions = { color: 'black', dashArray: "4" }
-    const newPointsLength = this.state.newPoints.length-1
+    // const blackOptions = { color: 'black' }
+    // const limeOptions = { color: 'black', dashArray: "4" }
+    // const newPointsLength = this.state.newPoints.length-1
     return (
       <Container>
-        <MapContainer center={CENTER_CANTABRIA} zoom={10} scrollWheelZoom={true} zoomControl={false} dragging={true}>
+        {/* <MapContainer center={CENTER_CANTABRIA} zoom={10} scrollWheelZoom={true} zoomControl={false} dragging={true}>
           <TileLayer
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -64,7 +64,7 @@ export default class CapturePage extends Component {
           <Navbar.Brand>
             <img src="./unicorn.png" alt="Icunu di unicurniu encabritáu"/>
           </Navbar.Brand>          
-        </Navbar>
+        </Navbar> */}
       </Container>
     );
   }

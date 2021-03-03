@@ -30,7 +30,7 @@ function shouldReload(newHash) {
     return reload
 }
 
-export default class TopoRepository {
+class TopoRepository {
 
     constructor(database) {
         this.database = _(database).orderBy(['title'])

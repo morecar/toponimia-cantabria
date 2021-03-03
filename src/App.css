@@ -6,7 +6,7 @@ body { padding-top: 60px; }
     padding: 0px;
 }
 
-.leaflet-container{
+.leaflet-container {
   height: 100%;
   position: absolute;
   top: 0;
@@ -17,6 +17,13 @@ body { padding-top: 60px; }
 
 .navbar .form-inline {
   min-width: 500px;
+}
+
+.navbar a {
+  color: darkgray;
+}
+.navbar a::after {
+  content: none;
 }
 
 .navbar .form-inline input {
@@ -43,7 +50,7 @@ body { padding-top: 60px; }
 .main-brand {
   padding-top: 0px;
   font-size: 1.75em;
-  font-family: 'Lobster', cursive;;
+  font-family: 'Lobster', cursive;
 }
 
 #settings.nav-item  {
