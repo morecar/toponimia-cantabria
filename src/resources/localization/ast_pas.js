@@ -24,4 +24,17 @@ export const ast_pas =
     "toogle_search_regex": "Búsqueda con regex", 
     "toogle_search_tags_autocomplete": "Autucompletar etiquetas", 
     "toogle_search_tags_palette": "Mostrar paleta etiquetas",
+
+    "tag_etymology:romance": "Romanci",
+    "tag_etymology:celtic": "Celta",
+    "tag_etymology:celtoroman": "Celtulatina",
+    "tag_etymology:ie": "Indu-Europeya",
+    "tag_etymology:unknown": "Incierta",
+
+    "tag_feature:metaphony_u": "Metafunía U",
+    "tag_feature:metaphony_i": "Metafunía I",
+    "tag_feature:aspirate_f": "F aspiráu",
+    "tag_feature:b_g": "B > G",
+    "tag_feature:lost_f": "F mudu",
+    "tag_feature:antihiatic_yod": "Yod antihiáticu"
 }

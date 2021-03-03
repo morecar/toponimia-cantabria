@@ -22,5 +22,19 @@ export const esp =
     "toogle_search_regex": "Búsqueda con regex", 
     "toogle_detect_underdoth": "Detectar hache sopunteada (h.→ḥ)", 
     "toogle_search_tags_autocomplete": "Autocompletar etiquetas", 
-    "toogle_search_tags_palette": "Mostrar paleta etiquetas"
+    "toogle_search_tags_palette": "Mostrar paleta etiquetas",
+
+
+    "tag_etymology:romance": "Romance",
+    "tag_etymology:celtic": "Celta",
+    "tag_etymology:celtoroman": "Celtolatina",
+    "tag_etymology:ie": "Indoeuropea",
+    "tag_etymology:unknown": "Incierta",
+
+    "tag_feature:metaphony_u": "Metafonía U",
+    "tag_feature:metaphony_i": "Metafonía I",
+    "tag_feature:aspirate_f": "F aspirada",
+    "tag_feature:b_g": "B > G",
+    "tag_feature:lost_f": "F muda",
+    "tag_feature:antihiatic_yod": "Yod antihiática"
 }
