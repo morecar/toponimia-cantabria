@@ -2,7 +2,7 @@ import { Marker, Popup} from 'react-leaflet'
 
 import { Link, generatePath } from "react-router-dom"
 
-import { ROUTE_RESULT_PATTERN } from '../staticData/localization'
+import { ROUTE_RESULT_PATTERN } from '../resources/routes'
 
 import TagsContainer from './TagsContainer'
 

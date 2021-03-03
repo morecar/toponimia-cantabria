@@ -1,5 +1,5 @@
 import { Redirect, useLocation, useHistory } from "react-router-dom";
-import { ROUTE_HOME } from "../../staticData/localization";
+import { ROUTE_HOME } from "../../resources/routes";
 
 import ResultsPage from '../ResultsPage'
 

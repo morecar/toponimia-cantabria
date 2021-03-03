@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { GOOGLE_DOC_ID, GOOGLE_DB_SHEET_TITLE, GOOGLE_INFO_SHEET_TITLE, GOOGLE_INFO_SHEET_CELL, GOOGLE_SHEETS_API_KEY } from '../staticData/googleCredentials'
+import { GOOGLE_DOC_ID, GOOGLE_DB_SHEET_TITLE, GOOGLE_INFO_SHEET_TITLE, GOOGLE_INFO_SHEET_CELL, GOOGLE_SHEETS_API_KEY } from '../resources/googleCredentials'
 
 export default class GSpreadsheet {
   static async load() {
