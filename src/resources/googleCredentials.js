@@ -1,7 +1,5 @@
-export const GOOGLE_SHEETS_API_KEY = 'REDACTED_API_KEY'
-
-export const GOOGLE_DOC_ID = 'REDACTED_DOC_ID'
-export const GOOGLE_DB_SHEET_TITLE = 'DB'
-export const GOOGLE_INFO_SHEET_TITLE = 'INFO'
-export const GOOGLE_INFO_SHEET_CELL = 'A1'
-
+export const GOOGLE_SHEETS_API_KEY   = process.env.REACT_APP_GOOGLE_SHEETS_API_KEY
+export const GOOGLE_DOC_ID           = process.env.REACT_APP_GOOGLE_DOC_ID
+export const GOOGLE_DB_SHEET_TITLE   = process.env.REACT_APP_GOOGLE_DB_SHEET_TITLE
+export const GOOGLE_INFO_SHEET_TITLE = process.env.REACT_APP_GOOGLE_INFO_SHEET_TITLE
+export const GOOGLE_INFO_SHEET_CELL  = process.env.REACT_APP_GOOGLE_INFO_SHEET_CELL

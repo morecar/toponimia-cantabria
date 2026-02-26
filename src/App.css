@@ -1,5 +1,6 @@
 body { padding-top: 60px; }
 
+
 .container {
     width: 100%;
     max-width: 100%;
@@ -15,10 +16,6 @@ body { padding-top: 60px; }
   width: 100%;
 }
 
-.navbar .form-inline {
-  min-width: 500px;
-}
-
 .navbar a {
   color: darkgray;
 }
@@ -26,13 +23,58 @@ body { padding-top: 60px; }
   content: none;
 }
 
-.navbar .form-inline input {
-  min-width: 500px;
+.navbar {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  min-height: 56px;
+}
+
+.navbar-brand-center {
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.navbar-brand-center .navbar-brand {
+  pointer-events: auto;
 }
 
 .navbar img {
   margin-top: -8px;
   height: 40px;
+}
+
+/* Search bar: móvil — flotante en la parte inferior */
+.search-wrapper {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 1029;
+}
+
+.search-wrapper .form-control {
+  width: 100%;
+  border-radius: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Search bar: escritorio — centrada debajo del navbar */
+@media (min-width: 992px) {
+  .search-wrapper {
+    bottom: auto;
+    top: 64px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 500px;
+    background-color: transparent;
+    padding: 0;
+  }
 }
 
 .tagsContainer{
@@ -53,8 +95,43 @@ body { padding-top: 60px; }
   font-family: 'Lobster', cursive;
 }
 
-#settings.nav-item  {
+.settings-toggle {
+  background: none;
+  border: none;
   color: darkgray;
-  padding-left: 10px;
-  padding-top: 4px;
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.settings-toggle:focus {
+  outline: none;
+}
+
+.settings-panel {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  background-color: #2c3034;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 0 1rem;
+  z-index: 1030;
+}
+
+.settings-form {
+  padding: 0.75rem 0;
+  color: #adb5bd;
+}
+
+.settings-form .form-check-label,
+.settings-form .form-label {
+  color: #adb5bd;
+}
+
+.settings-form .form-check-input:disabled ~ .form-check-label,
+.settings-form .form-check-input[disabled] ~ .form-check-label {
+  color: #6c757d;
+  opacity: 1;
 }

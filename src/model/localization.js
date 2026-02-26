@@ -34,6 +34,8 @@ export default class Localization {
     }
 
     static createFromConfig(config) {
-        return new Localization(config.locale)
+        const available = Object.keys(Locales).filter(l => l !== 'unlocalizable')
+        const locale = available.includes(config.locale) ? config.locale : available[0]
+        return new Localization(locale)
     }
 }

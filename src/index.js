@@ -1,23 +1,23 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'leaflet/dist/leaflet.css';
 
 import App from './App';
 
 import Configuration from './model/configuration'
-import GSpreadsheet from './model/gSpreadsheet'
+import DataLoader from './model/dataLoader'
 import Localization from './model/localization'
 import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/topoRepository'
 
 function startApp(repository) {
   var config = Configuration.readFromLocalStorage()
   var localization = Localization.createFromConfig(config)
-  ReactDOM.render(
-    // <React.StrictMode>
-      <App config={config} repository={repository} loc={localization}/>,
-    // </React.StrictMode>,
-    document.getElementById('root')
+  const root = createRoot(document.getElementById('root'));
+  root.render(
+    <App config={config} repository={repository} loc={localization}/>
   );
 }
 
-GSpreadsheet.load().then(buildRepositoryFromSheet, buildRepositoryFromLocalStorage).then(startApp)
-
+DataLoader.load().then(buildRepositoryFromSheet, buildRepositoryFromLocalStorage).then(startApp)

@@ -1,13 +1,13 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 
-import {Container, Navbar, Nav, NavItem, OverlayTrigger} from 'react-bootstrap';
-import {Toggles} from 'react-bootstrap-icons';
+import {Container, Navbar} from 'react-bootstrap';
+
+import {List} from 'react-bootstrap-icons';
 
 import SearchBar from './SearchBar'
 import SettingsPopover from './SettingsPopover'
 
 import ResultsMap from './ResultsMap';
-import LanguageSelector from './LanguageSelector';
 
 function buildResults(props) {
   if(!props.search) {
@@ -24,13 +24,13 @@ function buildResults(props) {
 
 export default class ResultsPage extends Component {
   constructor(props) {
-    super(props);    
+    super(props);
     const {queryString, queryResults} = buildResults(props)
     this.state = {
-      locale: this.props.loc.locale,
       //Displayed content
       queryString: queryString,
       queryResults: queryResults,
+      showSettings: false,
       //Results from settings
       displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && props.search),
       displayLines: (props.config.resultsTypes.includes('line')),
@@ -60,13 +60,6 @@ export default class ResultsPage extends Component {
     )
   }
 
-  handleChangeLanguage(event) {
-    if(this.props.loc.availableLocales.includes(event.target.id)) {
-      this.props.loc.locale = event.target.id
-      this.setState( {locale: event.target.id})
-    }
-  }
-
   render() {
     const points = this.state.displayPoints ? this.state.queryResults.filter(point => point.type === 'point') : []
     const polys = this.state.displayPolys ? this.state.queryResults.filter(point => point.type === 'poly') : []
@@ -74,28 +67,42 @@ export default class ResultsPage extends Component {
 
     return (
       <Container>
-        <Navbar fixed="top"  bg="dark" expand="lg" variant="dark">
-          <Navbar.Brand>
-            <img src="./unicorn.png" alt={this.props.loc.get("brand_alt")}/>
-          </Navbar.Brand> 
-          <Navbar.Brand className={'main-brand'}>{this.props.loc.get("brand_name")}</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />        
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
-              <SearchBar onSearch={this.updateResults.bind(this)} value={this.state.queryString} tags={this.props.repository.getAllTags()} regex={this.state.useRegex} {...this.props}/>
-
-            </Nav>
-            <LanguageSelector onLanguageChanged={this.handleChangeLanguage.bind(this)} title={this.props.loc.get(this.state.locale)} {...this.props} />
-            <NavItem id="settings">
-              <OverlayTrigger trigger="click" placement={'bottom'} overlay={<SettingsPopover  onSettingsUpdated={this.handleSettingsUpdated.bind(this)} {...this.props}/>} rootClose> 
-                  <Toggles style={{'fontSize': 'xx-large'}}/>
-              </OverlayTrigger>
-              </NavItem>  
-          </Navbar.Collapse>
+        <Navbar fixed="top" bg="dark" variant="dark">
+          <div className="navbar-brand-center">
+            <Navbar.Brand>
+              <img src={process.env.PUBLIC_URL + '/unicorn.png'} alt={this.props.loc.get("brand_alt")}/>
+            </Navbar.Brand>
+            <Navbar.Brand className={'main-brand'}>{this.props.loc.get("brand_name")}</Navbar.Brand>
+          </div>
+          <button
+            className="settings-toggle ms-auto"
+            onClick={() => this.setState(s => ({showSettings: !s.showSettings}))}
+          >
+            <List/>
+          </button>
         </Navbar>
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} {...this.props}/>
+        {this.state.showSettings && (
+          <div className="settings-panel">
+            <SettingsPopover
+              onSettingsUpdated={this.handleSettingsUpdated.bind(this)}
+              config={this.props.config}
+              loc={this.props.loc}
+            />
+          </div>
+        )}
+        <div className="search-wrapper">
+          <SearchBar
+            onSearch={this.updateResults.bind(this)}
+            value={this.state.queryString}
+            tags={this.props.repository.getAllTags()}
+            regex={this.state.useRegex}
+            config={this.props.config}
+            loc={this.props.loc}
+            history={this.props.history}
+          />
+        </div>
+        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc}/>
       </Container>
     );
   }
 }
-
