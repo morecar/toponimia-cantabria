@@ -1,20 +1,13 @@
 {
   "files": {
-    "main.css": "/toponimia-cantabria/static/css/main.e89950d5.chunk.css",
-    "main.js": "/toponimia-cantabria/static/js/main.a6204e3a.chunk.js",
-    "main.js.map": "/toponimia-cantabria/static/js/main.a6204e3a.chunk.js.map",
-    "runtime-main.js": "/toponimia-cantabria/static/js/runtime-main.3864172f.js",
-    "runtime-main.js.map": "/toponimia-cantabria/static/js/runtime-main.3864172f.js.map",
-    "static/js/2.3cc5abb4.chunk.js": "/toponimia-cantabria/static/js/2.3cc5abb4.chunk.js",
-    "static/js/2.3cc5abb4.chunk.js.map": "/toponimia-cantabria/static/js/2.3cc5abb4.chunk.js.map",
+    "main.css": "/toponimia-cantabria/static/css/main.60c2523b.css",
+    "main.js": "/toponimia-cantabria/static/js/main.08ef2530.js",
     "index.html": "/toponimia-cantabria/index.html",
-    "static/css/main.e89950d5.chunk.css.map": "/toponimia-cantabria/static/css/main.e89950d5.chunk.css.map",
-    "static/js/2.3cc5abb4.chunk.js.LICENSE.txt": "/toponimia-cantabria/static/js/2.3cc5abb4.chunk.js.LICENSE.txt"
+    "main.60c2523b.css.map": "/toponimia-cantabria/static/css/main.60c2523b.css.map",
+    "main.08ef2530.js.map": "/toponimia-cantabria/static/js/main.08ef2530.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.3864172f.js",
-    "static/js/2.3cc5abb4.chunk.js",
-    "static/css/main.e89950d5.chunk.css",
-    "static/js/main.a6204e3a.chunk.js"
+    "static/css/main.60c2523b.css",
+    "static/js/main.08ef2530.js"
   ]
 }
