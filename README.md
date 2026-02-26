@@ -1,71 +1,89 @@
-# Getting Started with Create React App
+# El Toponomicón de Cantabria
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Una aplicación web interactiva para explorar la toponimia histórica de Cantabria, con énfasis en las huellas fonéticas del romance cántabro: metafonía, aspiración de la F inicial latina, y otros rasgos del habla tradicional.
 
-## Available Scripts
+## ¿Qué hace?
 
-In the project directory, you can run:
+- **Mapa interactivo** (OpenStreetMap) con los topónimos georreferenciados como puntos, líneas o polígonos
+- **Búsqueda** por nombre, con soporte para expresiones regulares y detección automática de la hache sopunteada (`h.` → `ḥ`)
+- **Etiquetas** de clasificación etimológica y fonética (romance, celta, metafonía U/I, F aspirada, F muda…)
+- **Panel de ajustes** configurable: qué etiquetas mostrar y cuándo, qué tipos de resultados incluir
+- **Sin backend**: los datos se cargan desde un fichero JSON estático y se cachean en `localStorage`
 
-### `yarn start`
+## Estructura de los datos
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Los topónimos se cargan desde `public/data.json` (no versionado). El formato es:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```json
+{
+  "hash": "v1",
+  "data": [
+    {
+      "hash": "t001",
+      "name": "Ḥuyu, el",
+      "type": "point",
+      "coordinates": "43.4312067,-3.889545168",
+      "tags": "feature:metaphony_u,feature:aspirate_f,etymology:romance"
+    },
+    {
+      "hash": "t012",
+      "name": "La Ḥoyanca",
+      "type": "line",
+      "coordinates": "43.007898,-4.300307;43.007313,-4.296300",
+      "tags": "etymology:romance,feature:aspirate_f"
+    }
+  ]
+}
+```
 
-### `yarn test`
+| Campo | Descripción |
+|---|---|
+| `hash` | Identificador único del topónimo (usado en las URLs de enlace directo) |
+| `name` | Nombre en grafía histórica o dialectal |
+| `type` | `point`, `line` o `poly` |
+| `coordinates` | Pares `lat,lng` separados por `;` (un par para puntos, varios para líneas y polígonos) |
+| `tags` | Etiquetas separadas por `,` |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Cuando el campo `hash` del fichero cambia respecto al que tiene guardado el navegador, la app descarga el fichero completo y actualiza la caché. Si no cambia, sirve los datos desde `localStorage` sin ninguna petición de red.
 
-### `yarn build`
+### Etiquetas disponibles
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Etimología:** `etymology:romance` · `etymology:celtic` · `etymology:celtoroman` · `etymology:ie` · `etymology:unknown`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Rasgos fonéticos:** `feature:metaphony_u` · `feature:metaphony_i` · `feature:aspirate_f` · `feature:lost_f` · `feature:b_g` · `feature:antihiatic_yod`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Ejecutar en local
 
-### `yarn eject`
+```bash
+nvm use 18
+yarn install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Crea `public/data.json` con tus datos (ver formato arriba). Este fichero no está versionado; cada instancia mantiene el suyo propio.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+yarn start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+La app queda disponible en `http://localhost:3000/toponimia-cantabria`.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Variable de entorno opcional
 
-## Learn More
+Crea `.env.local` si quieres apuntar a una URL externa para el fichero de datos:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+REACT_APP_DATA_URL=https://ejemplo.com/mis-toponimos.json
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Por defecto usa `public/data.json` del mismo servidor.
 
-### Code Splitting
+## Despliegue en GitHub Pages
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+yarn build
+yarn deploy
+```
 
-### Analyzing the Bundle Size
+## Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# toponimia-cantabria
+[React 18](https://react.dev/) · [React Router 6](https://reactrouter.com/) · [React Leaflet 4](https://react-leaflet.js.org/) · [React Bootstrap 2](https://react-bootstrap.github.io/) / Bootstrap 5 · Create React App 5
