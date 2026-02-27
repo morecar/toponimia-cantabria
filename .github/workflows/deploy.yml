@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, data]
 
 permissions:
   contents: write
@@ -16,7 +16,13 @@ jobs:
       - name: Fetch data.json from data branch
         run: |
           git fetch origin data
-          git checkout origin/data -- public/data.json
+          git show origin/data:data.json > public/data.json
+
+      - name: Generate data-hash.json from data.json blob SHA
+        run: |
+          HASH=$(git ls-tree origin/data data.json | awk '{print substr($3,1,12)}')
+          printf '{"hash":"%s"}\n' "$HASH" > public/data-hash.json
+          echo "Data hash: $HASH"
 
       - uses: actions/setup-node@v4
         with:
@@ -25,9 +31,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-
-      - name: Compute data hash
-        run: node scripts/update-data-hash.js
 
       - name: Build
         env:

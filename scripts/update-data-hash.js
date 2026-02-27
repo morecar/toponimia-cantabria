@@ -1,26 +1,17 @@
 #!/usr/bin/env node
-// Computes a SHA-256 of the data[] array in public/data.json,
-// writes the hash back into data.json and into public/data-hash.json.
-// Run automatically via predeploy and the GitHub Actions workflow.
+// Uses the git blob SHA of public/data.json in origin/data as the data version.
+// This is a cryptographic hash of the file content, stable and automatic —
+// changes only when data.json changes, not when other files in the branch do.
 
-const crypto = require('crypto')
+const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
-const dataPath = path.join(__dirname, '../public/data.json')
 const hashPath = path.join(__dirname, '../public/data-hash.json')
 
-const content = JSON.parse(fs.readFileSync(dataPath, 'utf8'))
+// git ls-tree prints: <mode> blob <sha>\t<path>
+const line = execSync('git ls-tree origin/data data.json').toString().trim()
+const hash = line.split(/\s+/)[2].slice(0, 12)
 
-// Hash only the data array so the hash field itself is not part of the input
-const hash = crypto
-  .createHash('sha256')
-  .update(JSON.stringify(content.data))
-  .digest('hex')
-  .slice(0, 12)
-
-content.hash = hash
-fs.writeFileSync(dataPath, JSON.stringify(content, null, 2) + '\n')
 fs.writeFileSync(hashPath, JSON.stringify({ hash }) + '\n')
-
 console.log(`data hash: ${hash}`)

@@ -5,18 +5,23 @@ const USE_CUSTOM_URL = !!process.env.REACT_APP_DATA_URL
 export default class DataLoader {
   static async load() {
     if (!USE_CUSTOM_URL) {
-      // Fetch only the hash first — fast check before downloading all data
+      // Fast path: fetch only the tiny hash file first
       try {
-        const hashResponse = await fetch(HASH_URL)
-        if (hashResponse.ok) {
-          const { hash } = await hashResponse.json()
-          if (hash === localStorage.getItem('localIndexHash')) {
-            return null  // Cache is valid, skip full download
-          }
+        const hashRes = await fetch(HASH_URL)
+        if (hashRes.ok) {
+          const { hash } = await hashRes.json()
+          if (hash === localStorage.getItem('localIndexHash')) return null  // cache valid
+
+          // Hash differs — fetch full data, use the blob SHA as cache key
+          const dataRes = await fetch(DATA_URL)
+          if (!dataRes.ok) throw new Error(`Failed to fetch data: ${dataRes.status}`)
+          const json = await dataRes.json()
+          return { hash, rows: json.data }
         }
-      } catch {} // Fall through to full load on any error
+      } catch {} // fall through to unconditional load on any error
     }
 
+    // Fallback (custom URL or hash fetch failed): load data.json directly
     const response = await fetch(DATA_URL)
     if (!response.ok) throw new Error(`Failed to fetch data: ${response.status}`)
     const json = await response.json()
