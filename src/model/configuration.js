@@ -91,4 +91,13 @@ export default class ConfigService {
         this._config.search_use_regex = newSearchUseRegex;
         this.writeToLocalStorage()
     }
+
+    get markerSize() {
+        return this._config.marker_size
+    }
+
+    set markerSize(newMarkerSize) {
+        this._config.marker_size = newMarkerSize;
+        this.writeToLocalStorage()
+    }
 }

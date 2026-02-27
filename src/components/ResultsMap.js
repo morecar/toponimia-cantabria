@@ -214,7 +214,7 @@ export default function ResultsMap(props) {
       />
       <CantabriaColorPane />
       {props.points.map(p =>
-        <MapMarker key={p.hash} position={p.coordinates[0]} hash={p.hash} title={p.title} color={p.color} />
+        <MapMarker key={p.hash} position={p.coordinates[0]} hash={p.hash} title={p.title} colors={p.colors} markerSize={props.markerSize} />
       )}
       {props.lines.map(l =>
         <Polyline key={l.hash} pathOptions={{ ...lineOptions, color: l.color }} positions={l.coordinates}>

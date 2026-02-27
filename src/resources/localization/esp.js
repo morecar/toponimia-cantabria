@@ -18,6 +18,11 @@ export const esp =
     "result_class_line": "Lineales",
     "result_class_poly": "Zonales",
 
+    "marker_size": "Tamaño marcador",
+    "marker_size_s": "P",
+    "marker_size_m": "M",
+    "marker_size_l": "G",
+
     "settings_category_other": "Otros",
     "toogle_search_regex": "Búsqueda con regex", 
     "toogle_detect_underdoth": "Detectar hache sopunteada (h.→ḥ)", 

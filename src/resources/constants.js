@@ -9,5 +9,6 @@ export const CONFIG_DEFAULT = {
     search_use_regex: true,
     search_autocomplete_underdoth: true,
     search_autocomplete_tags: false,
-    search_display_tag_palette: false
+    search_display_tag_palette: false,
+    marker_size: 'medium'
   }

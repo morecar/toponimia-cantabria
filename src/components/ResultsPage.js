@@ -116,16 +116,16 @@ export default class ResultsPage extends Component {
   }
 
   render() {
-    const seen = new Set()
-    const allResults = this.state.queries.flatMap(q =>
-      q.queryResults
-        .filter(r => {
-          if (seen.has(r.hash)) return false
-          seen.add(r.hash)
-          return true
-        })
-        .map(r => ({ ...r, color: q.color }))
-    )
+    const colorsByHash = new Map()
+    this.state.queries.forEach(q => {
+      q.queryResults.forEach(r => {
+        if (!colorsByHash.has(r.hash)) colorsByHash.set(r.hash, { result: r, colors: [] })
+        colorsByHash.get(r.hash).colors.push(q.color)
+      })
+    })
+    const allResults = Array.from(colorsByHash.values()).map(({ result, colors }) => ({
+      ...result, colors, color: colors[0],
+    }))
 
     const points = this.state.displayPoints ? allResults.filter(r => r.type === 'point') : []
     const polys  = this.state.displayPolys  ? allResults.filter(r => r.type === 'poly')  : []
@@ -210,7 +210,7 @@ export default class ResultsPage extends Component {
           )}
         </div>
 
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} onZoomed={this.handleMapZoomed.bind(this)}/>
+        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onZoomed={this.handleMapZoomed.bind(this)}/>
       </Container>
     );
   }
