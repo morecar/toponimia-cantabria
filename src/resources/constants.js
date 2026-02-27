@@ -5,7 +5,7 @@ export const CONFIG_DEFAULT = {
     locale: 'esp',
     results_title: 'never',
     results_tags: 'search',
-    results_types: ['point'],
+    results_types: ['point', 'line', 'poly'],
     search_use_regex: true,
     search_autocomplete_underdoth: true,
     search_autocomplete_tags: false,
