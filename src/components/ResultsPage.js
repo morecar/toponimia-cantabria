@@ -6,33 +6,42 @@ import {List} from 'react-bootstrap-icons';
 
 import SearchBar from './SearchBar'
 import SettingsPopover from './SettingsPopover'
-
 import ResultsMap from './ResultsMap';
 
+import { ROUTE_SEARCH, ROUTE_HOME } from '../resources/routes'
+
+const QUERY_COLORS = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed']
+const MAX_QUERIES = 4
+
 function buildResults(props) {
-  if(!props.search) {
-    return {queryString:"",  queryResults: props.repository.getFromQueryString("")}
+  if (!props.search || props.search === 'false') {
+    return [{ queryString: '', queryResults: props.repository.getFromQueryString('') }]
   }
 
-  if(props.wordId) {
-    const singleResult = props.repository.getFromId(props.wordId) ?? {queryString: "", queryResults: []}
-    return {queryString: singleResult.title, queryResults: [singleResult]}
+  if (props.wordId) {
+    const singleResult = props.repository.getFromId(props.wordId)
+    return [{ queryString: singleResult?.title ?? '', queryResults: singleResult ? [singleResult] : [] }]
   }
 
-  return {queryString: props.queryString,  queryResults: props.repository.getFromQueryString(props.queryString)}
+  const queryStrings = props.queryStrings || []
+  if (queryStrings.length === 0) return [{ queryString: '', queryResults: [] }]
+  return queryStrings.map(qs => ({
+    queryString: qs,
+    queryResults: props.repository.getFromQueryString(qs)
+  }))
 }
 
 export default class ResultsPage extends Component {
   constructor(props) {
     super(props);
-    const {queryString, queryResults} = buildResults(props)
+    const initialQueries = buildResults(props)
+    const anyQuery = initialQueries.some(q => !!q.queryString)
     this.state = {
-      //Displayed content
-      queryString: queryString,
-      queryResults: queryResults,
+      queries: initialQueries.map((q, i) => ({ id: i + 1, ...q, color: QUERY_COLORS[i % QUERY_COLORS.length] })),
+      nextId: initialQueries.length + 1,
       showSettings: false,
-      //Results from settings
-      displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && props.search),
+      hasSearched: anyQuery,
+      displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && anyQuery),
       displayLines: (props.config.resultsTypes.includes('line')),
       displayPolys: (props.config.resultsTypes.includes('poly')),
       displayPoints: (props.config.resultsTypes.includes('point')),
@@ -40,30 +49,90 @@ export default class ResultsPage extends Component {
     }
   }
 
-  updateResults(newQueryString) {
-    this.setState( {
-      queryString: newQueryString,
-      queryResults: this.props.repository.getFromQueryString(newQueryString, this.props.config.searchUseRegex),
-      displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && newQueryString ? true : false)
+  updateResults(id, newQueryString) {
+    this.setState(s => {
+      const queries = s.queries.map(q =>
+        q.id === id
+          ? { ...q, queryString: newQueryString, queryResults: this.props.repository.getFromQueryString(newQueryString, this.props.config.searchUseRegex) }
+          : q
+      )
+      const nonEmpty = queries.filter(q => !!q.queryString)
+      if (nonEmpty.length === 0) {
+        this.props.history(ROUTE_HOME)
+      } else {
+        const params = new URLSearchParams()
+        nonEmpty.forEach(q => params.append('q', q.queryString))
+        this.props.history(`${ROUTE_SEARCH}?${params.toString()}`)
+      }
+      return {
+        queries,
+        displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
+        hasSearched: true,
+      }
     })
   }
 
-  handleSettingsUpdated() {
-    this.setState(
-      {
-        displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && this.state.search),
-        displayLines: (this.props.config.resultsTypes.includes('line')),
-        displayPolys: (this.props.config.resultsTypes.includes('poly')),
-        displayPoints: (this.props.config.resultsTypes.includes('point')),
-        useRegex: this.props.config.searchUseRegex
+  addQuery() {
+    this.setState(s => {
+      if (s.queries.length >= MAX_QUERIES) return null
+      return {
+        queries: [...s.queries, { id: s.nextId, queryString: '', queryResults: [], color: QUERY_COLORS[s.queries.length % QUERY_COLORS.length] }],
+        nextId: s.nextId + 1,
+        hasSearched: true,
       }
-    )
+    })
+  }
+
+  removeQuery(id) {
+    this.setState(s => {
+      const queries = s.queries.filter(q => q.id !== id)
+      const nonEmpty = queries.filter(q => !!q.queryString)
+      if (nonEmpty.length === 0) {
+        this.props.history(ROUTE_HOME)
+      } else {
+        const params = new URLSearchParams()
+        nonEmpty.forEach(q => params.append('q', q.queryString))
+        this.props.history(`${ROUTE_SEARCH}?${params.toString()}`)
+      }
+      return {
+        queries,
+        displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
+      }
+    })
+  }
+
+  handleMapZoomed() {
+    if (!this.state.hasSearched) this.setState({ hasSearched: true })
+  }
+
+  handleSettingsUpdated() {
+    this.setState({
+      displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && this.state.queries.some(q => !!q.queryString)),
+      displayLines: (this.props.config.resultsTypes.includes('line')),
+      displayPolys: (this.props.config.resultsTypes.includes('poly')),
+      displayPoints: (this.props.config.resultsTypes.includes('point')),
+      useRegex: this.props.config.searchUseRegex
+    })
   }
 
   render() {
-    const points = this.state.displayPoints ? this.state.queryResults.filter(point => point.type === 'point') : []
-    const polys = this.state.displayPolys ? this.state.queryResults.filter(point => point.type === 'poly') : []
-    const lines = this.state.displayLines ? this.state.queryResults.filter(point => point.type === 'line') : []
+    const seen = new Set()
+    const allResults = this.state.queries.flatMap(q =>
+      q.queryResults
+        .filter(r => {
+          if (seen.has(r.hash)) return false
+          seen.add(r.hash)
+          return true
+        })
+        .map(r => ({ ...r, color: q.color }))
+    )
+
+    const points = this.state.displayPoints ? allResults.filter(r => r.type === 'point') : []
+    const polys  = this.state.displayPolys  ? allResults.filter(r => r.type === 'poly')  : []
+    const lines  = this.state.displayLines  ? allResults.filter(r => r.type === 'line')  : []
+    const searching = this.state.queries.some(q => !!q.queryString)
+    const multiSearch = this.state.queries.length > 1
+    const canAddMore = this.state.hasSearched && this.state.queries.length < MAX_QUERIES
 
     return (
       <Container>
@@ -90,18 +159,58 @@ export default class ResultsPage extends Component {
             />
           </div>
         )}
-        <div className="search-wrapper">
-          <SearchBar
-            onSearch={this.updateResults.bind(this)}
-            value={this.state.queryString}
-            tags={this.props.repository.getAllTags()}
-            regex={this.state.useRegex}
-            config={this.props.config}
-            loc={this.props.loc}
-            history={this.props.history}
-          />
+
+        <div className={`search-wrapper${this.state.hasSearched ? '' : ' search-centered'}`}>
+          {multiSearch ? (
+            <div className="search-row">
+              <div className="search-chips-bar">
+                {this.state.queries.map((q, i) => (
+                  <React.Fragment key={q.id}>
+                    {i > 0 && <span className="search-chip-sep">/</span>}
+                    <div className={`search-chip${!q.queryString ? ' search-chip--new' : ''}`}>
+                      <span className="search-chip-dot" style={{ background: q.color }} />
+                      {q.queryString
+                        ? <span className="search-chip-text">{q.queryString}</span>
+                        : <input
+                            autoFocus
+                            className="search-chip-input"
+                            placeholder={this.props.loc.get("search_placeholder")}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                this.updateResults(q.id, e.target.value.trim())
+                              }
+                            }}
+                          />
+                      }
+                      <button className="search-chip-remove" onClick={() => this.removeQuery(q.id)}>×</button>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+              {canAddMore && this.state.queries.every(q => !!q.queryString) && (
+                <button className="search-addon-btn" onClick={this.addQuery.bind(this)}>+</button>
+              )}
+            </div>
+          ) : (
+            <div className="search-row">
+              <SearchBar
+                onSearch={newQuery => this.updateResults(this.state.queries[0].id, newQuery)}
+                value={this.state.queries[0].queryString}
+                color={this.state.hasSearched ? this.state.queries[0].color : undefined}
+                tags={this.props.repository.getAllTags()}
+                regex={this.state.useRegex}
+                config={this.props.config}
+                loc={this.props.loc}
+              />
+              {canAddMore && (
+                <button className="search-addon-btn" onClick={this.addQuery.bind(this)}>+</button>
+              )}
+            </div>
+          )}
         </div>
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc}/>
+
+        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} onZoomed={this.handleMapZoomed.bind(this)}/>
       </Container>
     );
   }

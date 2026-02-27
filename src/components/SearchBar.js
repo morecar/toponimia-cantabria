@@ -1,10 +1,7 @@
 import React, { Component} from 'react';
-import {generatePath} from 'react-router-dom'
 
 import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl'
-
-import {ROUTE_SEARCH_PATTERN, ROUTE_HOME} from '../resources/routes'
 
 export default class SearchBar extends Component {
     constructor(props) {
@@ -20,12 +17,7 @@ export default class SearchBar extends Component {
 
     handleSearch(event) {
         event.preventDefault();
-        var query = this.searchBar.current.value.trim()
-        const url = query === ""
-                    ? generatePath(ROUTE_HOME)
-                    : generatePath(ROUTE_SEARCH_PATTERN, {query: encodeURIComponent(query)})
-        this.props.history(url)
-        this.props.onSearch(query)
+        this.props.onSearch(this.searchBar.current.value.trim())
     }
 
     handleChange(event) {
@@ -37,9 +29,14 @@ export default class SearchBar extends Component {
 
     render() {
         return (
-            <Form onSubmit={this.handleSearch.bind(this)}>
-                <FormControl type="text" defaultValue={this.props.value} onChange={this.handleChange.bind(this)} placeholder={this.props.regex?this.props.loc.get("search_regex_placeholder"):this.props.loc.get("search_placeholder")} ref={this.searchBar}/>
-            </Form>
+            <div className="search-input-wrapper">
+                {this.props.color && (
+                    <span className="search-color-dot" style={{ background: this.props.color }} />
+                )}
+                <Form onSubmit={this.handleSearch.bind(this)}>
+                    <FormControl type="text" defaultValue={this.props.value} onChange={this.handleChange.bind(this)} placeholder={this.props.regex?this.props.loc.get("search_regex_placeholder"):this.props.loc.get("search_placeholder")} ref={this.searchBar} className={this.props.color ? 'has-color-dot' : ''}/>
+                </Form>
+            </div>
             )
         }
     }

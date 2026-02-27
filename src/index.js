@@ -20,4 +20,7 @@ function startApp(repository) {
   );
 }
 
-DataLoader.load().then(buildRepositoryFromSheet, buildRepositoryFromLocalStorage).then(startApp)
+DataLoader.load()
+  .then(data => data ? buildRepositoryFromSheet(data) : buildRepositoryFromLocalStorage())
+  .catch(() => buildRepositoryFromLocalStorage())
+  .then(startApp)

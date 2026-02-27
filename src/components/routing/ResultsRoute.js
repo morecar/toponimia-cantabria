@@ -9,10 +9,10 @@ function useQuery() {
 
 export default function ResultsRoute(props) {
     let query = useQuery();
-    let search = { "wordId": query.get('h') ?? undefined, "queryString": query.get('q') ?? "" }
+    let wordId = query.get('h') ?? undefined
+    let queryStrings = query.getAll('q').filter(Boolean)
     let navigate = useNavigate()
 
-    if(!search.wordId && !search.queryString) return <Navigate to={ROUTE_HOME} replace />
-    else return <ResultsPage repository={props.repository} search="true" {...search} {...props} history={navigate}/>
-
+    if(!wordId && queryStrings.length === 0) return <Navigate to={ROUTE_HOME} replace />
+    return <ResultsPage repository={props.repository} search="true" wordId={wordId} queryStrings={queryStrings} {...props} history={navigate}/>
 }
