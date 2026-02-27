@@ -24,6 +24,7 @@ jobs:
       - name: Build
         env:
           PUBLIC_URL: /toponimia-cantabria
+          REACT_APP_DATA_URL: https://raw.githubusercontent.com/morecar/toponimia-cantabria/data/data.json
         run: yarn build
 
       - name: Deploy
@@ -31,4 +32,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          keep_files: true
