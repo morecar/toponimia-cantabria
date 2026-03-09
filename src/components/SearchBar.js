@@ -9,6 +9,7 @@ export default class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.searchBar = React.createRef()
+        this._debounce = null
 
         this.state = {
             inputValue: this.props.value || '',
@@ -17,6 +18,7 @@ export default class SearchBar extends Component {
 
     handleSearch(event) {
         event.preventDefault();
+        clearTimeout(this._debounce)
         this.props.onSearch(this.searchBar.current.value.trim())
     }
 
@@ -25,7 +27,10 @@ export default class SearchBar extends Component {
             let regex = RegExp(/h\.\S/, 'i')
             this.searchBar.current.value = this.searchBar.current.value.replace(regex, (match, offset, string) => {return match.startsWith('h') ? `ḥ${string[offset+2]}` : `Ḥ${[offset+2]}` })
         }
-        this.setState({ inputValue: this.searchBar.current.value })
+        const value = this.searchBar.current.value
+        this.setState({ inputValue: value })
+        clearTimeout(this._debounce)
+        this._debounce = setTimeout(() => this.props.onSearch(value.trim()), 200)
     }
 
     render() {
