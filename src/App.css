@@ -91,9 +91,9 @@ body { padding-top: 60px; }
     top: auto;
     transform: none;
   }
-  .search-wrapper.search-centered .form-control {
+  .search-wrapper .form-control {
+    padding: 0.65rem 1rem;
     font-size: 1rem;
-    padding: 0.375rem 1rem;
   }
 }
 
