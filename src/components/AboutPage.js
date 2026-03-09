@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import { ROUTE_HOME } from '../resources/routes'
+import iconNobg from '../assets/icon-nobg.png'
 
 export default function AboutPage() {
   const navigate = useNavigate()
@@ -14,9 +15,10 @@ export default function AboutPage() {
 
       <div className="about-body">
         <div className="about-hero">
-          <h1 className="about-hero-title">El Toponomicón<br/>de Cantabria</h1>
+          <img src={iconNobg} alt="" className="about-hero-icon" aria-hidden="true" />
+          <h1 className="about-hero-title">El Toponomicón</h1>
           <p className="about-hero-sub">
-            Una herramienta para explorar la toponimia histórica de Cantabria
+            Una herramienta para explorar la toponimia de Cantabria
             en sus dimensiones geográfica e histórica.
           </p>
         </div>
@@ -137,6 +139,11 @@ export default function AboutPage() {
                 Twitter @morecar89
               </a>{' '}
               o por email (el mismo nombre, en Gmail).
+            </p>
+            <p className="about-links">
+              <a href="https://es.linkedin.com/in/morecar/en" target="_blank" rel="noreferrer">LinkedIn</a>
+              {' · '}
+              <a href="https://github.com/morecar" target="_blank" rel="noreferrer">GitHub</a>
             </p>
           </section>
 

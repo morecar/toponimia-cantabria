@@ -150,14 +150,15 @@ export default class ResultsPage extends Component {
       <Container>
         <Navbar fixed="top" bg="dark" variant="dark">
           <div className="navbar-brand-center">
-            <Navbar.Brand className={'main-brand'}>{this.props.loc.get("brand_name")}</Navbar.Brand>
+            <Navbar.Brand className={'main-brand'}><span className="brand-el">El </span>Toponomicón</Navbar.Brand>
           </div>
           <button
             className="about-nav-btn"
             onClick={() => this.props.history(ROUTE_ABOUT)}
             title="Sobre el proyecto"
           >
-            ℹ
+            <span className="about-nav-icon">ℹ</span>
+            <span className="about-nav-label">Sobre el proyecto</span>
           </button>
           <button
             className="settings-toggle ms-auto"

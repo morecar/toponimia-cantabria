@@ -37,9 +37,9 @@ body { padding-top: 60px; }
 
 .navbar-brand-center {
   position: absolute;
-  top: 0.5rem;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   pointer-events: none;
@@ -555,17 +555,29 @@ body { padding-top: 60px; }
 .about-nav-btn {
   background: none;
   border: none;
-  color: #6c757d;
-  font-size: 1rem;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.8rem;
   line-height: 1;
   cursor: pointer;
-  padding: 0.25rem 0.4rem;
-  margin-right: 0.1rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.25rem;
   border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   transition: color 0.15s;
+  white-space: nowrap;
 }
-.about-nav-btn:hover { color: #adb5bd; }
+.about-nav-btn:hover { color: #fff; }
 .about-nav-btn:focus { outline: none; }
+.about-nav-icon { font-size: 1.05rem; line-height: 1; display: flex; align-items: center; }
+.about-nav-label { font-size: 0.78rem; line-height: 1; display: flex; align-items: center; }
+
+.brand-el {
+  font-size: 0.6em;
+  opacity: 0.7;
+  vertical-align: baseline;
+}
 
 /* ── About page ───────────────────────────────────────────────────── */
 .about-layout {
@@ -590,12 +602,20 @@ body { padding-top: 60px; }
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
+.about-hero-icon {
+  width: clamp(80px, 14vw, 140px);
+  height: auto;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+}
+
 .about-hero-title {
   font-size: clamp(1.9rem, 5vw, 3rem);
+  font-family: 'Cinzel Decorative', serif;
   font-weight: 700;
   color: #f1f5f9;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
   margin-bottom: 1rem;
 }
 
