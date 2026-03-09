@@ -23,8 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 /public/toponyms.json
 /public/toponyms-hash.json
-/public/attestations.json
-/public/attestations-hash.json
 /public/etymologies.json
 /public/etymologies-hash.json
 
