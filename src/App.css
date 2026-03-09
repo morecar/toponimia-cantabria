@@ -278,8 +278,9 @@ body { padding-top: 60px; }
 
 .main-brand {
   padding-top: 0px;
-  font-size: 1.75em;
-  font-family: 'Lobster', cursive;
+  font-size: 1.4em;
+  font-family: 'Cinzel Decorative', serif;
+  letter-spacing: 0.02em;
 }
 
 .settings-toggle {
@@ -324,6 +325,16 @@ body { padding-top: 60px; }
 }
 
 /* ── Toponym detail panel ─────────────────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
 .topo-detail-panel {
   position: fixed;
   top: 56px;
@@ -336,6 +347,7 @@ body { padding-top: 60px; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  animation: slideInRight 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .topo-detail-inner {
@@ -427,6 +439,14 @@ body { padding-top: 60px; }
   padding: 0.1rem 0.6rem;
 }
 
+.topo-attestation-mark {
+  background: #fff3cd;
+  color: inherit;
+  font-style: inherit;
+  padding: 0 0.1em;
+  border-radius: 2px;
+}
+
 .topo-attestation-link {
   font-size: 0.8rem;
 }
@@ -446,5 +466,6 @@ body { padding-top: 60px; }
   .topo-detail-panel {
     left: 0;
     width: 100%;
+    animation: slideInUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }

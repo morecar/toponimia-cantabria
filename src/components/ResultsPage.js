@@ -19,11 +19,6 @@ function buildResults(props) {
     return [{ queryString: '', queryResults: props.repository.getFromQueryString('') }]
   }
 
-  if (props.wordId) {
-    const singleResult = props.repository.getFromId(props.wordId)
-    return [{ queryString: singleResult?.title ?? '', queryResults: singleResult ? [singleResult] : [] }]
-  }
-
   const queryStrings = props.queryStrings || []
   if (queryStrings.length === 0) return [{ queryString: '', queryResults: [] }]
   return queryStrings.map(qs => ({
@@ -46,7 +41,8 @@ export default class ResultsPage extends Component {
       displayLines: (props.config.resultsTypes.includes('line')),
       displayPolys: (props.config.resultsTypes.includes('poly')),
       displayPoints: (props.config.resultsTypes.includes('point')),
-      useRegex: props.config.searchUseRegex
+      useRegex: props.config.searchUseRegex,
+      panelHash: new URLSearchParams(window.location.search).get('h') || null,
     }
   }
 
@@ -103,16 +99,17 @@ export default class ResultsPage extends Component {
   }
 
   openPanel(hash) {
-    const params = new URLSearchParams(window.location.search)
-    params.set('h', hash)
-    this.props.history(`${window.location.pathname}?${params.toString()}`)
+    const url = new URL(window.location.href)
+    url.searchParams.set('h', hash)
+    window.history.pushState(null, '', url.toString())
+    this.setState({ panelHash: hash, hasSearched: true })
   }
 
   closePanel() {
-    const params = new URLSearchParams(window.location.search)
-    params.delete('h')
-    const qs = params.toString()
-    this.props.history(`${window.location.pathname}${qs ? '?' + qs : ''}`)
+    const url = new URL(window.location.href)
+    url.searchParams.delete('h')
+    window.history.pushState(null, '', url.toString())
+    this.setState({ panelHash: null })
   }
 
   handleMapZoomed() {
@@ -149,12 +146,10 @@ export default class ResultsPage extends Component {
     const canAddMore = this.state.hasSearched && this.state.queries.length < MAX_QUERIES
 
     return (
+      <>
       <Container>
         <Navbar fixed="top" bg="dark" variant="dark">
           <div className="navbar-brand-center">
-            <Navbar.Brand>
-              <img src={process.env.PUBLIC_URL + '/unicorn.png'} alt={this.props.loc.get("brand_alt")}/>
-            </Navbar.Brand>
             <Navbar.Brand className={'main-brand'}>{this.props.loc.get("brand_name")}</Navbar.Brand>
           </div>
           <button
@@ -224,11 +219,11 @@ export default class ResultsPage extends Component {
           )}
         </div>
 
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)}/>
+        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)} flyToHash={this.state.panelHash}/>
       </Container>
-      {this.props.wordId && (
+      {this.state.panelHash && (
         <TopoDetailPanel
-          hash={this.props.wordId}
+          hash={this.state.panelHash}
           repository={this.props.repository}
           attestationsStore={this.props.attestationsStore}
           etymologyStore={this.props.etymologyStore}
@@ -236,6 +231,7 @@ export default class ResultsPage extends Component {
           onClose={this.closePanel.bind(this)}
         />
       )}
+      </>
     );
   }
 }

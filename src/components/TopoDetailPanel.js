@@ -1,5 +1,18 @@
 import React from 'react'
 
+function HighlightedQuote({ quote, highlight }) {
+  if (!highlight) return <>{quote}</>
+  const idx = quote.indexOf(highlight)
+  if (idx === -1) return <>{quote}</>
+  return (
+    <>
+      {quote.slice(0, idx)}
+      <mark className="topo-attestation-mark">{highlight}</mark>
+      {quote.slice(idx + highlight.length)}
+    </>
+  )
+}
+
 export default function TopoDetailPanel({ hash, repository, attestationsStore, etymologyStore, loc, onClose }) {
   const topo = repository.getFromId(hash)
   if (!topo) return null
@@ -40,7 +53,9 @@ export default function TopoDetailPanel({ hash, repository, attestationsStore, e
                     <span className="topo-attestation-source">{a.source}</span>
                   </div>
                   {a.quote && (
-                    <blockquote className="topo-attestation-quote">{a.quote}</blockquote>
+                    <blockquote className="topo-attestation-quote">
+                      <HighlightedQuote quote={a.quote} highlight={a.highlight} />
+                    </blockquote>
                   )}
                   {a.url && (
                     <a href={a.url} target="_blank" rel="noopener noreferrer" className="topo-attestation-link">

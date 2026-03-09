@@ -11,6 +11,18 @@ function TopoPopup({ hash, title, onMarkerClick }) {
   )
 }
 
+function FlyTo({ hash, points }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!hash) return
+    const point = points.find(p => p.hash === hash)
+    if (point?.coordinates?.[0]) {
+      map.flyTo(point.coordinates[0], Math.max(map.getZoom(), 14), { duration: 0.8 })
+    }
+  }, [hash]) // eslint-disable-line react-hooks/exhaustive-deps
+  return null
+}
+
 function ZoomWatcher({ initialZoom, onZoomed }) {
   const map = useMap()
   useEffect(() => {
@@ -205,6 +217,7 @@ export default function ResultsMap(props) {
   return (
     <MapContainer center={CENTER_CANTABRIA} zoom={10} scrollWheelZoom={true} zoomControl={false} dragging={true}>
       <FitBounds points={props.points} lines={props.lines} polys={props.polys} searching={props.searching} />
+      {props.flyToHash && <FlyTo hash={props.flyToHash} points={props.points} />}
       {props.onZoomed && <ZoomWatcher initialZoom={10} onZoomed={props.onZoomed} />}
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
