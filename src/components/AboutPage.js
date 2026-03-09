@@ -40,7 +40,8 @@ export default function AboutPage() {
               es un mapa exhaustivo, sino un mapa de los topónimos con valor singular, aunque
               no sean raros. Por ejemplo, <em>Llama</em> es muy común en Cantabria, pero
               presenta características evolutivas que hacen interesante representarlo en un
-              mapa.
+              mapa. <em>Vega</em>, en cambio, es igualmente frecuente, pero no presenta
+              rasgos particulares en Cantabria que justifiquen su inclusión.
             </p>
           </section>
 
