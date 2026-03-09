@@ -264,6 +264,63 @@ body { padding-top: 60px; }
   min-width: 60px;
 }
 
+/* Expression preview chips (regex mode) */
+.search-expr-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.3rem 0.9rem;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 20;
+}
+
+.search-expr-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: #2563eb;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.search-expr-tag--negated {
+  background: #dc2626;
+}
+
+.search-expr-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  font-size: 0.72rem;
+  color: #334155;
+  font-family: monospace;
+}
+
+.search-expr-op {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 700;
+  user-select: none;
+  padding: 0 0.1rem;
+}
+
+.search-expr-not {
+  font-size: 0.65rem;
+  font-weight: 700;
+  opacity: 0.8;
+  user-select: none;
+}
+
 .tagsContainer{
   box-shadow: none;
   background-color: transparent;
@@ -423,6 +480,12 @@ body { padding-top: 60px; }
   font-size: 0.9rem;
   color: #2563eb;
   flex-shrink: 0;
+}
+
+.topo-attestation-form {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #1e293b;
 }
 
 .topo-attestation-source {

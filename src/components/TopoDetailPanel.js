@@ -13,12 +13,12 @@ function HighlightedQuote({ quote, highlight }) {
   )
 }
 
-export default function TopoDetailPanel({ hash, repository, attestationsStore, etymologyStore, loc, onClose }) {
+export default function TopoDetailPanel({ hash, repository, etymologyStore, loc, onClose }) {
   const topo = repository.getFromId(hash)
   if (!topo) return null
 
-  const attestations = attestationsStore.getByHash(hash)
-  const etymology = topo.etymology_id ? etymologyStore.getById(topo.etymology_id) : null
+  const attestations = topo.attestations || []
+  const etymologies = (topo.etymology_ids || []).map(id => etymologyStore.getById(id)).filter(Boolean)
 
   return (
     <div className="topo-detail-panel">
@@ -27,18 +27,22 @@ export default function TopoDetailPanel({ hash, repository, attestationsStore, e
 
         <h2 className="topo-detail-title">{topo.title}</h2>
 
-        {etymology && (
+        {etymologies.length > 0 && (
           <section className="topo-detail-section">
             <h3 className="topo-detail-section-title">{loc.get('panel_etymology')}</h3>
-            {etymology.origin && (
-              <p><strong>{loc.get('panel_origin')}:</strong> {etymology.origin}</p>
-            )}
-            {etymology.meaning && (
-              <p><strong>{loc.get('panel_meaning')}:</strong> {etymology.meaning}</p>
-            )}
-            {etymology.notes && (
-              <p className="topo-detail-notes">{etymology.notes}</p>
-            )}
+            {etymologies.map((etymology, i) => (
+              <div key={i} className={etymologies.length > 1 ? 'topo-etymology-item' : undefined}>
+                {etymology.origin && (
+                  <p><strong>{loc.get('panel_origin')}:</strong> {etymology.origin}</p>
+                )}
+                {etymology.meaning && (
+                  <p><strong>{loc.get('panel_meaning')}:</strong> {etymology.meaning}</p>
+                )}
+                {etymology.notes && (
+                  <p className="topo-detail-notes">{etymology.notes}</p>
+                )}
+              </div>
+            ))}
           </section>
         )}
 
@@ -50,6 +54,7 @@ export default function TopoDetailPanel({ hash, repository, attestationsStore, e
                 <li key={i} className="topo-attestation-item">
                   <div className="topo-attestation-header">
                     <span className="topo-attestation-year">{a.year}</span>
+                    {a.highlight && <span className="topo-attestation-form">{a.highlight}</span>}
                     <span className="topo-attestation-source">{a.source}</span>
                   </div>
                   {a.quote && (
@@ -68,7 +73,7 @@ export default function TopoDetailPanel({ hash, repository, attestationsStore, e
           </section>
         )}
 
-        {!etymology && attestations.length === 0 && (
+        {etymologies.length === 0 && attestations.length === 0 && (
           <p className="text-muted" style={{ fontSize: '0.875rem' }}>{loc.get('panel_no_data')}</p>
         )}
       </div>

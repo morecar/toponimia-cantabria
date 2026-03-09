@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { parseExpression, evaluateExpression, shouldShowPreview } from './queryParser'
 
 export async function buildRepositoryFromSheet(spreadsheet) {
     if (shouldReload(spreadsheet.hash))
@@ -17,7 +18,9 @@ async function reloadLocalDatabase(newHash, rows) {
         title: row.name,
         type: row.type,
         coordinates: row.coordinates.trim().split(';').map(pair => pair.trim().split(',').map(parseFloat)),
-        tags: row.tags.split(',')
+        tags: row.tags.split(','),
+        etymology_ids: row.etymology_ids || [],
+        attestations: row.attestations || [],
     }))
     localStorage.setItem("localIndex", JSON.stringify(remotedb))
     localStorage.setItem("localIndexHash", newHash)
@@ -40,12 +43,22 @@ class TopoRepository {
     }
 
     getFromQueryString(queryString, regex = true) {
-        if(regex) {
-            let queryRegex = RegExp(queryString, 'i')
+        if (!queryString.trim()) return this.database.value()
 
-            return this.database.filter(entry => queryRegex.test(entry.title)).value()
+        if (regex) {
+            const knownTags = this.getAllTags()
+            const groups = parseExpression(queryString, knownTags)
+            if (groups && shouldShowPreview(groups)) {
+                return this.database.filter(entry => evaluateExpression(entry, groups, true)).value()
+            }
+            try {
+                const re = RegExp(queryString, 'i')
+                return this.database.filter(entry => re.test(entry.title)).value()
+            } catch {
+                return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase())).value()
+            }
         } else {
-            return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase()))
+            return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase())).value()
         }
     }
 
@@ -53,10 +66,10 @@ class TopoRepository {
         const result = this.database.filter(entry => entry.hash === wordId).value()
         return result?.[0] ?? undefined
     }
-    
+
     getAllTags() {
-        let tags = new Set()
-        this.database.map(entry => entry.tags).forEach(tag => tags.add(tag))
+        const tags = new Set()
+        this.database.forEach(entry => (entry.tags || []).forEach(tag => tags.add(tag)))
         return Array.from(tags)
     }
 }

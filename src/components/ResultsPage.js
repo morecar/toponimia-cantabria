@@ -225,7 +225,6 @@ export default class ResultsPage extends Component {
         <TopoDetailPanel
           hash={this.state.panelHash}
           repository={this.props.repository}
-          attestationsStore={this.props.attestationsStore}
           etymologyStore={this.props.etymologyStore}
           loc={this.props.loc}
           onClose={this.closePanel.bind(this)}

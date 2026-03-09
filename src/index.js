@@ -10,20 +10,19 @@ import Configuration from './model/configuration'
 import DataLoader from './model/dataLoader'
 import JsonLoader from './model/jsonLoader'
 import Localization from './model/localization'
-import AttestationsStore from './model/attestationsStore'
 import EtymologyStore from './model/etymologyStore'
 import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/topoRepository'
 
 const DATA_BASE = (process.env.REACT_APP_DATA_URL || `${process.env.PUBLIC_URL}/toponyms.json`)
   .replace(/toponyms\.json$/, '')
 
-function startApp(repository, attestationsStore, etymologyStore) {
+function startApp(repository, etymologyStore) {
   var config = Configuration.readFromLocalStorage()
   var localization = Localization.createFromConfig(config)
   const root = createRoot(document.getElementById('root'));
   root.render(
     <App config={config} repository={repository} loc={localization}
-         attestationsStore={attestationsStore} etymologyStore={etymologyStore}/>
+         etymologyStore={etymologyStore}/>
   );
 }
 
@@ -32,15 +31,10 @@ Promise.all([
     .then(data => data ? buildRepositoryFromSheet(data) : buildRepositoryFromLocalStorage())
     .catch(() => buildRepositoryFromLocalStorage()),
   new JsonLoader({
-    dataUrl: `${DATA_BASE}attestations.json`,
-    hashUrl: `${DATA_BASE}attestations-hash.json`,
-    cacheKey: 'localAttestations',
-  }).load().catch(() => []),
-  new JsonLoader({
     dataUrl: `${DATA_BASE}etymologies.json`,
     hashUrl: `${DATA_BASE}etymologies-hash.json`,
     cacheKey: 'localEtymologies',
   }).load().catch(() => []),
-]).then(([repository, attestationRows, etymologyRows]) =>
-  startApp(repository, new AttestationsStore(attestationRows), new EtymologyStore(etymologyRows))
+]).then(([repository, etymologyRows]) =>
+  startApp(repository, new EtymologyStore(etymologyRows))
 )
