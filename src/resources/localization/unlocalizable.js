@@ -1,5 +1,5 @@
 export const unlocalizable = 
 {
-    "brand_name": "L'Unicurniu",
+    "brand_name": "El Toponomicón",
     "esp": "Castellano"
 }

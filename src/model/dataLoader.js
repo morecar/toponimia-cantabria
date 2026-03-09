@@ -1,5 +1,5 @@
-const DATA_URL = process.env.REACT_APP_DATA_URL || `${process.env.PUBLIC_URL}/data.json`
-const HASH_URL = DATA_URL.replace(/data\.json$/, 'data-hash.json')
+const DATA_URL = process.env.REACT_APP_DATA_URL || `${process.env.PUBLIC_URL}/toponyms.json`
+const HASH_URL = DATA_URL.replace(/toponyms\.json$/, 'toponyms-hash.json')
 
 export default class DataLoader {
   static async load() {
@@ -17,7 +17,7 @@ export default class DataLoader {
       }
     } catch {} // fall through to unconditional load on any error
 
-    // Fallback (hash fetch failed): load data.json directly
+    // Fallback (hash fetch failed): load toponyms.json directly
     const response = await fetch(DATA_URL)
     if (!response.ok) throw new Error(`Failed to fetch data: ${response.status}`)
     const json = await response.json()

@@ -1,7 +1,5 @@
 import L from 'leaflet'
 import { Marker, Popup } from 'react-leaflet'
-import { Link } from "react-router-dom"
-import { ROUTE_RESULT } from '../resources/routes'
 
 const MARKER_RADII = { small: 3, medium: 5, large: 8 }
 
@@ -44,9 +42,9 @@ export default function MapMarker(props) {
   return (
     <Marker position={props.position} icon={makePieIcon(colors, props.markerSize)}>
       <Popup>
-        <Link to={`${ROUTE_RESULT}?h=${props.hash}`}>
+        <button className="topo-popup-link" onClick={() => props.onMarkerClick(props.hash)}>
           {props.title}
-        </Link>
+        </button>
       </Popup>
     </Marker>
   )

@@ -21,5 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-/public/data.json
-/public/data-hash.json
+/public/toponyms.json
+/public/toponyms-hash.json
+/public/attestations.json
+/public/attestations-hash.json
+/public/etymologies.json
+/public/etymologies-hash.json

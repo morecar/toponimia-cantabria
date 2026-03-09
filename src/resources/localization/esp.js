@@ -23,6 +23,13 @@ export const esp =
     "marker_size_m": "M",
     "marker_size_l": "G",
 
+    "panel_etymology": "Etimología",
+    "panel_origin": "Origen",
+    "panel_meaning": "Significado",
+    "panel_attestations": "Atestaciones históricas",
+    "panel_source_link": "Ver fuente",
+    "panel_no_data": "Sin datos adicionales.",
+
     "settings_category_other": "Otros",
     "toogle_search_regex": "Búsqueda con regex", 
     "toogle_detect_underdoth": "Detectar hache sopunteada (h.→ḥ)", 

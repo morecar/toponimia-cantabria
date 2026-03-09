@@ -7,6 +7,7 @@ import {List} from 'react-bootstrap-icons';
 import SearchBar from './SearchBar'
 import SettingsPopover from './SettingsPopover'
 import ResultsMap from './ResultsMap';
+import TopoDetailPanel from './TopoDetailPanel'
 
 import { ROUTE_SEARCH, ROUTE_HOME } from '../resources/routes'
 
@@ -99,6 +100,19 @@ export default class ResultsPage extends Component {
         displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
       }
     })
+  }
+
+  openPanel(hash) {
+    const params = new URLSearchParams(window.location.search)
+    params.set('h', hash)
+    this.props.history(`${window.location.pathname}?${params.toString()}`)
+  }
+
+  closePanel() {
+    const params = new URLSearchParams(window.location.search)
+    params.delete('h')
+    const qs = params.toString()
+    this.props.history(`${window.location.pathname}${qs ? '?' + qs : ''}`)
   }
 
   handleMapZoomed() {
@@ -210,8 +224,18 @@ export default class ResultsPage extends Component {
           )}
         </div>
 
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onZoomed={this.handleMapZoomed.bind(this)}/>
+        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)}/>
       </Container>
+      {this.props.wordId && (
+        <TopoDetailPanel
+          hash={this.props.wordId}
+          repository={this.props.repository}
+          attestationsStore={this.props.attestationsStore}
+          etymologyStore={this.props.etymologyStore}
+          loc={this.props.loc}
+          onClose={this.closePanel.bind(this)}
+        />
+      )}
     );
   }
 }

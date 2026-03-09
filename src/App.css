@@ -322,3 +322,129 @@ body { padding-top: 60px; }
   color: #6c757d;
   opacity: 1;
 }
+
+/* ── Toponym detail panel ─────────────────────────────────────────── */
+.topo-detail-panel {
+  position: fixed;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  width: 380px;
+  background: #fff;
+  z-index: 1028;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.topo-detail-inner {
+  overflow-y: auto;
+  flex: 1;
+  padding: 1rem 1.25rem;
+  position: relative;
+}
+
+.topo-detail-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+}
+.topo-detail-close:hover { color: #000; }
+.topo-detail-close:focus { outline: none; }
+
+.topo-detail-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  padding-right: 1.5rem;
+}
+
+.topo-detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.topo-detail-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.25rem;
+}
+
+.topo-detail-notes {
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.topo-attestations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topo-attestation-item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.topo-attestation-item:last-child { border-bottom: none; }
+
+.topo-attestation-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.topo-attestation-year {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.topo-attestation-source {
+  font-size: 0.85rem;
+  color: #495057;
+}
+
+.topo-attestation-quote {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #666;
+  border-left: 3px solid #dee2e6;
+  margin: 0.25rem 0;
+  padding: 0.1rem 0.6rem;
+}
+
+.topo-attestation-link {
+  font-size: 0.8rem;
+}
+
+.topo-popup-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #0d6efd;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+}
+.topo-popup-link:hover { color: #0a58ca; }
+
+@media (max-width: 991px) {
+  .topo-detail-panel {
+    left: 0;
+    width: 100%;
+  }
+}

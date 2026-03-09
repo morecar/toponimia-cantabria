@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Polyline, Polygon, Popup, useMap } from 'react-leaflet'
-import { Link } from "react-router-dom"
 import MapMarker from './MapMarker'
 import { CENTER_CANTABRIA } from '../resources/constants'
-import { ROUTE_RESULT } from '../resources/routes'
 
-function TopoPopup({ hash, title }) {
+function TopoPopup({ hash, title, onMarkerClick }) {
   return (
     <Popup>
-      <Link to={`${ROUTE_RESULT}?h=${hash}`}>{title}</Link>
+      <button className="topo-popup-link" onClick={() => onMarkerClick(hash)}>{title}</button>
     </Popup>
   )
 }
@@ -214,16 +212,16 @@ export default function ResultsMap(props) {
       />
       <CantabriaColorPane />
       {props.points.map(p =>
-        <MapMarker key={p.hash} position={p.coordinates[0]} hash={p.hash} title={p.title} colors={p.colors} markerSize={props.markerSize} />
+        <MapMarker key={p.hash} position={p.coordinates[0]} hash={p.hash} title={p.title} colors={p.colors} markerSize={props.markerSize} onMarkerClick={props.onMarkerClick} />
       )}
       {props.lines.map(l =>
         <Polyline key={l.hash} pathOptions={{ ...lineOptions, color: l.color }} positions={l.coordinates}>
-          <TopoPopup hash={l.hash} title={l.title} />
+          <TopoPopup hash={l.hash} title={l.title} onMarkerClick={props.onMarkerClick} />
         </Polyline>
       )}
       {props.polys.map(p =>
         <Polygon key={p.hash} pathOptions={{ ...polyOptions, color: p.color, fillColor: p.color }} positions={p.coordinates}>
-          <TopoPopup hash={p.hash} title={p.title} />
+          <TopoPopup hash={p.hash} title={p.title} onMarkerClick={props.onMarkerClick} />
         </Polygon>
       )}
     </MapContainer>
