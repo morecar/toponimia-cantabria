@@ -40,6 +40,17 @@ class TopoRepository {
 
     constructor(database) {
         this.database = _(database).orderBy(['title'])
+        this.etymologyStore = null
+    }
+
+    _withEtymologyTags(entry) {
+        if (!this.etymologyStore) return entry
+        const etymTags = (entry.etymology_ids || []).flatMap(id => {
+            const etym = this.etymologyStore.getById(id)
+            return etym?.tags ? etym.tags.split(',').map(t => t.trim()).filter(Boolean) : []
+        })
+        if (etymTags.length === 0) return entry
+        return { ...entry, tags: [...(entry.tags || []), ...etymTags] }
     }
 
     getFromQueryString(queryString, regex = true) {
@@ -49,7 +60,7 @@ class TopoRepository {
             const knownTags = this.getAllTags()
             const groups = parseExpression(queryString, knownTags)
             if (groups && shouldShowPreview(groups)) {
-                return this.database.filter(entry => evaluateExpression(entry, groups, true)).value()
+                return this.database.filter(entry => evaluateExpression(this._withEtymologyTags(entry), groups, true)).value()
             }
             try {
                 const re = RegExp(`^${queryString}$`, 'i')
@@ -69,7 +80,11 @@ class TopoRepository {
 
     getAllTags() {
         const tags = new Set()
-        this.database.forEach(entry => (entry.tags || []).forEach(tag => tags.add(tag)))
+        this.database.forEach(entry => {
+            (entry.tags || []).forEach(tag => tags.add(tag))
+            const withEtym = this._withEtymologyTags(entry)
+            ;(withEtym.tags || []).forEach(tag => tags.add(tag))
+        })
         return Array.from(tags)
     }
 }

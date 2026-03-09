@@ -713,6 +713,13 @@ a.topo-tag-link:hover {
   color: #fff;
 }
 
+.settings-author {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c757d;
+  padding: 0.2rem 0 0.4rem;
+}
+
 /* ── Navbar info button ───────────────────────────────────────────── */
 .new-topo-btn {
   background: none;

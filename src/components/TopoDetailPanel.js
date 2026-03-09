@@ -25,7 +25,8 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
   const attestations = topo.attestations || []
   const etymologyIds = topo.etymology_ids ? String(topo.etymology_ids).split(',').map(s => s.trim()) : []
   const etymologies = etymologyIds.map(id => etymologyStore.getById(id)).filter(Boolean)
-  const tags = topo.tags || []
+  const etymTags = etymologies.flatMap(e => e.tags ? e.tags.split(',').map(t => t.trim()).filter(Boolean) : [])
+  const tags = [...new Set([...(topo.tags || []), ...etymTags])]
 
   return (
     <div className="topo-detail-panel">

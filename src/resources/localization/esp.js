@@ -41,6 +41,7 @@ export const esp =
     "toogle_search_tags_palette": "Mostrar paleta etiquetas",
 
 
+    "tag_etymology:latin": "Latín",
     "tag_etymology:hagio": "Hagiotopónimo",
     "tag_etymology:romance": "Romance",
     "tag_etymology:celtic": "Celta",
@@ -54,5 +55,7 @@ export const esp =
     "tag_feature:b_g": "B > G",
     "tag_feature:lost_f": "F muda",
     "tag_feature:antihiatic_yod": "Yod antihiática",
-    "tag_feature:palatalization_l": "Palatalización de L-"
+    "tag_feature:palatalization_l": "Palatalización de L-",
+    "tag_feature:diphthongation_e": "Diptongación de Ĕ",
+    "tag_feature:apocope_e": "Apócope de -E"
 }

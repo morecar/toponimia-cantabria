@@ -32,6 +32,8 @@ Promise.all([
     hashUrl: process.env.REACT_APP_ETYMOLOGIES_HASH_URL || `${process.env.PUBLIC_URL}/etymologies-hash.json`,
     cacheKey: 'localEtymologies',
   }).load().catch(() => []),
-]).then(([repository, etymologyRows]) =>
-  startApp(repository, new EtymologyStore(etymologyRows))
-)
+]).then(([repository, etymologyRows]) => {
+  const etymologyStore = new EtymologyStore(etymologyRows)
+  repository.etymologyStore = etymologyStore
+  startApp(repository, etymologyStore)
+})

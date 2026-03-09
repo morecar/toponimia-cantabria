@@ -174,10 +174,7 @@ export default class ResultsPage extends Component {
               loc={this.props.loc}
             />
             <div className="settings-backoffice-link">
-              <button className="settings-toggle settings-backoffice-btn"
-                onClick={() => this.props.history(ROUTE_BACKOFFICE)}>
-                ✎ Editor de topónimos
-              </button>
+              <span className="settings-author">Creado por Manuel Moreno Carral</span>
               <button className="settings-toggle settings-backoffice-btn"
                 onClick={() => this.props.history(ROUTE_ABOUT)}>
                 ℹ Sobre el proyecto
