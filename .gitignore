@@ -27,3 +27,6 @@ yarn-error.log*
 /public/attestations-hash.json
 /public/etymologies.json
 /public/etymologies-hash.json
+
+# git worktree for data branch
+/data/
