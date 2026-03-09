@@ -1,5 +1,5 @@
-const DATA_URL = process.env.REACT_APP_DATA_URL || `${process.env.PUBLIC_URL}/toponyms.json`
-const HASH_URL = DATA_URL.replace(/toponyms\.json$/, 'toponyms-hash.json')
+const DATA_URL = process.env.REACT_APP_TOPONYMS_URL || `${process.env.PUBLIC_URL}/toponyms.json`
+const HASH_URL = process.env.REACT_APP_TOPONYMS_HASH_URL || `${process.env.PUBLIC_URL}/toponyms-hash.json`
 
 export default class DataLoader {
   static async load() {

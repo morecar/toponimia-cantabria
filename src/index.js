@@ -13,9 +13,6 @@ import Localization from './model/localization'
 import EtymologyStore from './model/etymologyStore'
 import { buildRepositoryFromSheet, buildRepositoryFromLocalStorage } from './model/topoRepository'
 
-const DATA_BASE = (process.env.REACT_APP_DATA_URL || `${process.env.PUBLIC_URL}/toponyms.json`)
-  .replace(/toponyms\.json$/, '')
-
 function startApp(repository, etymologyStore) {
   var config = Configuration.readFromLocalStorage()
   var localization = Localization.createFromConfig(config)
@@ -31,8 +28,8 @@ Promise.all([
     .then(data => data ? buildRepositoryFromSheet(data) : buildRepositoryFromLocalStorage())
     .catch(() => buildRepositoryFromLocalStorage()),
   new JsonLoader({
-    dataUrl: `${DATA_BASE}etymologies.json`,
-    hashUrl: `${DATA_BASE}etymologies-hash.json`,
+    dataUrl: process.env.REACT_APP_ETYMOLOGIES_URL || `${process.env.PUBLIC_URL}/etymologies.json`,
+    hashUrl: process.env.REACT_APP_ETYMOLOGIES_HASH_URL || `${process.env.PUBLIC_URL}/etymologies-hash.json`,
     cacheKey: 'localEtymologies',
   }).load().catch(() => []),
 ]).then(([repository, etymologyRows]) =>
