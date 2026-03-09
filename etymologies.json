@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "id": "etym002",
+      "origin": "Latín FLAMMA",
+      "meaning": "llama, fuego; por extensión, terreno quemado o roza",
+      "notes": "[PRUEBA] Del latín flamma, con evolución regular fl- > ll- característica del romance cántabro. El topónimo designa probablemente un paraje obtenido mediante roza, práctica común en la colonización agraria medieval de la zona costera."
+    },
+    {
+      "id": "etym001",
+      "origin": "Prelatino *LAMA",
+      "meaning": "terreno pantanoso, hondonada húmeda",
+      "notes": "Hipótesis alternativa que conecta el topónimo con la raíz prelatina *lama, presente en toda la franja cantábrica con el sentido de terreno bajo y encharcado. La palatalización inicial sería secundaria, por influjo del romance vecino."
+    },
+    {
+      "id": "etym003",
+      "origin": "Latín SANCTI EMETERII",
+      "meaning": "del santo Emeterio; del monasterio de San Emeterio",
+      "notes": "Del genitivo latino Sancti Emeterii, con elisión del sustantivo monasterium y del segundo titular (Sancti Celedoni). La forma reconstruida Monasterium Sancti Emeterii et Sancti Caledonii evolucionó mediante síncopa y reducción del grupo consonántico: Sanctemeter > Santemder > Santander. Evolución fonética regular con pérdida del grupo -ct-, síncopa de la vocal postónica y sonorización de la dental intervocálica."
+    }
+  ]
+}
