@@ -13,7 +13,7 @@ export function buildRepositoryFromLocalStorage () {
 }
 
 async function reloadLocalDatabase(newHash, rows) {
-    const remotedb = rows.map(row => ({
+    const remotedb = (Array.isArray(rows) ? rows : Object.values(rows)).map(row => ({
         hash: row.hash,
         title: row.name,
         type: row.type,
