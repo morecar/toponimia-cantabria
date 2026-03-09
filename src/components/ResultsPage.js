@@ -9,7 +9,7 @@ import SettingsPopover from './SettingsPopover'
 import ResultsMap from './ResultsMap';
 import TopoDetailPanel from './TopoDetailPanel'
 
-import { ROUTE_SEARCH, ROUTE_HOME } from '../resources/routes'
+import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_BACKOFFICE } from '../resources/routes'
 
 const QUERY_COLORS = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed']
 const MAX_QUERIES = 4
@@ -166,6 +166,12 @@ export default class ResultsPage extends Component {
               config={this.props.config}
               loc={this.props.loc}
             />
+            <div className="settings-backoffice-link">
+              <button className="settings-toggle settings-backoffice-btn"
+                onClick={() => this.props.history(ROUTE_BACKOFFICE)}>
+                ✎ Backoffice
+              </button>
+            </div>
           </div>
         )}
 
