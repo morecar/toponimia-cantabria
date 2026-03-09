@@ -28,11 +28,6 @@ export default class SettingsPopover extends Component {
                                                     ? Array.from(new Set(this.props.config.resultsTypes).add('poly'))
                                                     : this.props.config.resultsTypes.filter(e => e!=='poly')
 
-        if(event.target.id === 'marker-size') {
-            const sizes = ['small', 'medium', 'large']
-            this.props.config.markerSize = sizes[parseInt(event.target.value) - 1]
-        }
-
         if(event.target.id === 'toggle-regex') this.props.config.searchUseRegex = event.target.checked
         if(event.target.id === 'toggle-underdoth') this.props.config.searchAutocompleteUnderdoth = event.target.checked
         if(event.target.id === 'toggle-tag-auto') this.props.config.searchAutocompleteTags = event.target.checked
@@ -41,7 +36,18 @@ export default class SettingsPopover extends Component {
         this.props.onSettingsUpdated()
     }
 
+    handleMarkerSize(size) {
+        this.props.config.markerSize = size
+        this.forceUpdate()
+        this.props.onSettingsUpdated()
+    }
+
     render() {
+        const SIZES = [
+          { key: 'small',  r: 5  },
+          { key: 'medium', r: 8  },
+          { key: 'large',  r: 11 },
+        ]
         return (
           <>
           <Form className="settings-form" onChange={this.handleToggleChanged.bind(this)}>
@@ -70,13 +76,19 @@ export default class SettingsPopover extends Component {
                   <Form.Check defaultChecked={this.props.config.resultsTypes.includes('poly')}  label={this.props.loc.get("result_class_poly")}  type='checkbox' id='toggle-polygons'/>
                 </Form.Group>
                 <Form.Group className="mt-2">
-                  <Form.Label>
-                    <b>{this.props.loc.get("marker_size")}</b>
-                    {' '}<small className="text-muted">{this.props.loc.get(`marker_size_${this.props.config.markerSize[0]}`)}</small>
-                  </Form.Label>
-                  <Form.Range id="marker-size" min={1} max={3} step={1}
-                    defaultValue={['small','medium','large'].indexOf(this.props.config.markerSize) + 1}
-                  />
+                  <Form.Label><b>{this.props.loc.get("marker_size")}</b></Form.Label>
+                  <div className="marker-size-btns">
+                    {SIZES.map(({ key, r }) => (
+                      <button key={key} type="button"
+                        className={`marker-size-btn${this.props.config.markerSize === key ? ' active' : ''}`}
+                        onClick={() => this.handleMarkerSize(key)}>
+                        <svg width={22} height={22} viewBox="0 0 22 22">
+                          <circle cx={11} cy={11} r={r} fill="currentColor"/>
+                        </svg>
+                        <span>{this.props.loc.get(`marker_size_${key[0]}`)}</span>
+                      </button>
+                    ))}
+                  </div>
                 </Form.Group>
               </div>
               <div className="col-6 col-md-3">

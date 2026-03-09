@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import BackofficeMap from './BackofficeMap'
@@ -369,7 +369,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
     <div className="bo-layout">
       <Navbar fixed="top" bg="dark" variant="dark" className="bo-navbar">
         <button className="bo-back-btn" onClick={() => navigate(ROUTE_HOME)}>←</button>
-        <Navbar.Brand className="bo-brand">Backoffice</Navbar.Brand>
+        <Navbar.Brand className="bo-brand">Editor de topónimos</Navbar.Brand>
       </Navbar>
 
       <div className="bo-body">

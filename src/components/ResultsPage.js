@@ -169,7 +169,7 @@ export default class ResultsPage extends Component {
             <div className="settings-backoffice-link">
               <button className="settings-toggle settings-backoffice-btn"
                 onClick={() => this.props.history(ROUTE_BACKOFFICE)}>
-                ✎ Backoffice
+                ✎ Editor de topónimos
               </button>
             </div>
           </div>
