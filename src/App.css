@@ -695,6 +695,14 @@ body { padding-top: 60px; }
   padding: 1.5rem;
 }
 
+/* ── Latin words (serif) ──────────────────────────────────────────── */
+.about-latin {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.92em;
+  letter-spacing: 0.03em;
+  color: #cbd5e1;
+}
+
 /* ── Marker size button group ─────────────────────────────────────── */
 .marker-size-btns {
   display: flex;

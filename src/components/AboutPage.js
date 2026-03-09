@@ -70,21 +70,21 @@ export default function AboutPage() {
             <ul className="about-rules">
               <li>
                 Se prescribe el uso de la <strong>ḥ</strong> (hache sopunteada) para las
-                aspiraciones resultado de F latina (<em>ḥuegu</em> &lt; FOCUM).
+                aspiraciones resultado de F latina: <em>ḥuegu</em> &lt; <span className="about-latin">FOCUM</span>.
               </li>
               <li>
                 Se adoptan las grafías castellanas para los resultados que producen velares
-                o aspiradas no provenientes de F latina (<em>hiju</em> &lt; FILIUM,{' '}
-                <em>hoja</em> &lt; FOLIAM).
+                o aspiradas no provenientes de F latina: <em>hiju</em> &lt; <span className="about-latin">FILIUM</span>,{' '}
+                <em>hoja</em> &lt; <span className="about-latin">FOLIAM</span>.
               </li>
               <li>
                 Se preferirán formas no armonizadas cuando puedan recomponerse siguiendo
-                procesos meramente fonológicos (<em>Colina</em> y no <em>*Culina</em>;{' '}
-                <em>Ḥeniru</em> y no <em>Ḥiniru</em> &lt; FAENARIUM).
+                procesos meramente fonológicos: <em>Colina</em> y no <em>*Culina</em>;{' '}
+                <em>Ḥeniru</em> y no <em>Ḥiniru</em> &lt; <span className="about-latin">FAENARIUM</span>.
               </li>
               <li>
                 Los sustantivos masculinos se marcarán con <strong>-u</strong> cuando sea
-                pertinente (<em>riu</em> y no <em>río</em>).
+                pertinente: <em>riu</em> y no <em>río</em>.
               </li>
             </ul>
 
@@ -96,8 +96,8 @@ export default function AboutPage() {
             <ul className="about-rules">
               <li>
                 Se generaliza el uso de H para resultados de la pérdida de F:{' '}
-                <em>Hontaneda</em>, <em>Hontón</em> (ambos de FONTE) o <em>Hesles</em>{' '}
-                (de FISTOLES).
+                <em>Hontaneda</em>, <em>Hontón</em> — ambos de <span className="about-latin">FONTE</span> — o <em>Hesles</em>{' '}
+                — de <span className="about-latin">FISTOLES</span>.
               </li>
               <li>
                 Se separan las locuciones cuando es pertinente: <em>El Castru
