@@ -1,5 +1,5 @@
 {
-  "hash": "04a4462b9f6d",
+  "hash": "df78777eeb1e",
   "data": [
     {
       "hash": "t001",
@@ -359,8 +359,8 @@
         }
       ],
       "etymology_ids": [
-        "etym-prelat-lama",
-        "etym-lat-flamma"
+        "etym001",
+        "etym002"
       ]
     },
     {
