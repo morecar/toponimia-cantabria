@@ -29,6 +29,7 @@ export const esp =
     "panel_attestations": "Atestaciones históricas",
     "panel_source_link": "Ver fuente",
     "panel_tags": "Etiquetas",
+    "tag_category_class": "Clase",
     "tag_category_etymology": "Etimología",
     "tag_category_feature": "Fenómeno lingüístico",
     "tag_category_status": "Estado",
@@ -42,7 +43,7 @@ export const esp =
 
 
     "tag_etymology:latin": "Latín",
-    "tag_etymology:hagio": "Hagiotopónimo",
+    "tag_class:hagio": "Hagiotopónimo",
     "tag_etymology:romance": "Romance",
     "tag_etymology:celtic": "Celta",
     "tag_etymology:celtoroman": "Celtolatina",
@@ -52,8 +53,9 @@ export const esp =
     "tag_feature:metaphony_u": "Metafonía U",
     "tag_feature:metaphony_i": "Metafonía I",
     "tag_feature:aspirate_f": "F aspirada",
+    "tag_feature:preserved_f": "Aspiración de F-",
     "tag_feature:b_g": "B > G",
-    "tag_feature:lost_f": "F muda",
+    "tag_feature:lost_f": "Pérdida de F-",
     "tag_feature:antihiatic_yod": "Yod antihiática",
     "tag_feature:palatalization_l": "Palatalización de L-",
     "tag_feature:diphthongation_e": "Diptongación de Ĕ",

@@ -340,6 +340,33 @@ body { padding-top: 60px; }
 }
 
 /* Tag palette dropdown */
+.search-operator-palette {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  gap: 0.35rem;
+  z-index: 200;
+}
+
+.search-operator-btn {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.search-operator-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
 .search-tag-palette {
   position: absolute;
   top: calc(100% + 4px);
@@ -691,6 +718,10 @@ a.topo-tag-link:hover {
   }
   /* On mobile the search bar is fixed at the bottom, so show palette above */
   .search-tag-palette {
+    top: auto;
+    bottom: calc(100% + 4px);
+  }
+  .search-operator-palette {
     top: auto;
     bottom: calc(100% + 4px);
   }

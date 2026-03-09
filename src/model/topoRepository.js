@@ -18,7 +18,7 @@ async function reloadLocalDatabase(newHash, rows) {
         title: row.name,
         type: row.type,
         coordinates: row.coordinates.trim().split(';').map(pair => pair.trim().split(',').map(parseFloat)),
-        tags: row.tags.split(','),
+        tags: row.tags ? row.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
         etymology_ids: row.etymology_ids ? String(row.etymology_ids).split(',').map(s => s.trim()) : [],
         attestations: row.attestations || [],
     }))
@@ -81,9 +81,9 @@ class TopoRepository {
     getAllTags() {
         const tags = new Set()
         this.database.forEach(entry => {
-            (entry.tags || []).forEach(tag => tags.add(tag))
+            (entry.tags || []).forEach(tag => { if (tag) tags.add(tag) })
             const withEtym = this._withEtymologyTags(entry)
-            ;(withEtym.tags || []).forEach(tag => tags.add(tag))
+            ;(withEtym.tags || []).forEach(tag => { if (tag) tags.add(tag) })
         })
         return Array.from(tags)
     }

@@ -55,7 +55,11 @@ export default class ResultsPage extends Component {
       )
       const nonEmpty = queries.filter(q => !!q.queryString)
       if (nonEmpty.length === 0) {
-        this.props.history(ROUTE_HOME)
+        if (s.hasSearched) {
+          this.props.history(ROUTE_SEARCH)
+        } else {
+          this.props.history(ROUTE_HOME)
+        }
       } else {
         const params = new URLSearchParams()
         nonEmpty.forEach(q => params.append('q', q.queryString))
@@ -85,7 +89,11 @@ export default class ResultsPage extends Component {
       const queries = s.queries.filter(q => q.id !== id)
       const nonEmpty = queries.filter(q => !!q.queryString)
       if (nonEmpty.length === 0) {
-        this.props.history(ROUTE_HOME)
+        if (s.hasSearched) {
+          this.props.history(ROUTE_SEARCH)
+        } else {
+          this.props.history(ROUTE_HOME)
+        }
       } else {
         const params = new URLSearchParams()
         nonEmpty.forEach(q => params.append('q', q.queryString))

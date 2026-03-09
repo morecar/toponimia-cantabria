@@ -11,8 +11,8 @@
  */
 export function normalizeQuery(input) {
   return input
-    .replace(/\s*\|\|\s*/g, ' | ')
-    .replace(/\s*&&\s*/g, ' & ')
+    .replace(/\s*\|{1,2}\s*/g, ' | ')
+    .replace(/\s*&{1,2}\s*/g, ' & ')
 }
 
 export function parseExpression(input, knownTags) {

@@ -12,7 +12,7 @@ export default class SearchBar extends Component {
         super(props)
         this.editorRef = React.createRef()
         this._blurTimeout = null
-        this.state = { showPalette: false }
+        this.state = { showPalette: false, showOperators: false }
     }
 
     componentDidMount() {
@@ -164,6 +164,16 @@ export default class SearchBar extends Component {
         return match ? match[0] : ''
     }
 
+    handleInsertOperator(op) {
+        const rawText = this._getRawText()
+        const cursor = this._getCursor() ?? rawText.length
+        const newRaw = rawText.slice(0, cursor) + op + rawText.slice(cursor)
+        this._renderTokens(newRaw)
+        this._setCursor(cursor + op.length)
+        this.setState({ showOperators: false })
+        this.props.onSearch(newRaw.trim())
+    }
+
     handleInput() {
         let rawText = this._getRawText()
 
@@ -174,6 +184,30 @@ export default class SearchBar extends Component {
         const cursor = this._getCursor()
         this._renderTokens(rawText)
         if (cursor != null) this._setCursor(cursor)
+        this.setState({ showOperators: false })
+    }
+
+    _deleteLastChip() {
+        const el = this.editorRef.current
+        if (!el) return false
+        // Find the last chip in the editor
+        let lastChip = null
+        const walk = node => {
+            if (node.dataset?.raw != null) lastChip = node
+            else node.childNodes.forEach(walk)
+        }
+        el.childNodes.forEach(walk)
+        if (!lastChip) return false
+        const beforeChip = lastChip.previousSibling
+        const afterChip = lastChip.nextSibling
+        if (beforeChip?.nodeType === 3) beforeChip.remove()
+        if (afterChip?.nodeType === 3) afterChip.remove()
+        lastChip.remove()
+        const newRaw = this._getRawText().trim()
+        this._renderTokens(newRaw)
+        this._setCursor(newRaw.length)
+        this.props.onSearch(newRaw.trim())
+        return true
     }
 
     handleKeyDown(e) {
@@ -183,16 +217,15 @@ export default class SearchBar extends Component {
                 const range = sel.getRangeAt(0)
                 const node = range.startContainer
                 const el = this.editorRef.current
+                // Case 1: cursor in text node right after a chip
                 if (node.nodeType === 3 && el?.contains(node)) {
                     const prev = node.previousSibling
-                    // Cursor is in the text node immediately after a chip
                     if (prev?.dataset?.raw != null) {
                         const atStartOrInTrailingSpace =
                             range.startOffset === 0 ||
-                            node.textContent.trim() === ''  // only artificial whitespace
+                            node.textContent.trim() === ''
                         if (atStartOrInTrailingSpace) {
                             e.preventDefault()
-                            // Remove preceding separator text node and the chip
                             const beforeChip = prev.previousSibling
                             if (beforeChip?.nodeType === 3) beforeChip.remove()
                             prev.remove()
@@ -202,6 +235,15 @@ export default class SearchBar extends Component {
                             this.props.onSearch(newRaw.trim())
                             return
                         }
+                    }
+                }
+                // Case 2: cursor is in the editor div itself (not a text node),
+                // e.g. when bar is initialized with a chip and not yet focused-typed
+                if ((node === el || !el?.contains(node)) && el) {
+                    const isAtEnd = range.startOffset >= el.childNodes.length ||
+                        (node === el && range.startOffset === el.childNodes.length)
+                    if (isAtEnd || node === el) {
+                        if (this._deleteLastChip()) { e.preventDefault(); return }
                     }
                 }
             }
@@ -234,11 +276,11 @@ export default class SearchBar extends Component {
     }
 
     handleBlur() {
-        this._blurTimeout = setTimeout(() => this.setState({ showPalette: false }), 150)
+        this._blurTimeout = setTimeout(() => this.setState({ showPalette: false, showOperators: false }), 150)
     }
 
     togglePalette() {
-        this.setState(s => ({ showPalette: !s.showPalette }))
+        this.setState(s => ({ showPalette: !s.showPalette, showOperators: false }))
     }
 
     handleClick() {
@@ -279,7 +321,7 @@ export default class SearchBar extends Component {
 
         this._renderTokens(newRaw)
         this._setCursor(start + tag.length)
-        this.setState({ showPalette: false })
+        this.setState({ showPalette: false, showOperators: true })
 
         clearTimeout(this._debounce)
         this.props.onSearch(newRaw.trim())
@@ -287,7 +329,7 @@ export default class SearchBar extends Component {
 
     render() {
         const { color, regex, loc, tags = [] } = this.props
-        const { showPalette } = this.state
+        const { showPalette, showOperators } = this.state
 
         // Group tags by category prefix for the palette
         const tagGroups = {}
@@ -322,7 +364,21 @@ export default class SearchBar extends Component {
                 >
                     <Tags size={13} />
                 </button>
-                {showPalette && tags.length > 0 && (
+                {showOperators && (
+                    <div className="search-operator-palette">
+                        <button
+                            className="search-operator-btn"
+                            onMouseDown={e => { e.preventDefault(); this.handleInsertOperator(' & ') }}
+                            title="Y (AND)"
+                        >&amp; Y</button>
+                        <button
+                            className="search-operator-btn"
+                            onMouseDown={e => { e.preventDefault(); this.handleInsertOperator(' | ') }}
+                            title="O (OR)"
+                        >| O</button>
+                    </div>
+                )}
+                {!showOperators && showPalette && tags.length > 0 && (
                     <div className="search-tag-palette">
                         {Object.entries(tagGroups).map(([cat, catTags]) => (
                             <div key={cat} className="search-tag-palette-group">
