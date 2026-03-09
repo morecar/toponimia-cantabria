@@ -343,6 +343,7 @@ body { padding-top: 60px; }
 .search-tag-palette {
   position: absolute;
   top: calc(100% + 4px);
+  bottom: auto;
   left: 0;
   right: 0;
   background: white;
@@ -688,6 +689,11 @@ a.topo-tag-link:hover {
     width: 100%;
     animation: slideInUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
+  /* On mobile the search bar is fixed at the bottom, so show palette above */
+  .search-tag-palette {
+    top: auto;
+    bottom: calc(100% + 4px);
+  }
 }
 
 /* ── Settings: backoffice link ────────────────────────────────────── */
@@ -708,26 +714,19 @@ a.topo-tag-link:hover {
 }
 
 /* ── Navbar info button ───────────────────────────────────────────── */
-.about-nav-btn {
+.new-topo-btn {
   background: none;
   border: none;
   color: rgba(255,255,255,0.75);
-  font-size: 0.8rem;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  margin-right: 0.25rem;
+  padding: 0 0.5rem;
   border-radius: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
   transition: color 0.15s;
-  white-space: nowrap;
 }
-.about-nav-btn:hover { color: #fff; }
-.about-nav-btn:focus { outline: none; }
-.about-nav-icon { font-size: 1.05rem; line-height: 1; display: flex; align-items: center; }
-.about-nav-label { font-size: 0.78rem; line-height: 1; display: flex; align-items: center; }
+.new-topo-btn:hover { color: #fff; }
+.new-topo-btn:focus { outline: none; }
 
 .brand-el {
   font-size: 0.6em;

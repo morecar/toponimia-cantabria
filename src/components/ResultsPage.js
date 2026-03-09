@@ -153,12 +153,11 @@ export default class ResultsPage extends Component {
             <Navbar.Brand className={'main-brand'}><span className="brand-el">El </span>Toponomasticon</Navbar.Brand>
           </div>
           <button
-            className="about-nav-btn"
-            onClick={() => this.props.history(ROUTE_ABOUT)}
-            title="Sobre el proyecto"
+            className="new-topo-btn"
+            onClick={() => this.props.history(ROUTE_BACKOFFICE)}
+            title="Añadir topónimo"
           >
-            <span className="about-nav-icon">ℹ</span>
-            <span className="about-nav-label">Sobre el proyecto</span>
+            +
           </button>
           <button
             className="settings-toggle ms-auto"
