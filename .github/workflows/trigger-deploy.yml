@@ -1,28 +1,32 @@
-name: Update data hash
+name: Update data hashes
 
 on:
   push:
-    paths: [data.json]
+    paths: [toponyms.json, attestations.json, etymologies.json]
 
 permissions:
   contents: write
 
 jobs:
-  update-hash:
+  update-hashes:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compute blob SHA and update data-hash.json
+      - name: Compute blob SHAs and update hash files
         run: |
-          HASH=$(git ls-tree HEAD data.json | awk '{print substr($3,1,12)}')
-          printf '{"hash":"%s"}\n' "$HASH" > data-hash.json
-          echo "Data hash: $HASH"
+          for file in toponyms attestations etymologies; do
+            if git ls-tree HEAD ${file}.json | grep -q .; then
+              HASH=$(git ls-tree HEAD ${file}.json | awk '{print substr($3,1,12)}')
+              printf '{"hash":"%s"}\n' "$HASH" > ${file}-hash.json
+              echo "${file} hash: $HASH"
+            fi
+          done
 
-      - name: Commit data-hash.json
+      - name: Commit hash files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data-hash.json
-          git diff --cached --quiet || git commit -m "chore: update data-hash.json"
+          git add toponyms-hash.json attestations-hash.json etymologies-hash.json
+          git diff --cached --quiet || git commit -m "chore: update data hash files"
           git push origin data
