@@ -16,7 +16,7 @@ export default function AboutPage() {
       <div className="about-body">
         <div className="about-hero">
           <img src={iconNobg} alt="" className="about-hero-icon" aria-hidden="true" />
-          <h1 className="about-hero-title">El Toponomicón</h1>
+          <h1 className="about-hero-title">El Toponomasticon</h1>
           <p className="about-hero-sub">
             Una herramienta para explorar la toponimia de Cantabria
             en sus dimensiones geográfica e histórica.

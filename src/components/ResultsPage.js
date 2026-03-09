@@ -150,7 +150,7 @@ export default class ResultsPage extends Component {
       <Container>
         <Navbar fixed="top" bg="dark" variant="dark">
           <div className="navbar-brand-center">
-            <Navbar.Brand className={'main-brand'}><span className="brand-el">El </span>Toponomicón</Navbar.Brand>
+            <Navbar.Brand className={'main-brand'}><span className="brand-el">El </span>Toponomasticon</Navbar.Brand>
           </div>
           <button
             className="about-nav-btn"
