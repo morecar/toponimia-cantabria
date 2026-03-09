@@ -207,7 +207,8 @@
       "type": "point",
       "coordinates": "43.4623,-3.8099",
       "tags": "etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym003"
     }
   }
 }
