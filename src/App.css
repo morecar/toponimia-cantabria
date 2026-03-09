@@ -720,6 +720,27 @@ a.topo-tag-link:hover {
   padding: 0.2rem 0 0.4rem;
 }
 
+.settings-author-link {
+  color: #adb5bd;
+  text-decoration: none;
+}
+
+.settings-author-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.settings-inline-btn {
+  font-size: 0.8rem !important;
+  padding: 0 !important;
+  color: #adb5bd !important;
+  vertical-align: baseline;
+}
+
+.settings-inline-btn:hover {
+  color: #fff !important;
+}
+
 /* ── Navbar info button ───────────────────────────────────────────── */
 .new-topo-btn {
   background: none;

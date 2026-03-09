@@ -174,11 +174,14 @@ export default class ResultsPage extends Component {
               loc={this.props.loc}
             />
             <div className="settings-backoffice-link">
-              <span className="settings-author">Creado por Manuel Moreno Carral</span>
-              <button className="settings-toggle settings-backoffice-btn"
-                onClick={() => this.props.history(ROUTE_ABOUT)}>
-                ℹ Sobre el proyecto
-              </button>
+              <span className="settings-author">
+                Creado por <a href="https://github.com/morecar" target="_blank" rel="noopener noreferrer" className="settings-author-link">morecar</a>
+                {' | '}
+                <button className="settings-toggle settings-backoffice-btn settings-inline-btn"
+                  onClick={() => this.props.history(ROUTE_ABOUT)}>
+                  Sobre el proyecto
+                </button>
+              </span>
             </div>
           </div>
         )}
