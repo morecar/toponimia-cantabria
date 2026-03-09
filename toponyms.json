@@ -6,7 +6,7 @@
       "name": "Selaya",
       "type": "point",
       "coordinates": "43.216569472660105,-3.8070351717410533",
-      "tags": "etymology:romance,feature:lost_f,status:demo",
+      "tags": "etymology:romance,feature:lost_f",
       "attestations": []
     },
     "1": {
@@ -14,7 +14,7 @@
       "name": "Castru Valnera, el",
       "type": "point",
       "coordinates": "43.14545389316128,-3.6820701994074945",
-      "tags": "etymology:celtoroman,status:demo",
+      "tags": "etymology:romance",
       "attestations": []
     },
     "2": {
@@ -23,7 +23,22 @@
       "type": "point",
       "coordinates": "43.173888,-4.065801",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": [],
+      "attestations": [
+        {
+          "year": 1210,
+          "source": "Becerro de las Behetrías",
+          "quote": "…in villa que dicitur Llama…",
+          "url": "",
+          "highlight": "Llama"
+        },
+        {
+          "year": 1404,
+          "source": "Archivo Catedral de Santander",
+          "quote": "…aldea de La Llama…",
+          "url": "",
+          "highlight": "La Llama"
+        }
+      ],
       "etymology_ids": "etym001,etym002"
     },
     "3": {
@@ -32,7 +47,15 @@
       "type": "point",
       "coordinates": "43.172934,-4.638801",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": [],
+      "attestations": [
+        {
+          "year": 1587,
+          "source": "Catastro del Marqués de la Ensenada",
+          "quote": "…lugar de Llamas…",
+          "url": "",
+          "highlight": "Llamas"
+        }
+      ],
       "etymology_ids": "etym001,etym002"
     },
     "4": {
@@ -206,8 +229,58 @@
       "name": "Santander",
       "type": "point",
       "coordinates": "43.4623,-3.8099",
-      "tags": "etymology:romance",
-      "attestations": [],
+      "tags": "etymology:hagio,etymology:romance",
+      "attestations": [
+        {
+          "year": 1068,
+          "source": "Privilegio de Sancho II al obispo de Oca (catedral de Burgos)",
+          "quote": "…pascua et ligna… et in porto Sancti Emetherii …",
+          "url": "",
+          "highlight": "Sancti Emetherii"
+        },
+        {
+          "year": 1187,
+          "source": "Fuero de Santander, Alfonso VIII",
+          "quote": "…facio carta donationis et institutionis fororum… uobis concilio ville Sancti Emetherii … dono itaque uobis et concedo villam Sancti Emetherii in habitationem…",
+          "url": "",
+          "highlight": "Sancti Emetherii"
+        },
+        {
+          "year": 1188,
+          "source": "Documentación diplomática, catedral de Burgos",
+          "quote": "…decimas portatici in Portus Sancti Anderii …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sancti Anderii"
+        },
+        {
+          "year": 1192,
+          "source": "Cartulario de Burgos (DCBurgos)",
+          "quote": "…decimas de omni portatico portus Sancti Emetherii …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sancti Emetherii"
+        },
+        {
+          "year": 1195,
+          "source": "Cartulario de Santa María de las Huelgas / CarPias",
+          "quote": "…Don Pedro de Sanctaender …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sanctaender"
+        },
+        {
+          "year": 1352,
+          "source": "Becerro de las Behetrías de Castilla",
+          "quote": "…Sant Ander. Este logar es del rey …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sant Ander"
+        },
+        {
+          "year": 1475,
+          "source": "Archivo General de Simancas",
+          "quote": "…vecinos de la villa de Sant Ander …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sant Ander"
+        }
+      ],
       "etymology_ids": "etym003"
     }
   }
