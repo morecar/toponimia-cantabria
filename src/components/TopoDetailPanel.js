@@ -55,8 +55,8 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                   <div className="topo-attestation-header">
                     <span className="topo-attestation-year">{a.year}</span>
                     {a.highlight && <span className="topo-attestation-form">{a.highlight}</span>}
-                    <span className="topo-attestation-source">{a.source}</span>
                   </div>
+                  {a.source && <div className="topo-attestation-source">{a.source}</div>}
                   {a.quote && (
                     <blockquote className="topo-attestation-quote">
                       <HighlightedQuote quote={a.quote} highlight={a.highlight} />
