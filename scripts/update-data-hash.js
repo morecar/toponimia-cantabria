@@ -14,8 +14,6 @@ const FILES = [
   'toponyms-hash.json',
   'etymologies.json',
   'etymologies-hash.json',
-  'attestations.json',
-  'attestations-hash.json',
 ]
 
 for (const file of FILES) {

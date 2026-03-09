@@ -265,6 +265,130 @@ body { padding-top: 60px; }
   min-width: 60px;
 }
 
+/* Contenteditable tokens editor */
+.search-tokens-editor {
+  min-height: calc(1.5em + 0.75rem + 2px);
+  cursor: text;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+.search-tokens-editor.has-tag-toggle {
+  padding-right: 2rem;
+}
+
+/* Tag palette toggle button */
+.search-tag-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.15rem 0.25rem;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.search-tag-toggle:hover,
+.search-tag-toggle.active {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+.search-tokens-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #6c757d;
+  pointer-events: none;
+}
+
+/* Tag chips — shared pill style used in editor, panel, and palette */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: #2563eb;
+  color: white;
+  font-size: 0.82em;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Extra spacing when chips are inside the contenteditable editor */
+.search-tokens-editor .tag-chip {
+  margin: 0 0.15rem;
+  vertical-align: baseline;
+}
+
+.tag-chip--cat-etymology {
+  background: #7c3aed !important;
+}
+
+.tag-chip--cat-feature {
+  background: #0891b2 !important;
+}
+
+.tag-chip--cat-status {
+  background: #64748b !important;
+}
+
+.tag-chip--negated {
+  background: #dc2626 !important;
+}
+
+/* Tag palette dropdown */
+.search-tag-palette {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  padding: 0.5rem 0.75rem;
+  z-index: 30;
+}
+.search-tag-palette-group {
+  margin-bottom: 0.4rem;
+}
+.search-tag-palette-group:last-child {
+  margin-bottom: 0;
+}
+.search-tag-palette-group-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin-bottom: 0.25rem;
+}
+.search-tag-palette-group-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.search-tag-palette-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #2563eb;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.search-tag-palette-item:hover {
+  filter: brightness(0.88);
+}
+
 /* Expression preview chips (regex mode) */
 .search-expr-preview {
   display: flex;
@@ -455,6 +579,38 @@ body { padding-top: 60px; }
 .topo-detail-notes {
   font-size: 0.875rem;
   color: #555;
+}
+
+.topo-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+a.topo-tag-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.topo-tag-link:hover {
+  filter: brightness(0.88);
+  text-decoration: none;
+}
+
+.topo-detail-tag-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.topo-detail-tag-category {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 6rem;
 }
 
 .topo-attestations-list {

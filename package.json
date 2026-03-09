@@ -16,6 +16,7 @@
     "react-bootstrap-icons": "^1.11.0",
     "react-dom": "^18",
     "react-leaflet": "^4",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^6",
     "react-scripts": "5.0.1",
     "web-vitals": "^3"

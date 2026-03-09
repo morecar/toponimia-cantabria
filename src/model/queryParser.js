@@ -9,10 +9,17 @@
  * Tag keys: exact match against knownTags (case-insensitive, spaces around ':' ignored).
  * Returns null if input is empty.
  */
+export function normalizeQuery(input) {
+  return input
+    .replace(/\s*\|\|\s*/g, ' | ')
+    .replace(/\s*&&\s*/g, ' & ')
+}
+
 export function parseExpression(input, knownTags) {
   if (!input || !input.trim()) return null
 
-  const groups = input.split(' | ').map(clause =>
+  const src = normalizeQuery(input)
+  const groups = src.split(' | ').map(clause =>
     clause.split(' & ').map(term => {
       const t = term.trim()
       if (!t) return null
@@ -51,7 +58,7 @@ export function evaluateExpression(entry, groups, useRegex) {
       if (term.type === 'tag') {
         matches = (entry.tags || []).includes(term.key)
       } else if (useRegex) {
-        try { matches = new RegExp(`^${term.pattern}$`, 'i').test(entry.title) }
+        try { matches = new RegExp(term.pattern, 'i').test(entry.title) }
         catch { matches = false }
       } else {
         matches = entry.title.toLowerCase().includes(term.pattern.toLowerCase())
