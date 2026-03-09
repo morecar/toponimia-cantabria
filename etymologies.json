@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "etym002",
+      "origin": "Latín FLAMMA",
+      "meaning": "llama, fuego; por extensión, terreno quemado o roza",
+      "notes": "[PRUEBA] Del latín flamma, con evolución regular fl- > ll- característica del romance cántabro. El topónimo designa probablemente un paraje obtenido mediante roza, práctica común en la colonización agraria medieval de la zona costera."
+    },
+    {
+      "id": "etym001",
+      "origin": "Prelatino *LAMA",
+      "meaning": "terreno pantanoso, hondonada húmeda",
+      "notes": "Hipótesis alternativa que conecta el topónimo con la raíz prelatina *lama, presente en toda la franja cantábrica con el sentido de terreno bajo y encharcado. La palatalización inicial sería secundaria, por influjo del romance vecino."
+    }
+  ]
+}
