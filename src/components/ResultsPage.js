@@ -9,7 +9,7 @@ import SettingsPopover from './SettingsPopover'
 import ResultsMap from './ResultsMap';
 import TopoDetailPanel from './TopoDetailPanel'
 
-import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_BACKOFFICE } from '../resources/routes'
+import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_BACKOFFICE, ROUTE_ABOUT } from '../resources/routes'
 
 const QUERY_COLORS = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed']
 const MAX_QUERIES = 4
@@ -153,6 +153,13 @@ export default class ResultsPage extends Component {
             <Navbar.Brand className={'main-brand'}>{this.props.loc.get("brand_name")}</Navbar.Brand>
           </div>
           <button
+            className="about-nav-btn"
+            onClick={() => this.props.history(ROUTE_ABOUT)}
+            title="Sobre el proyecto"
+          >
+            ℹ
+          </button>
+          <button
             className="settings-toggle ms-auto"
             onClick={() => this.setState(s => ({showSettings: !s.showSettings}))}
           >
@@ -170,6 +177,10 @@ export default class ResultsPage extends Component {
               <button className="settings-toggle settings-backoffice-btn"
                 onClick={() => this.props.history(ROUTE_BACKOFFICE)}>
                 ✎ Editor de topónimos
+              </button>
+              <button className="settings-toggle settings-backoffice-btn"
+                onClick={() => this.props.history(ROUTE_ABOUT)}>
+                ℹ Sobre el proyecto
               </button>
             </div>
           </div>

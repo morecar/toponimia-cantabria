@@ -12,8 +12,9 @@ import ResultsRoute from './components/routing/ResultsRoute'
 import CaptureRoute from './components/routing/CaptureRoute'
 import HomeRoute from './components/routing/HomeRoute'
 import BackofficeRoute from './components/routing/BackofficeRoute'
+import AboutRoute from './components/routing/AboutRoute'
 
-import { ROUTE_HOME, ROUTE_CAPTURE, ROUTE_SEARCH, ROUTE_RESULT, ROUTE_BACKOFFICE } from './resources/routes'
+import { ROUTE_HOME, ROUTE_CAPTURE, ROUTE_SEARCH, ROUTE_RESULT, ROUTE_BACKOFFICE, ROUTE_ABOUT } from './resources/routes'
 
 export default function App(props) {
     return (
@@ -24,6 +25,7 @@ export default function App(props) {
                 <Route path={ROUTE_SEARCH} element={<ResultsRoute {...props} />} />
                 <Route path={ROUTE_RESULT} element={<ResultsRoute {...props} />} />
                 <Route path={ROUTE_BACKOFFICE} element={<BackofficeRoute {...props} />} />
+                <Route path={ROUTE_ABOUT} element={<AboutRoute />} />
             </Routes>
         </Router>
     )
