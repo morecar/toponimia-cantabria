@@ -87,7 +87,7 @@
       "name": "Mies de la Llama",
       "type": "point",
       "coordinates": "43.334287,-3.713011",
-      "tags": "feature:palatalization_l",
+      "tags": "feature:palatalization_l,feature:diphthongation_e,feature:apocope_e",
       "attestations": [],
       "etymology_ids": "etym004,etym001"
     },
@@ -187,7 +187,57 @@
       "type": "point",
       "coordinates": "43.4623,-3.8099",
       "tags": "",
-      "attestations": [],
+      "attestations": [
+        {
+          "year": 1068,
+          "source": "Privilegio de Sancho II al obispo de Oca (catedral de Burgos)",
+          "quote": "…pascua et ligna… et in porto Sancti Emetherii …",
+          "url": "",
+          "highlight": "Sancti Emetherii"
+        },
+        {
+          "year": 1187,
+          "source": "Fuero de Santander, Alfonso VIII",
+          "quote": "…facio carta donationis et institutionis fororum… uobis concilio ville Sancti Emetherii … dono itaque uobis et concedo villam Sancti Emetherii in habitationem…",
+          "url": "",
+          "highlight": "Sancti Emetherii"
+        },
+        {
+          "year": 1188,
+          "source": "Documentación diplomática, catedral de Burgos",
+          "quote": "…decimas portatici in Portus Sancti Anderii …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sancti Anderii"
+        },
+        {
+          "year": 1192,
+          "source": "Cartulario de Burgos (DCBurgos)",
+          "quote": "…decimas de omni portatico portus Sancti Emetherii …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sancti Emetherii"
+        },
+        {
+          "year": 1195,
+          "source": "Cartulario de Santa María de las Huelgas / CarPias",
+          "quote": "…Don Pedro de Sanctaender …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sanctaender"
+        },
+        {
+          "year": 1352,
+          "source": "Becerro de las Behetrías de Castilla",
+          "quote": "…Sant Ander. Este logar es del rey …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sant Ander"
+        },
+        {
+          "year": 1475,
+          "source": "Archivo General de Simancas",
+          "quote": "…vecinos de la villa de Sant Ander …",
+          "url": "https://toponhisp.org/node/4821",
+          "highlight": "Sant Ander"
+        }
+      ],
       "etymology_ids": "etym003"
     }
   }
