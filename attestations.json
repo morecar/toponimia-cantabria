@@ -33,21 +33,24 @@
       "year": 1210,
       "source": "Becerro Gótico de Santillana",
       "quote": "…et in villa que dicitur Llamas iuxta mare…",
-      "url": ""
+      "url": "https://bibliotecavirtual.cantabria.es/",
+      "highlight": "Llamas"
     },
     {
       "topo_hash": "t042",
       "year": 1351,
       "source": "Becerro de las Behetrías",
       "quote": "Las Llamas, aldea en Asturias de Santillana; behetría de Gonzalo Ruiz de la Vega.",
-      "url": ""
+      "url": "https://pares.mcu.es/",
+      "highlight": "Las Llamas"
     },
     {
       "topo_hash": "t042",
       "year": 1752,
       "source": "Catastro del Marqués de la Ensenada",
       "quote": "Lugar de Las Llamas, jurisdicción de Santillana del Mar, con veinte y tres vecinos.",
-      "url": ""
+      "url": "",
+      "highlight": "Las Llamas"
     }
   ]
 }
