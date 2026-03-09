@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/toponimia-cantabria/static/css/main.d9247db6.css",
-    "main.js": "/toponimia-cantabria/static/js/main.8f3437f5.js",
+    "main.js": "/toponimia-cantabria/static/js/main.fcfdfbed.js",
     "index.html": "/toponimia-cantabria/index.html",
     "main.d9247db6.css.map": "/toponimia-cantabria/static/css/main.d9247db6.css.map",
-    "main.8f3437f5.js.map": "/toponimia-cantabria/static/js/main.8f3437f5.js.map"
+    "main.fcfdfbed.js.map": "/toponimia-cantabria/static/js/main.fcfdfbed.js.map"
   },
   "entrypoints": [
     "static/css/main.d9247db6.css",
-    "static/js/main.8f3437f5.js"
+    "static/js/main.fcfdfbed.js"
   ]
 }
