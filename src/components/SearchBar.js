@@ -109,10 +109,10 @@ export default class SearchBar extends Component {
     _renderTokens(rawText) {
         const el = this.editorRef.current
         if (!el) return
-        const { tags = [], loc } = this.props
+        const { tags = [], loc, config } = this.props
         // Normalize operators so && → ' & ' and || → ' | '
         const src = normalizeQuery(rawText)
-        const groups = src.trim() ? parseExpression(src, tags) : null
+        const groups = src.trim() && config.searchAutocompleteTags ? parseExpression(src, tags) : null
         const frag = document.createDocumentFragment()
 
         if (groups && shouldShowPreview(groups)) {
@@ -251,14 +251,16 @@ export default class SearchBar extends Component {
             e.preventDefault()
             this.props.onSearch(this._getRawText().trim())
         } else if (e.key === 'Tab') {
-            const { tags = [] } = this.props
-            const rawText = this._getRawText()
-            const cursor = this._getCursor() ?? rawText.length
-            const token = this._getCurrentToken(rawText, cursor).toLowerCase()
-            const match = token ? tags.find(t => t.toLowerCase().includes(token)) : null
-            if (match) {
-                e.preventDefault()
-                this.handleInsertTag(match)
+            const { tags = [], config } = this.props
+            if (config.searchAutocompleteTags) {
+                const rawText = this._getRawText()
+                const cursor = this._getCursor() ?? rawText.length
+                const token = this._getCurrentToken(rawText, cursor).toLowerCase()
+                const match = token ? tags.find(t => t.toLowerCase().includes(token)) : null
+                if (match) {
+                    e.preventDefault()
+                    this.handleInsertTag(match)
+                }
             }
         } else if (e.key === 'Escape') {
             this.setState({ showPalette: false })
@@ -328,8 +330,9 @@ export default class SearchBar extends Component {
     }
 
     render() {
-        const { color, regex, loc, tags = [] } = this.props
+        const { color, regex, loc, tags = [], config } = this.props
         const { showPalette, showOperators } = this.state
+        const tagsEnabled = config.searchAutocompleteTags
 
         // Group tags by category prefix for the palette
         const tagGroups = {}
@@ -355,16 +358,18 @@ export default class SearchBar extends Component {
                     data-placeholder={regex ? loc.get('search_regex_placeholder') : loc.get('search_placeholder')}
                     spellCheck={false}
                 />
-                <button
-                    className={`search-tag-toggle${showPalette ? ' active' : ''}`}
-                    onMouseDown={e => { e.preventDefault(); this.togglePalette() }}
-                    title={loc.get('search_tags_toggle') || 'Etiquetas'}
-                    aria-label={loc.get('search_tags_toggle') || 'Etiquetas'}
-                    tabIndex={-1}
-                >
-                    <Tags size={13} />
-                </button>
-                {showOperators && (
+                {tagsEnabled && (
+                    <button
+                        className={`search-tag-toggle${showPalette ? ' active' : ''}`}
+                        onMouseDown={e => { e.preventDefault(); this.togglePalette() }}
+                        title={loc.get('search_tags_toggle') || 'Etiquetas'}
+                        aria-label={loc.get('search_tags_toggle') || 'Etiquetas'}
+                        tabIndex={-1}
+                    >
+                        <Tags size={13} />
+                    </button>
+                )}
+                {tagsEnabled && showOperators && (
                     <div className="search-operator-palette">
                         <button
                             className="search-operator-btn"
@@ -378,7 +383,7 @@ export default class SearchBar extends Component {
                         >| O</button>
                     </div>
                 )}
-                {!showOperators && showPalette && tags.length > 0 && (
+                {tagsEnabled && !showOperators && showPalette && tags.length > 0 && (
                     <div className="search-tag-palette">
                         {Object.entries(tagGroups).map(([cat, catTags]) => (
                             <div key={cat} className="search-tag-palette-group">

@@ -18,11 +18,11 @@ function tagCategoryClass(tagKey) {
   return `tag-chip--cat-${prefix}`
 }
 
-export default function TopoDetailPanel({ hash, repository, etymologyStore, loc, onClose }) {
+export default function TopoDetailPanel({ hash, repository, etymologyStore, loc, onClose, onNavigateToEtym }) {
   const topo = repository.getFromId(hash)
   if (!topo) return null
 
-  const attestations = topo.attestations || []
+  const attestations = (topo.attestations || []).slice().reverse()
   const etymologyIds = topo.etymology_ids ? String(topo.etymology_ids).split(',').map(s => s.trim()) : []
   const etymologies = etymologyIds.map(id => etymologyStore.getById(id)).filter(Boolean)
   const etymTags = etymologies.flatMap(e => e.tags ? e.tags.split(',').map(t => t.trim()).filter(Boolean) : [])
@@ -41,7 +41,13 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
             {etymologies.map((etymology, i) => (
               <div key={i} className={etymologies.length > 1 ? 'topo-etymology-item' : undefined}>
                 {etymology.origin && (
-                  <p><strong>{loc.get('panel_origin')}:</strong> <Markdown components={{ p: 'span' }}>{etymology.origin}</Markdown></p>
+                  <p>
+                    <strong>{loc.get('panel_origin')}:</strong>{' '}
+                    <Markdown components={{ p: 'span' }}>{etymology.origin}</Markdown>
+                    {onNavigateToEtym && (
+                      <button className="etym-goto-btn" onClick={() => onNavigateToEtym(etymology.id)} title={loc.get('nav_etymologies')}>↗</button>
+                    )}
+                  </p>
                 )}
                 {etymology.meaning && (
                   <p><strong>{loc.get('panel_meaning')}:</strong> <Markdown components={{ p: 'span' }}>{etymology.meaning}</Markdown></p>

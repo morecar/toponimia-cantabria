@@ -7,4 +7,8 @@ export default class EtymologyStore {
   getById(id) {
     return this.byId.get(id) || null
   }
+
+  getAll() {
+    return Array.from(this.byId.values())
+  }
 }

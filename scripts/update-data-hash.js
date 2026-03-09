@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-// Copies data files from the data/ worktree into public/ before build,
-// and updates public/data-hash.json with the git blob SHA of toponyms.json.
+// Copies data files from the data/ worktree into public/ before build.
 
 const { execSync } = require('child_process')
 const fs = require('fs')
@@ -25,9 +24,3 @@ for (const file of FILES) {
   }
 }
 
-// Also update data-hash.json (used by older cache logic)
-const hashPath = path.join(PUBLIC_DIR, 'data-hash.json')
-const line = execSync('git ls-tree origin/data toponyms.json').toString().trim()
-const hash = line.split(/\s+/)[2].slice(0, 12)
-fs.writeFileSync(hashPath, JSON.stringify({ hash }) + '\n')
-console.log(`data hash: ${hash}`)

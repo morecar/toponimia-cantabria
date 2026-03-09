@@ -9,7 +9,7 @@ import SettingsPopover from './SettingsPopover'
 import ResultsMap from './ResultsMap';
 import TopoDetailPanel from './TopoDetailPanel'
 
-import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_BACKOFFICE, ROUTE_ABOUT } from '../resources/routes'
+import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_BACKOFFICE, ROUTE_ABOUT, ROUTE_ETYMOLOGIES } from '../resources/routes'
 
 const QUERY_COLORS = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed']
 const MAX_QUERIES = 4
@@ -38,6 +38,7 @@ export default class ResultsPage extends Component {
       showSettings: false,
       hasSearched: anyQuery,
       displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && anyQuery),
+      displayTitle: (props.config.resultsTitle === 'always') || (props.config.resultsTitle === 'search' && anyQuery),
       displayLines: (props.config.resultsTypes.includes('line')),
       displayPolys: (props.config.resultsTypes.includes('poly')),
       displayPoints: (props.config.resultsTypes.includes('point')),
@@ -68,6 +69,7 @@ export default class ResultsPage extends Component {
       return {
         queries,
         displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
+        displayTitle: (this.props.config.resultsTitle === 'always') || (this.props.config.resultsTitle === 'search' && nonEmpty.length > 0),
         hasSearched: true,
       }
     })
@@ -102,6 +104,7 @@ export default class ResultsPage extends Component {
       return {
         queries,
         displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
+        displayTitle: (this.props.config.resultsTitle === 'always') || (this.props.config.resultsTitle === 'search' && nonEmpty.length > 0),
       }
     })
   }
@@ -127,6 +130,7 @@ export default class ResultsPage extends Component {
   handleSettingsUpdated() {
     this.setState({
       displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && this.state.queries.some(q => !!q.queryString)),
+      displayTitle: (this.props.config.resultsTitle === 'always') || (this.props.config.resultsTitle === 'search' && this.state.queries.some(q => !!q.queryString)),
       displayLines: (this.props.config.resultsTypes.includes('line')),
       displayPolys: (this.props.config.resultsTypes.includes('poly')),
       displayPoints: (this.props.config.resultsTypes.includes('point')),
@@ -184,6 +188,11 @@ export default class ResultsPage extends Component {
             <div className="settings-backoffice-link">
               <span className="settings-author">
                 Creado por <a href="https://github.com/morecar" target="_blank" rel="noopener noreferrer" className="settings-author-link">morecar</a>
+                {' | '}
+                <button className="settings-toggle settings-backoffice-btn settings-inline-btn"
+                  onClick={() => this.props.history(ROUTE_ETYMOLOGIES)}>
+                  {this.props.loc.get('nav_etymologies')}
+                </button>
                 {' | '}
                 <button className="settings-toggle settings-backoffice-btn settings-inline-btn"
                   onClick={() => this.props.history(ROUTE_ABOUT)}>
@@ -244,7 +253,7 @@ export default class ResultsPage extends Component {
           )}
         </div>
 
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)} flyToHash={this.state.panelHash}/>
+        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} displayTitle={this.state.displayTitle} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)} flyToHash={this.state.panelHash}/>
       </Container>
       {this.state.panelHash && (
         <TopoDetailPanel
@@ -253,6 +262,7 @@ export default class ResultsPage extends Component {
           etymologyStore={this.props.etymologyStore}
           loc={this.props.loc}
           onClose={this.closePanel.bind(this)}
+          onNavigateToEtym={id => this.props.history(`${ROUTE_ETYMOLOGIES}?focus=${id}`)}
         />
       )}
       </>

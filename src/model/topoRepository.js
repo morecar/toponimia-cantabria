@@ -78,6 +78,10 @@ class TopoRepository {
         return result?.[0] ?? undefined
     }
 
+    getAllEntries() {
+        return this.database.value()
+    }
+
     getAllTags() {
         const tags = new Set()
         this.database.forEach(entry => {

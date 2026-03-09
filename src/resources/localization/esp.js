@@ -2,6 +2,18 @@ export const esp =
 {
     "brand_alt": "Logo del Toponomasticon",
 
+    "nav_etymologies": "Índice de étimos",
+
+    "etymologies_title": "Índice de étimos",
+    "etymologies_search_placeholder": "Buscar en etimologías…",
+    "etymologies_scope_all": "Todo",
+    "etymologies_scope_etym": "Solo étimos",
+    "etymologies_result_singular": "etimología",
+    "etymologies_result_plural": "etimologías",
+    "etymologies_topo_singular": "topónimo",
+    "etymologies_topo_plural": "topónimos",
+    "etymologies_refs_label": "Compuesto de:",
+
     "search_placeholder": "Escribe tu búsqueda…",
     "search_regex_placeholder": "Búsqueda con regexp…",
 
@@ -38,8 +50,7 @@ export const esp =
     "settings_category_other": "Otros",
     "toogle_search_regex": "Búsqueda con regex", 
     "toogle_detect_underdoth": "Detectar hache sopunteada (h.→ḥ)", 
-    "toogle_search_tags_autocomplete": "Autocompletar etiquetas", 
-    "toogle_search_tags_palette": "Mostrar paleta etiquetas",
+    "toogle_search_tags_autocomplete": "Autocompletar etiquetas",
 
 
     "tag_etymology:latin": "Latín",

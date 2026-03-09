@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { MapContainer, TileLayer, Polyline, Polygon, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Polyline, Polygon, Popup, Tooltip, useMap } from 'react-leaflet'
 import MapMarker from './MapMarker'
 import CantabriaColorPane from './CantabriaColorPane'
 import { CENTER_CANTABRIA } from '../resources/constants'
@@ -68,16 +68,18 @@ export default function ResultsMap(props) {
       />
       <CantabriaColorPane />
       {props.points.map(p =>
-        <MapMarker key={p.hash} position={p.coordinates[0]} hash={p.hash} title={p.title} colors={p.colors} markerSize={props.markerSize} onMarkerClick={props.onMarkerClick} />
+        <MapMarker key={p.hash} position={p.coordinates[0]} hash={p.hash} title={p.title} colors={p.colors} markerSize={props.markerSize} showTitle={props.displayTitle} onMarkerClick={props.onMarkerClick} />
       )}
       {props.lines.map(l =>
         <Polyline key={l.hash} pathOptions={{ ...lineOptions, color: l.color }} positions={l.coordinates}>
           <TopoPopup hash={l.hash} title={l.title} onMarkerClick={props.onMarkerClick} />
+          {props.displayTitle && <Tooltip permanent className="topo-label">{l.title}</Tooltip>}
         </Polyline>
       )}
       {props.polys.map(p =>
         <Polygon key={p.hash} pathOptions={{ ...polyOptions, color: p.color, fillColor: p.color }} positions={p.coordinates}>
           <TopoPopup hash={p.hash} title={p.title} onMarkerClick={props.onMarkerClick} />
+          {props.displayTitle && <Tooltip permanent className="topo-label">{p.title}</Tooltip>}
         </Polygon>
       )}
     </MapContainer>

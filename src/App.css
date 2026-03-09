@@ -710,6 +710,281 @@ a.topo-tag-link:hover {
 }
 .topo-popup-link:hover { color: #0a58ca; }
 
+.topo-label {
+  background: rgba(15, 23, 42, 0.82);
+  color: #f1f5f9;
+  border: none;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+.topo-label::before { display: none; }
+
+/* ── Etymology Index Page ───────────────────────────────────────────────── */
+.etym-route {
+  min-height: 100vh;
+  background: #0f172a;
+}
+.etym-route .navbar {
+  background: #0f172a !important;
+  border-bottom: 1px solid #1e293b;
+  box-shadow: none;
+}
+
+.etym-page {
+  padding-top: 130px;
+  padding-bottom: 5rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.etym-page-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+/* Search bar — desktop: below navbar; mobile: fixed at bottom */
+.etym-search-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+/* desktop: header in bar; mobile: header in page content */
+.etym-search-header--mobile { display: none; }
+@media (max-width: 991px) {
+  .etym-search-header--mobile { display: flex; margin-bottom: 1rem; }
+  .etym-search-bar .etym-search-header { display: none; }
+}
+
+.etym-search-bar {
+  position: fixed;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 760px;
+  padding: 0.5rem 1rem;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  z-index: 1050;
+}
+
+@media (max-width: 991px) {
+  .etym-search-bar {
+    top: auto;
+    bottom: 1.25rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    max-width: none;
+    transform: none;
+    border-bottom: none;
+    border-radius: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .etym-page {
+    padding-top: 72px;
+    padding-bottom: 5rem;
+  }
+}
+
+.etym-search-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.etym-search-input {
+  flex: 1;
+  min-width: 0;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 2rem;
+  color: #f1f5f9;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  outline: none;
+}
+.etym-search-input::placeholder { color: #64748b; }
+.etym-search-input:focus { border-color: #475569; }
+
+.etym-scope-toggle {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.etym-scope-btn {
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.etym-scope-btn.active,
+.etym-scope-btn:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.etym-count-line {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.etym-list {
+  padding: 0;
+  margin: 0;
+}
+
+.etym-section {
+  margin-bottom: 1.5rem;
+}
+
+.etym-section-letter {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #475569;
+  margin: 0 0 0.6rem 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.etym-section-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.etym-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 1rem 1.125rem;
+}
+
+.etym-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: #f1f5f9;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.etym-origin-roman {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+.etym-origin-roman em,
+.etym-origin-roman strong { font-style: normal; }
+
+
+.etym-card-count {
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.etym-card-meaning {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.etym-card-notes {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+}
+
+.etym-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.etym-card-refs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.etym-card-refs-label {
+  font-size: 0.72rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.1rem;
+}
+
+.etym-ref-chip {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  color: #93c5fd;
+  font-size: 0.82rem;
+  padding: 0.15rem 0.65rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.etym-ref-chip:hover {
+  background: #273548;
+  border-color: #60a5fa;
+}
+.etym-ref-chip p { margin: 0; display: inline; }
+
+.etym-card--highlighted {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+  transition: outline-color 0.4s;
+}
+
+.etym-goto-btn {
+  background: none;
+  border: none;
+  padding: 0 0 0 0.3em;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 0.8em;
+  line-height: 1;
+  vertical-align: middle;
+}
+.etym-goto-btn:hover { color: #93c5fd; }
+
+.etym-empty {
+  color: #64748b;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 0;
+  list-style: none;
+}
+
 @media (max-width: 991px) {
   .topo-detail-panel {
     left: 0;

@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import { Marker, Popup } from 'react-leaflet'
+import { Marker, Popup, Tooltip } from 'react-leaflet'
 
 const MARKER_RADII = { small: 3, medium: 5, large: 8 }
 
@@ -46,6 +46,7 @@ export default function MapMarker(props) {
           {props.title}
         </button>
       </Popup>
+      {props.showTitle && <Tooltip permanent direction="top" offset={[0, -(MARKER_RADII[props.markerSize || 'medium'] + 4)]} className="topo-label">{props.title}</Tooltip>}
     </Marker>
   )
 }

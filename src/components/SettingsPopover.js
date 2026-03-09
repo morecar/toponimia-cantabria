@@ -55,9 +55,9 @@ export default class SettingsPopover extends Component {
               <div className="col-6 col-md-3">
                 <Form.Group>
                   <Form.Label><b>{this.props.loc.get("show_title")}</b></Form.Label>
-                  <Form.Check defaultChecked={this.props.config.resultsTitle === 'always'} label={this.props.loc.get("toggle_always")} type='radio' id='show-title-always' name='showTitle' disabled/>
-                  <Form.Check defaultChecked={this.props.config.resultsTitle === 'search'} label={this.props.loc.get("toggle_search")} type='radio' id='show-title-search' name='showTitle' disabled/>
-                  <Form.Check defaultChecked={this.props.config.resultsTitle === 'click'}  label={this.props.loc.get("toggle_click")}  type='radio' id='show-title-click'  name='showTitle' disabled/>
+                  <Form.Check defaultChecked={this.props.config.resultsTitle === 'always'} label={this.props.loc.get("toggle_always")} type='radio' id='show-title-always' name='showTitle'/>
+                  <Form.Check defaultChecked={this.props.config.resultsTitle === 'search'} label={this.props.loc.get("toggle_search")} type='radio' id='show-title-search' name='showTitle'/>
+                  <Form.Check defaultChecked={this.props.config.resultsTitle === 'click'}  label={this.props.loc.get("toggle_click")}  type='radio' id='show-title-click'  name='showTitle'/>
                 </Form.Group>
               </div>
               <div className="col-6 col-md-3">
@@ -96,8 +96,7 @@ export default class SettingsPopover extends Component {
                   <Form.Label><b>{this.props.loc.get("settings_category_other")}</b></Form.Label>
                   <Form.Check defaultChecked={this.props.config.searchUseRegex}               type='switch' id='toggle-regex'       label={this.props.loc.get("toogle_search_regex")}/>
                   <Form.Check defaultChecked={this.props.config.searchAutocompleteUnderdoth}  type='switch' id='toggle-underdoth'   label={this.props.loc.get("toogle_detect_underdoth")}/>
-                  <Form.Check defaultChecked={this.props.config.searchAutocompleteTags}       type='switch' id='toggle-tag-auto'    label={this.props.loc.get("toogle_search_tags_autocomplete")} disabled/>
-                  <Form.Check defaultChecked={this.props.config.searchDisplayTagPalette}      type='switch' id='toggle-tag-palette' label={this.props.loc.get("toogle_search_tags_palette")} disabled/>
+                  <Form.Check defaultChecked={this.props.config.searchAutocompleteTags}       type='switch' id='toggle-tag-auto'    label={this.props.loc.get("toogle_search_tags_autocomplete")}/>
                 </Form.Group>
               </div>
             </div>
