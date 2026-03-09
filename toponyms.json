@@ -1,135 +1,7 @@
 {
   "hash": "df78777eeb1e",
-  "data": [
-    {
-      "hash": "t001",
-      "name": "Rucu Grandi",
-      "type": "point",
-      "coordinates": "43.48790438,-3.829743921",
-      "tags": "feature:metaphony_u,etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t002",
-      "name": "Ḥuyu, el",
-      "type": "point",
-      "coordinates": "43.4312067,-3.889545168",
-      "tags": "feature:metaphony_u,feature:aspirate_f,etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t003",
-      "name": "Ḥuyu, el",
-      "type": "point",
-      "coordinates": "43.37678866,-3.34634396",
-      "tags": "feature:metaphony_u,feature:aspirate_f,etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t004",
-      "name": "Huyu, l'",
-      "type": "point",
-      "coordinates": "43.15211888,-3.808916627",
-      "tags": "feature:metaphony_u,etymology:romance,feature:lost_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t005",
-      "name": "Huyuilu, l'",
-      "type": "point",
-      "coordinates": "43.17237457,-3.756904431",
-      "tags": "feature:metaphony_u,etymology:romance,feature:lost_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t006",
-      "name": "Huyu, l'",
-      "type": "point",
-      "coordinates": "43.41111895,-3.650205765",
-      "tags": "feature:metaphony_u,etymology:romance,feature:lost_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t007",
-      "name": "Peña del Rescañu, la",
-      "type": "point",
-      "coordinates": "43.217586455012416,-3.7443681682928447",
-      "tags": "etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t008",
-      "name": "Picu Ḥiniru, il",
-      "type": "point",
-      "coordinates": "43.23582482587518,-3.7789692369573085",
-      "tags": "feature:metaphony_u,etymology:romance,feature:aspirate_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t009",
-      "name": "Ḥuinti'l Truchiru",
-      "type": "point",
-      "coordinates": "43.19935580290242,-3.806243817337822",
-      "tags": "feature:metaphony_u,feature:metaphony_i,etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t010",
-      "name": "Plaza Vieja",
-      "type": "point",
-      "coordinates": "43.20733495751137,-3.805180561354875",
-      "tags": "etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t011",
-      "name": "Puzu'l Churrón",
-      "type": "point",
-      "coordinates": "43.2156463331718,-3.7507315971902373",
-      "tags": "feature:metaphony_u,etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t012",
-      "name": "La Ḥoyanca",
-      "type": "line",
-      "coordinates": "43.007898677566835,-4.300307358200996;43.00731356832721,-4.296300421155142",
-      "tags": "etymology:romance,feature:aspirate_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t013",
-      "name": "La Ḥoyancona",
-      "type": "point",
-      "coordinates": "43.10633366397117,-4.114499139036034",
-      "tags": "etymology:romance,feature:aspirate_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t014",
-      "name": "Las Ḥoyas",
-      "type": "point",
-      "coordinates": "43.14347907624589,-4.066868176748693",
-      "tags": "etymology:romance,feature:aspirate_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t015",
-      "name": "Hontaneda",
-      "type": "point",
-      "coordinates": "43.19960963835198,-3.927184401606769",
-      "tags": "etymology:romance,feature:lost_f,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t016",
-      "name": "Hesles",
-      "type": "point",
-      "coordinates": "43.282747021289694,-3.805149269459899",
-      "tags": "etymology:romance,feature:lost_f,status:demo",
-      "attestations": []
-    },
-    {
+  "data": {
+    "0": {
       "hash": "t017",
       "name": "Selaya",
       "type": "point",
@@ -137,47 +9,7 @@
       "tags": "etymology:romance,feature:lost_f,status:demo",
       "attestations": []
     },
-    {
-      "hash": "t018",
-      "name": "Santa Locaria",
-      "type": "point",
-      "coordinates": "43.20918271582873,-3.8137032623345593",
-      "tags": "etymology:romance,feature:rhotacism,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t019",
-      "name": "Peña Cabarga",
-      "type": "point",
-      "coordinates": "43.37906089206905,-3.7788343778350884",
-      "tags": "etymology:celtic,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t020",
-      "name": "Gurueba, la",
-      "type": "line",
-      "coordinates": "43.16672055685465,-3.846658873585171;43.16924537063116,-3.8446101508623984;43.16841165705303,-3.8401014338219257;43.16926445046744,-3.834418425854164",
-      "tags": "feature:b_g,etymology:celtic,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t021",
-      "name": "Sutu, el",
-      "type": "point",
-      "coordinates": "43.297233726842286,-3.8362093694394153",
-      "tags": "feature:metaphony_u,etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t022",
-      "name": "Huyu, l'",
-      "type": "point",
-      "coordinates": "43.32437682104227,-3.800027824637256",
-      "tags": "feature:metaphony_u,etymology:romance,feature:lost_f,status:demo",
-      "attestations": []
-    },
-    {
+    "1": {
       "hash": "t023",
       "name": "Castru Valnera, el",
       "type": "point",
@@ -185,151 +17,142 @@
       "tags": "etymology:celtoroman,status:demo",
       "attestations": []
     },
-    {
-      "hash": "t024",
-      "name": "Porra Culina, la",
-      "type": "point",
-      "coordinates": "43.238261770217626,-3.6601551158945704",
-      "tags": "etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t025",
-      "name": "Purtiyu de Lunada, il",
-      "type": "point",
-      "coordinates": "43.17114480838123,-3.655069943619361",
-      "tags": "etymology:romance,feature:antihiatic_yod,status:demo",
-      "attestations": []
-    },
-    {
-      "hash": "t026",
-      "name": "Valdigu, el",
-      "type": "poly",
-      "coordinates": "43.3720,-3.8150;43.3780,-3.8050;43.3850,-3.8100;43.3830,-3.8220;43.3750,-3.8230",
-      "tags": "etymology:romance,status:demo",
-      "attestations": []
-    },
-    {
+    "2": {
       "hash": "t027",
       "name": "Llama Pando",
       "type": "point",
       "coordinates": "43.173888,-4.065801",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "3": {
       "hash": "t028",
       "name": "Llama Redonda",
       "type": "point",
       "coordinates": "43.172934,-4.638801",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "4": {
       "hash": "t029",
       "name": "Llama Timbre, La",
       "type": "point",
       "coordinates": "43.139712,-4.817808",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "5": {
       "hash": "t030",
       "name": "Llama, Fuente la",
       "type": "point",
       "coordinates": "43.187476,-4.580019",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "6": {
       "hash": "t031",
       "name": "Llama, La",
       "type": "point",
       "coordinates": "43.351057,-4.042931",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "7": {
       "hash": "t032",
       "name": "Llama, La",
       "type": "point",
       "coordinates": "43.029209,-4.081233",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "8": {
       "hash": "t033",
       "name": "Llama, Majada de la",
       "type": "point",
       "coordinates": "43.236881,-4.679691",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "9": {
       "hash": "t034",
       "name": "Llama, Mies de la",
       "type": "point",
       "coordinates": "43.334287,-3.713011",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "10": {
       "hash": "t035",
       "name": "Llama, Monte de la",
       "type": "point",
       "coordinates": "43.231690,-4.677618",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "11": {
       "hash": "t036",
       "name": "Llamadoria",
       "type": "point",
       "coordinates": "43.186083,-4.581512",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "12": {
       "hash": "t037",
       "name": "Llamas",
       "type": "point",
       "coordinates": "43.457264,-3.517088",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "13": {
       "hash": "t038",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.205380,-3.802822",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "14": {
       "hash": "t039",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.388306,-4.218624",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "15": {
       "hash": "t040",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.077683,-4.383992",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "16": {
       "hash": "t041",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.104364,-4.375162",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "17": {
       "hash": "t042",
       "name": "Llamas, Las",
       "type": "point",
@@ -358,26 +181,33 @@
           "highlight": "Las Llamas"
         }
       ],
-      "etymology_ids": [
-        "etym001",
-        "etym002"
-      ]
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "18": {
       "hash": "t043",
       "name": "Llamas, Tres",
       "type": "point",
       "coordinates": "43.385678,-4.115112",
       "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": []
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
     },
-    {
+    "19": {
       "hash": "t044",
       "name": "Llamatán",
       "type": "point",
       "coordinates": "43.110292,-4.657413",
       "tags": "feature:palatalization_l,etymology:romance",
+      "attestations": [],
+      "etymology_ids": "etym001,etym002"
+    },
+    "20": {
+      "hash": "t045",
+      "name": "Santander",
+      "type": "point",
+      "coordinates": "43.4623,-3.8099",
+      "tags": "etymology:cantabri",
       "attestations": []
     }
-  ]
+  }
 }
