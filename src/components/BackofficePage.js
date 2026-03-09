@@ -1,13 +1,17 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import BackofficeMap from './BackofficeMap'
-import { getDrafts, saveDraft, deleteDraft, newDraftId, exportDrafts } from '../model/draftStore'
+import {
+  getDrafts, saveDraft, deleteDraft, newDraftId, exportDrafts,
+  getDraftEtymologies, saveDraftEtymology, newDraftEtymId,
+} from '../model/draftStore'
 import { ROUTE_HOME } from '../resources/routes'
 
 const EMPTY_FORM = () => ({
   draftId: null,
   name: '',
+  vernacular: '',
   type: 'point',
   coordinates: [],
   tags: [],
@@ -16,6 +20,205 @@ const EMPTY_FORM = () => ({
 })
 
 const EMPTY_ATTESTATION = () => ({ year: '', highlight: '', source: '', quote: '', url: '' })
+const EMPTY_NEW_ETYM = () => ({ origin: '', meaning: '', notes: '' })
+
+// ── Tag color by category ─────────────────────────────────────────────────────
+function tagColor(tag) {
+  if (tag.startsWith('etymology:')) return '#2563eb'
+  if (tag.startsWith('feature:'))   return '#d97706'
+  return '#6c757d'
+}
+
+// ── Tag autocomplete input ────────────────────────────────────────────────────
+function TagInput({ tags, knownTags, loc, onChange }) {
+  const [query, setQuery]               = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setShowDropdown(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const filtered = knownTags.filter(
+    t => !tags.includes(t) && t.toLowerCase().includes(query.toLowerCase())
+  )
+  const trimmed   = query.trim()
+  const canCreate = trimmed && !knownTags.includes(trimmed) && !tags.includes(trimmed)
+
+  const addTag = (tag) => {
+    onChange([...tags, tag])
+    setQuery('')
+    setShowDropdown(false)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (filtered.length > 0) addTag(filtered[0])
+      else if (canCreate)       addTag(trimmed)
+    }
+    if (e.key === 'Escape') setShowDropdown(false)
+  }
+
+  return (
+    <div className="bo-tag-input-wrap" ref={wrapRef}>
+      <div className="bo-tag-chips">
+        {tags.map(tag => (
+          <span key={tag} className="bo-tag-chip" style={{ background: tagColor(tag) }}>
+            {loc.get(`tag_${tag}`) || tag}
+            <button className="bo-tag-chip-remove" onClick={() => onChange(tags.filter(t => t !== tag))}>×</button>
+          </span>
+        ))}
+        <input
+          className="bo-tag-search"
+          value={query}
+          onChange={e => { setQuery(e.target.value); setShowDropdown(true) }}
+          onFocus={() => setShowDropdown(true)}
+          onKeyDown={handleKeyDown}
+          placeholder={tags.length ? '' : 'Buscar o crear etiqueta…'}
+        />
+      </div>
+      {showDropdown && (filtered.length > 0 || canCreate) && (
+        <div className="bo-dropdown">
+          {filtered.map(tag => (
+            <button key={tag} className="bo-dropdown-item" onClick={() => addTag(tag)}>
+              <span className="bo-dropdown-dot" style={{ background: tagColor(tag) }} />
+              {loc.get(`tag_${tag}`) || tag}
+            </button>
+          ))}
+          {canCreate && (
+            <button className="bo-dropdown-item bo-dropdown-create" onClick={() => addTag(trimmed)}>
+              + Crear: <em>"{trimmed}"</em>
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Etymology selector ────────────────────────────────────────────────────────
+function EtymologySelector({ etymology_ids, etymologyStore, onChange }) {
+  const [query, setQuery]               = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [creating, setCreating]         = useState(false)
+  const [newEtym, setNewEtym]           = useState(EMPTY_NEW_ETYM)
+  const [draftEtyms, setDraftEtyms]     = useState(() => getDraftEtymologies())
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setShowDropdown(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const allEtymologies = [
+    ...Array.from(etymologyStore?.byId?.values() || []),
+    ...draftEtyms,
+  ]
+
+  const lq = query.toLowerCase()
+  const filtered = query.length > 0
+    ? allEtymologies.filter(e =>
+        (e.origin  || '').toLowerCase().includes(lq) ||
+        (e.meaning || '').toLowerCase().includes(lq) ||
+        (e.notes   || '').toLowerCase().includes(lq)
+      )
+    : allEtymologies
+
+  const selectedEtymologies = etymology_ids.map(id =>
+    allEtymologies.find(e => e.id === id)
+  ).filter(Boolean)
+
+  const handleSelect = (etym) => {
+    if (!etymology_ids.includes(etym.id)) onChange([...etymology_ids, etym.id])
+    setQuery('')
+    setShowDropdown(false)
+  }
+
+  const handleCreate = () => {
+    if (!newEtym.origin.trim()) return
+    const id   = newDraftEtymId()
+    const etym = { ...newEtym, id }
+    saveDraftEtymology(etym)
+    setDraftEtyms(getDraftEtymologies())
+    onChange([...etymology_ids, id])
+    setCreating(false)
+    setNewEtym(EMPTY_NEW_ETYM)
+  }
+
+  const newField = (key, value) => setNewEtym(e => ({ ...e, [key]: value }))
+
+  return (
+    <div className="bo-etym-wrap" ref={wrapRef}>
+      {selectedEtymologies.map(e => (
+        <div key={e.id} className="bo-etym-chip">
+          <div className="bo-etym-chip-body">
+            <strong>{e.origin}</strong>
+            {e.meaning && <span> — {e.meaning}</span>}
+          </div>
+          <button className="bo-btn-icon" onClick={() => onChange(etymology_ids.filter(id => id !== e.id))}>×</button>
+        </div>
+      ))}
+
+      {!creating && (
+        <div className="bo-etym-search-row">
+          <div className="bo-etym-search-wrap">
+            <input
+              className="bo-input"
+              value={query}
+              onChange={e => { setQuery(e.target.value); setShowDropdown(true) }}
+              onFocus={() => setShowDropdown(true)}
+              placeholder="Buscar etimología existente…"
+            />
+            {showDropdown && (
+              <div className="bo-dropdown">
+                {filtered.length === 0 && (
+                  <div className="bo-dropdown-empty">Sin resultados</div>
+                )}
+                {filtered.map(e => (
+                  <button key={e.id} className="bo-dropdown-item" onClick={() => handleSelect(e)}>
+                    <strong>{e.origin}</strong>
+                    {e.meaning && <span className="bo-dropdown-sub"> — {e.meaning}</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <button className="bo-btn bo-btn-sm" onClick={() => { setShowDropdown(false); setCreating(true) }}>
+            + Nueva
+          </button>
+        </div>
+      )}
+
+      {creating && (
+        <div className="bo-etym-new-form">
+          <input className="bo-input" placeholder="Origen *" value={newEtym.origin}
+            onChange={e => newField('origin', e.target.value)} />
+          <input className="bo-input" placeholder="Significado" value={newEtym.meaning}
+            onChange={e => newField('meaning', e.target.value)} />
+          <textarea className="bo-input bo-textarea" placeholder="Notas" rows={2}
+            value={newEtym.notes} onChange={e => newField('notes', e.target.value)} />
+          <div className="bo-etym-new-actions">
+            <button className="bo-btn bo-btn-primary bo-btn-sm"
+              onClick={handleCreate} disabled={!newEtym.origin.trim()}>
+              Añadir
+            </button>
+            <button className="bo-btn bo-btn-sm" onClick={() => { setCreating(false); setNewEtym(EMPTY_NEW_ETYM) }}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ── Attestation editor row ────────────────────────────────────────────────────
 function AttestationRow({ att, onChange, onRemove }) {
@@ -57,10 +260,10 @@ function DraftItem({ draft, onEdit, onDelete }) {
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
-export default function BackofficePage({ repository, loc }) {
+export default function BackofficePage({ repository, etymologyStore, loc }) {
   const navigate = useNavigate()
   const [drafts, setDrafts]         = useState(() => getDrafts())
-  const [view, setView]             = useState('list')   // 'list' | 'form'
+  const [view, setView]             = useState('list')
   const [form, setForm]             = useState(EMPTY_FORM)
   const [isDrawing, setIsDrawing]   = useState(false)
   const [currentPoints, setCurrentPoints] = useState([])
@@ -120,30 +323,13 @@ export default function BackofficePage({ repository, loc }) {
   }, [form.type])
 
   const handleFinishDrawing = () => setIsDrawing(false)
+  const handleClearDrawing  = () => { setCurrentPoints([]); setIsDrawing(false) }
+  const handleStartDrawing  = () => { setCurrentPoints([]); setIsDrawing(true) }
 
-  const handleClearDrawing = () => {
-    setCurrentPoints([])
-    setIsDrawing(false)
-  }
-
-  const handleStartDrawing = () => {
-    setCurrentPoints([])
-    setIsDrawing(true)
-  }
-
-  // ── Type change resets drawing ──────────────────────────────────────────────
   const setType = (type) => {
     setForm(f => ({ ...f, type }))
     setCurrentPoints([])
     setIsDrawing(false)
-  }
-
-  // ── Tag toggle ──────────────────────────────────────────────────────────────
-  const toggleTag = (tag) => {
-    setForm(f => ({
-      ...f,
-      tags: f.tags.includes(tag) ? f.tags.filter(t => t !== tag) : [...f.tags, tag],
-    }))
   }
 
   // ── Attestations ────────────────────────────────────────────────────────────
@@ -160,8 +346,8 @@ export default function BackofficePage({ repository, loc }) {
   const handleExport = () => {
     const content = exportDrafts(drafts)
     const blob = new Blob([content], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
+    const url  = URL.createObjectURL(blob)
+    const a    = document.createElement('a')
     a.href = url
     a.download = 'nuevos-toponimos.json'
     a.click()
@@ -211,6 +397,7 @@ export default function BackofficePage({ repository, loc }) {
             </>
           ) : (
             <div className="bo-form">
+              {/* Nombre */}
               <div className="bo-form-section">
                 <label className="bo-label">Nombre <span className="bo-required">*</span></label>
                 <input className={`bo-input${error ? ' bo-input-error' : ''}`}
@@ -221,6 +408,17 @@ export default function BackofficePage({ repository, loc }) {
                 {error && <span className="bo-error">{error}</span>}
               </div>
 
+              {/* Forma patrimonial */}
+              <div className="bo-form-section">
+                <label className="bo-label">Forma patrimonial <span className="bo-optional">(opcional)</span></label>
+                <input className="bo-input"
+                  value={form.vernacular || ''}
+                  onChange={e => setForm(f => ({ ...f, vernacular: e.target.value }))}
+                  placeholder="Forma dialectal o popular, si difiere del nombre oficial"
+                />
+              </div>
+
+              {/* Tipo */}
               <div className="bo-form-section">
                 <label className="bo-label">Tipo</label>
                 <div className="bo-type-btns">
@@ -234,6 +432,7 @@ export default function BackofficePage({ repository, loc }) {
                 </div>
               </div>
 
+              {/* Geometría */}
               <div className="bo-form-section">
                 <label className="bo-label">Geometría</label>
                 <div className="bo-draw-row">
@@ -263,20 +462,18 @@ export default function BackofficePage({ repository, loc }) {
                 )}
               </div>
 
+              {/* Etiquetas */}
               <div className="bo-form-section">
                 <label className="bo-label">Etiquetas</label>
-                <div className="bo-tags-grid">
-                  {knownTags.map(tag => (
-                    <label key={tag} className="bo-tag-check">
-                      <input type="checkbox"
-                        checked={form.tags.includes(tag)}
-                        onChange={() => toggleTag(tag)} />
-                      {' '}{loc.get(`tag_${tag}`)}
-                    </label>
-                  ))}
-                </div>
+                <TagInput
+                  tags={form.tags}
+                  knownTags={knownTags}
+                  loc={loc}
+                  onChange={tags => setForm(f => ({ ...f, tags }))}
+                />
               </div>
 
+              {/* Atestaciones */}
               <div className="bo-form-section">
                 <label className="bo-label">Atestaciones</label>
                 {form.attestations.map((att, i) => (
@@ -287,15 +484,14 @@ export default function BackofficePage({ repository, loc }) {
                 <button className="bo-btn bo-btn-sm" onClick={addAttestation}>+ Añadir atestación</button>
               </div>
 
+              {/* Etimología */}
               <div className="bo-form-section">
-                <label className="bo-label">IDs de etimología</label>
-                <input className="bo-input"
-                  placeholder="etym001, etym002…"
-                  value={(form.etymology_ids || []).join(', ')}
-                  onChange={e => setForm(f => ({
-                    ...f,
-                    etymology_ids: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
-                  }))} />
+                <label className="bo-label">Etimología</label>
+                <EtymologySelector
+                  etymology_ids={form.etymology_ids || []}
+                  etymologyStore={etymologyStore}
+                  onChange={etymology_ids => setForm(f => ({ ...f, etymology_ids }))}
+                />
               </div>
 
               <div className="bo-form-actions">

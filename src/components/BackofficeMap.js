@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Polyline, Polygon, useMapEvents, useMap, Tooltip } from 'react-leaflet'
+import CantabriaColorPane from './CantabriaColorPane'
 import { CENTER_CANTABRIA } from '../resources/constants'
 
 const DRAFT_COLOR   = '#f59e0b'
@@ -120,6 +121,7 @@ export default function BackofficeMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://openstreetmap.org">OSM</a>'
       />
+      <CantabriaColorPane />
       <DrawingEvents isDrawing={isDrawing} onAddPoint={onAddPoint} />
       <ExistingLayer repository={repository} />
       {drafts.map(d => (

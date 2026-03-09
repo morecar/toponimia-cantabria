@@ -8,11 +8,12 @@ Una aplicación web interactiva para explorar la toponimia histórica de Cantabr
 - **Búsqueda** por nombre, con soporte para expresiones regulares y detección automática de la hache sopunteada (`h.` → `ḥ`)
 - **Etiquetas** de clasificación etimológica y fonética (romance, celta, metafonía U/I, F aspirada, F muda…)
 - **Panel de ajustes** configurable: qué etiquetas mostrar y cuándo, qué tipos de resultados incluir
-- **Sin backend**: los datos se cargan desde un fichero JSON estático y se cachean en `localStorage`
+- **Panel de detalle** con etimología, significado y atestaciones históricas del topónimo seleccionado
+- **Sin backend**: los datos se cargan desde ficheros JSON estáticos y se cachean en `localStorage`
 
 ## Estructura de los datos
 
-Los topónimos se cargan desde `public/data.json` (no versionado). El formato es:
+### Topónimos (`public/toponyms.json`, no versionado)
 
 ```json
 {
@@ -23,14 +24,18 @@ Los topónimos se cargan desde `public/data.json` (no versionado). El formato es
       "name": "Ḥuyu, el",
       "type": "point",
       "coordinates": "43.4312067,-3.889545168",
-      "tags": "feature:metaphony_u,feature:aspirate_f,etymology:romance"
-    },
-    {
-      "hash": "t012",
-      "name": "La Ḥoyanca",
-      "type": "line",
-      "coordinates": "43.007898,-4.300307;43.007313,-4.296300",
-      "tags": "etymology:romance,feature:aspirate_f"
+      "tags": "feature:metaphony_u,feature:aspirate_f,etymology:romance",
+      "vernacular": "El Foyu",
+      "etymology_ids": ["etym001"],
+      "attestations": [
+        {
+          "year": "1753",
+          "highlight": "Hoyo",
+          "source": "Catastro de Ensenada",
+          "quote": "…el lugar llamado Hoyo…",
+          "url": ""
+        }
+      ]
     }
   ]
 }
@@ -43,8 +48,26 @@ Los topónimos se cargan desde `public/data.json` (no versionado). El formato es
 | `type` | `point`, `line` o `poly` |
 | `coordinates` | Pares `lat,lng` separados por `;` (un par para puntos, varios para líneas y polígonos) |
 | `tags` | Etiquetas separadas por `,` |
+| `vernacular` | *(opcional)* Forma patrimonial o dialectal, si difiere del nombre oficial |
+| `etymology_ids` | *(opcional)* Array de IDs de etimologías referenciadas en `etymologies.json` |
+| `attestations` | *(opcional)* Array de atestaciones históricas |
 
-Cuando el campo `hash` del fichero cambia respecto al que tiene guardado el navegador, la app descarga el fichero completo y actualiza la caché. Si no cambia, sirve los datos desde `localStorage` sin ninguna petición de red.
+Cuando el campo `hash` del fichero cambia respecto al que tiene guardado el navegador, la app descarga el fichero completo y actualiza la caché.
+
+### Etimologías (`public/etymologies.json`, no versionado)
+
+```json
+{
+  "data": [
+    {
+      "id": "etym001",
+      "origin": "Prelatino *LAMA",
+      "meaning": "terreno pantanoso, hondonada húmeda",
+      "notes": "Hipótesis que conecta el topónimo con la raíz prelatina *lama…"
+    }
+  ]
+}
+```
 
 ### Etiquetas disponibles
 
@@ -52,14 +75,26 @@ Cuando el campo `hash` del fichero cambia respecto al que tiene guardado el nave
 
 **Rasgos fonéticos:** `feature:metaphony_u` · `feature:metaphony_i` · `feature:aspirate_f` · `feature:lost_f` · `feature:b_g` · `feature:antihiatic_yod`
 
+## Backoffice
+
+La app incluye un portal de edición en `/backoffice` para crear y gestionar borradores de nuevos topónimos antes de incorporarlos al fichero de datos.
+
+### Funcionalidades
+
+- **Formulario de nuevo topónimo** con todos los campos: nombre, forma patrimonial (opcional), tipo geométrico, coordenadas (dibujo en mapa), etiquetas, atestaciones y etimologías.
+- **Etiquetas con autocompletado**: escribe para filtrar las etiquetas conocidas (con colores por categoría: azul para `etymology:*`, naranja para `feature:*`). Si la etiqueta no existe, se puede crear al vuelo.
+- **Selector de etimología**: busca entre las etimologías existentes por origen, significado o notas. Si no existe, crea una nueva etimología borrador directamente desde el formulario.
+- **Exportar a JSON**: genera un fichero `nuevos-toponimos.json` con los borradores en el formato del fichero de datos, listo para revisar e integrar.
+- Los borradores se guardan en `localStorage` del navegador.
+
 ## Ejecutar en local
 
 ```bash
-nvm use 18
+nvm use 18.19.1
 yarn install
 ```
 
-Crea `public/data.json` con tus datos (ver formato arriba). Este fichero no está versionado; cada instancia mantiene el suyo propio.
+Crea `public/toponyms.json` y `public/etymologies.json` con tus datos (ver formato arriba). Estos ficheros no están versionados; cada instancia mantiene los suyos propios.
 
 ```bash
 yarn start
@@ -69,13 +104,13 @@ La app queda disponible en `http://localhost:3000/toponimia-cantabria`.
 
 ### Variable de entorno opcional
 
-Crea `.env.local` si quieres apuntar a una URL externa para el fichero de datos:
+Crea `.env.local` si quieres apuntar a una URL externa para los ficheros de datos:
 
 ```
 REACT_APP_DATA_URL=https://ejemplo.com/mis-toponimos.json
 ```
 
-Por defecto usa `public/data.json` del mismo servidor.
+Por defecto usa `public/toponyms.json` del mismo servidor. El fichero de etimologías se busca en la misma ruta base sustituyendo `toponyms.json` por `etymologies.json`.
 
 ## Despliegue en GitHub Pages
 

@@ -175,7 +175,7 @@ export default class ResultsPage extends Component {
           </div>
         )}
 
-        <div className={`search-wrapper${this.state.hasSearched ? '' : ' search-centered'}`}>
+        <div className={`search-wrapper${this.state.hasSearched ? '' : ' search-centered'}${this.state.panelHash ? ' panel-open' : ''}`}>
           {multiSearch ? (
             <div className="search-row">
               <div className="search-chips-bar">
