@@ -188,120 +188,105 @@
       "name": "Llama Pando",
       "type": "point",
       "coordinates": "43.173888,-4.065801",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t028",
       "name": "Llama Redonda",
       "type": "point",
       "coordinates": "43.172934,-4.638801",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t029",
       "name": "Llama Timbre, La",
       "type": "point",
       "coordinates": "43.139712,-4.817808",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t030",
       "name": "Llama, Fuente la",
       "type": "point",
       "coordinates": "43.187476,-4.580019",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t031",
       "name": "Llama, La",
       "type": "point",
       "coordinates": "43.351057,-4.042931",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t032",
       "name": "Llama, La",
       "type": "point",
       "coordinates": "43.029209,-4.081233",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t033",
       "name": "Llama, Majada de la",
       "type": "point",
       "coordinates": "43.236881,-4.679691",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t034",
       "name": "Llama, Mies de la",
       "type": "point",
       "coordinates": "43.334287,-3.713011",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t035",
       "name": "Llama, Monte de la",
       "type": "point",
       "coordinates": "43.231690,-4.677618",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t036",
       "name": "Llamadoria",
       "type": "point",
       "coordinates": "43.186083,-4.581512",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t037",
       "name": "Llamas",
       "type": "point",
       "coordinates": "43.457264,-3.517088",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t038",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.205380,-3.802822",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t039",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.388306,-4.218624",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t040",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.077683,-4.383992",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t041",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.104364,-4.375162",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t042",
@@ -309,23 +294,24 @@
       "type": "point",
       "coordinates": "43.473646,-3.802135",
       "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-002"
+      "etymology_ids": [
+        "etym-t042",
+        "etym-t042b"
+      ]
     },
     {
       "hash": "t043",
       "name": "Llamas, Tres",
       "type": "point",
       "coordinates": "43.385678,-4.115112",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     },
     {
       "hash": "t044",
       "name": "Llamatán",
       "type": "point",
       "coordinates": "43.110292,-4.657413",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "etymology_id": "etym-001"
+      "tags": "feature:palatalization_l,etymology:romance"
     }
   ]
 }
