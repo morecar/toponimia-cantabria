@@ -52,7 +52,7 @@ class TopoRepository {
                 return this.database.filter(entry => evaluateExpression(entry, groups, true)).value()
             }
             try {
-                const re = RegExp(queryString, 'i')
+                const re = RegExp(`^${queryString}$`, 'i')
                 return this.database.filter(entry => re.test(entry.title)).value()
             } catch {
                 return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase())).value()

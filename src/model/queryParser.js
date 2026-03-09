@@ -51,7 +51,7 @@ export function evaluateExpression(entry, groups, useRegex) {
       if (term.type === 'tag') {
         matches = (entry.tags || []).includes(term.key)
       } else if (useRegex) {
-        try { matches = new RegExp(term.pattern, 'i').test(entry.title) }
+        try { matches = new RegExp(`^${term.pattern}$`, 'i').test(entry.title) }
         catch { matches = false }
       } else {
         matches = entry.title.toLowerCase().includes(term.pattern.toLowerCase())
