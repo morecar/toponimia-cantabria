@@ -1,6 +1,6 @@
 {
-  "short_name": "Toponomicón",
-  "name": "L'Unicurniu: Toponomicón",
+  "short_name": "Toponomasticon",
+  "name": "El Toponomasticon",
   "icons": [
     {
       "src": "favicon.png",
@@ -8,8 +8,8 @@
       "type": "image/png"
     },
     {
-      "src": "unicorn.png",
-      "sizes": "300x300",
+      "src": "logo192.png",
+      "sizes": "192x192",
       "type": "image/png"
     }
   ],

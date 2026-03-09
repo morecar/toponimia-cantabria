@@ -60,11 +60,7 @@ export default class CapturePage extends Component {
           }
           <LocationMarker onClick={this.registerLocation.bind(this)}/>
         </MapContainer>
-        <Navbar fixed="bottom"  bg="dark" expand="lg" variant="dark">
-          <Navbar.Brand>
-            <img src="./unicorn.png" alt="Icunu di unicurniu encabritáu"/>
-          </Navbar.Brand>          
-        </Navbar> */}
+        */}
       </Container>
     );
   }

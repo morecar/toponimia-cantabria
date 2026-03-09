@@ -1,6 +1,6 @@
 export const esp = 
 {
-    "brand_alt": "Imagen de cabeza de unicornio",
+    "brand_alt": "Logo del Toponomasticon",
 
     "search_placeholder": "Escribe tu búsqueda…",
     "search_regex_placeholder": "Búsqueda con regexp…",
