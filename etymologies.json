@@ -1,22 +1,25 @@
 {
   "data": [
     {
-      "id": "etym002",
-      "origin": "Latín FLAMMA",
-      "meaning": "llama, fuego; por extensión, terreno quemado o roza",
-      "notes": "[PRUEBA] Del latín flamma, con evolución regular fl- > ll- característica del romance cántabro. El topónimo designa probablemente un paraje obtenido mediante roza, práctica común en la colonización agraria medieval de la zona costera."
+      "id": "etym001",
+      "origin": "Del latín *LAMA*",
+      "meaning": "ciénaga, lodazal, terreno encharcado y arcilloso",
+      "notes": "El latín *LAMA* designaba la ciénaga, el lodazal y el terreno encharcado y arcilloso. La palabra existía ya en latín, aunque su origen último es incierto. Se documenta con profusión en la toponimia de toda la franja cantábrica con el sentido de terreno encharcado y arcilloso, no necesariamente bajo. La *L-* inicial evoluciona a *Ll-* por palatalización, rasgo característico del asturleonés.",
+      "tags": "etymology:latin"
     },
     {
-      "id": "etym001",
-      "origin": "Prelatino *LAMA",
-      "meaning": "terreno pantanoso, hondonada húmeda",
-      "notes": "Hipótesis alternativa que conecta el topónimo con la raíz prelatina *lama, presente en toda la franja cantábrica con el sentido de terreno bajo y encharcado. La palatalización inicial sería secundaria, por influjo del romance vecino."
+      "id": "etym004",
+      "origin": "Del latín *MESSIS*",
+      "meaning": "cosecha, mies; época de segar",
+      "notes": "Del latín *MESSIS* (cosecha, recolección, época de segar), derivado del verbo *metĕre* (segar, cosechar). Designa los cereales maduros listos para la siega y, por extensión, el campo sembrado. Da lugar al romance *mies*, presente en numerosos topónimos que señalan tierras de cultivo cerealista.",
+      "tags": "etymology:latin,feature:diphthongation_e,feature:apocope_e"
     },
     {
       "id": "etym003",
       "origin": "Latín ***SANCTI EMETERII***",
       "meaning": "«del santo Emeterio»; por elipsis de *monasterium*",
-      "notes": "Del genitivo latino **Sancti Emeterii**, con elisión del sustantivo *monasterium* y del segundo titular (*Sancti Celedoni*). La forma reconstruida *Monasterium Sancti Emeterii et Sancti Caledonii* evolucionó por síncopa y reducción consonántica:\n\n**Sancti Emetherii** → *Sanctemeter* → *Santemder* → *Sanctaender* → **Santander**\n\nEvolución fonética regular: pérdida del grupo **-ct-**, síncopa de la vocal postónica y sonorización de la dental intervocálica."
+      "notes": "Del genitivo latino **Sancti Emeterii**, con elisión del sustantivo *monasterium* y del segundo titular (*Sancti Celedoni*). La forma reconstruida *Monasterium Sancti Emeterii et Sancti Caledonii* evolucionó por síncopa y reducción consonántica:\n\n**Sancti Emetherii** → *Sanctemeter* → *Santemder* → *Sanctaender* → **Santander**\n\nEvolución fonética regular: pérdida del grupo **-ct-**, síncopa de la vocal postónica y sonorización de la dental intervocálica.",
+      "tags": "etymology:hagio,etymology:romance"
     }
   ]
 }

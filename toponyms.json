@@ -6,281 +6,188 @@
       "name": "Selaya",
       "type": "point",
       "coordinates": "43.216569472660105,-3.8070351717410533",
-      "tags": "etymology:romance,feature:lost_f",
-      "attestations": []
+      "tags": "feature:lost_f",
+      "attestations": [],
+      "etymology_ids": ""
     },
     "1": {
       "hash": "t023",
       "name": "Castru Valnera, el",
       "type": "point",
       "coordinates": "43.14545389316128,-3.6820701994074945",
-      "tags": "etymology:romance",
-      "attestations": []
+      "tags": "",
+      "attestations": [],
+      "etymology_ids": ""
     },
     "2": {
       "hash": "t027",
       "name": "Llama Pando",
       "type": "point",
       "coordinates": "43.173888,-4.065801",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": [
-        {
-          "year": 1210,
-          "source": "Becerro de las Behetrías",
-          "quote": "…in villa que dicitur Llama…",
-          "url": "",
-          "highlight": "Llama"
-        },
-        {
-          "year": 1404,
-          "source": "Archivo Catedral de Santander",
-          "quote": "…aldea de La Llama…",
-          "url": "",
-          "highlight": "La Llama"
-        }
-      ],
-      "etymology_ids": "etym001,etym002"
+      "tags": "feature:palatalization_l",
+      "attestations": [],
+      "etymology_ids": "etym001"
     },
     "3": {
       "hash": "t028",
       "name": "Llama Redonda",
       "type": "point",
       "coordinates": "43.172934,-4.638801",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": [
-        {
-          "year": 1587,
-          "source": "Catastro del Marqués de la Ensenada",
-          "quote": "…lugar de Llamas…",
-          "url": "",
-          "highlight": "Llamas"
-        }
-      ],
-      "etymology_ids": "etym001,etym002"
+      "tags": "feature:palatalization_l",
+      "attestations": [],
+      "etymology_ids": "etym001"
     },
     "4": {
       "hash": "t029",
       "name": "Llama Timbre, La",
       "type": "point",
       "coordinates": "43.139712,-4.817808",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "5": {
       "hash": "t030",
-      "name": "Llama, Fuente la",
+      "name": "Fuente la Llama",
       "type": "point",
       "coordinates": "43.187476,-4.580019",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "6": {
       "hash": "t031",
       "name": "Llama, La",
       "type": "point",
       "coordinates": "43.351057,-4.042931",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "7": {
       "hash": "t032",
       "name": "Llama, La",
       "type": "point",
       "coordinates": "43.029209,-4.081233",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "8": {
       "hash": "t033",
-      "name": "Llama, Majada de la",
+      "name": "Majada de la Llama",
       "type": "point",
       "coordinates": "43.236881,-4.679691",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "9": {
       "hash": "t034",
-      "name": "Llama, Mies de la",
+      "name": "Mies de la Llama",
       "type": "point",
       "coordinates": "43.334287,-3.713011",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym004,etym001"
     },
     "10": {
       "hash": "t035",
-      "name": "Llama, Monte de la",
+      "name": "Monte de la Llama",
       "type": "point",
       "coordinates": "43.231690,-4.677618",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "11": {
       "hash": "t036",
       "name": "Llamadoria",
       "type": "point",
       "coordinates": "43.186083,-4.581512",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "12": {
       "hash": "t037",
       "name": "Llamas",
       "type": "point",
       "coordinates": "43.457264,-3.517088",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "13": {
       "hash": "t038",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.205380,-3.802822",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "14": {
       "hash": "t039",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.388306,-4.218624",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "15": {
       "hash": "t040",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.077683,-4.383992",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "16": {
       "hash": "t041",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.104364,-4.375162",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "17": {
       "hash": "t042",
       "name": "Llamas, Las",
       "type": "point",
       "coordinates": "43.473646,-3.802135",
-      "tags": "feature:palatalization_l,etymology:romance",
-      "attestations": [
-        {
-          "year": 1210,
-          "source": "Becerro Gótico de Santillana",
-          "quote": "…et in villa que dicitur Llamas iuxta mare…",
-          "url": "https://bibliotecavirtual.cantabria.es/",
-          "highlight": "Llamas"
-        },
-        {
-          "year": 1351,
-          "source": "Becerro de las Behetrías",
-          "quote": "Las Llamas, aldea en Asturias de Santillana; behetría de Gonzalo Ruiz de la Vega.",
-          "url": "https://pares.mcu.es/",
-          "highlight": "Las Llamas"
-        },
-        {
-          "year": 1752,
-          "source": "Catastro del Marqués de la Ensenada",
-          "quote": "Lugar de Las Llamas, jurisdicción de Santillana del Mar, con veinte y tres vecinos.",
-          "url": "",
-          "highlight": "Las Llamas"
-        }
-      ],
-      "etymology_ids": "etym001,etym002"
+      "tags": "feature:palatalization_l",
+      "attestations": [],
+      "etymology_ids": "etym001"
     },
     "18": {
       "hash": "t043",
-      "name": "Llamas, Tres",
+      "name": "Tres Llamas",
       "type": "point",
       "coordinates": "43.385678,-4.115112",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "19": {
       "hash": "t044",
       "name": "Llamatán",
       "type": "point",
       "coordinates": "43.110292,-4.657413",
-      "tags": "feature:palatalization_l,etymology:romance",
+      "tags": "feature:palatalization_l",
       "attestations": [],
-      "etymology_ids": "etym001,etym002"
+      "etymology_ids": "etym001"
     },
     "20": {
       "hash": "t045",
       "name": "Santander",
       "type": "point",
       "coordinates": "43.4623,-3.8099",
-      "tags": "etymology:hagio,etymology:romance",
-      "attestations": [
-        {
-          "year": 1068,
-          "source": "Privilegio de Sancho II al obispo de Oca (catedral de Burgos)",
-          "quote": "…pascua et ligna… et in porto Sancti Emetherii …",
-          "url": "",
-          "highlight": "Sancti Emetherii"
-        },
-        {
-          "year": 1187,
-          "source": "Fuero de Santander, Alfonso VIII",
-          "quote": "…facio carta donationis et institutionis fororum… uobis concilio ville Sancti Emetherii … dono itaque uobis et concedo villam Sancti Emetherii in habitationem…",
-          "url": "",
-          "highlight": "Sancti Emetherii"
-        },
-        {
-          "year": 1188,
-          "source": "Documentación diplomática, catedral de Burgos",
-          "quote": "…decimas portatici in Portus Sancti Anderii …",
-          "url": "https://toponhisp.org/node/4821",
-          "highlight": "Sancti Anderii"
-        },
-        {
-          "year": 1192,
-          "source": "Cartulario de Burgos (DCBurgos)",
-          "quote": "…decimas de omni portatico portus Sancti Emetherii …",
-          "url": "https://toponhisp.org/node/4821",
-          "highlight": "Sancti Emetherii"
-        },
-        {
-          "year": 1195,
-          "source": "Cartulario de Santa María de las Huelgas / CarPias",
-          "quote": "…Don Pedro de Sanctaender …",
-          "url": "https://toponhisp.org/node/4821",
-          "highlight": "Sanctaender"
-        },
-        {
-          "year": 1352,
-          "source": "Becerro de las Behetrías de Castilla",
-          "quote": "…Sant Ander. Este logar es del rey …",
-          "url": "https://toponhisp.org/node/4821",
-          "highlight": "Sant Ander"
-        },
-        {
-          "year": 1475,
-          "source": "Archivo General de Simancas",
-          "quote": "…vecinos de la villa de Sant Ander …",
-          "url": "https://toponhisp.org/node/4821",
-          "highlight": "Sant Ander"
-        }
-      ],
+      "tags": "",
+      "attestations": [],
       "etymology_ids": "etym003"
     }
   }
