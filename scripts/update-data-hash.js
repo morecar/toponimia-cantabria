@@ -10,7 +10,7 @@ const path = require('path')
 const hashPath = path.join(__dirname, '../public/data-hash.json')
 
 // git ls-tree prints: <mode> blob <sha>\t<path>
-const line = execSync('git ls-tree origin/data data.json').toString().trim()
+const line = execSync('git ls-tree origin/data toponyms.json').toString().trim()
 const hash = line.split(/\s+/)[2].slice(0, 12)
 
 fs.writeFileSync(hashPath, JSON.stringify({ hash }) + '\n')
