@@ -507,15 +507,126 @@ body { padding-top: 60px; }
   outline: none;
 }
 
-.settings-panel {
+/* ── Nav menu ─────────────────────────────────────────────────────── */
+.nav-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1044;
+  background: transparent;
+}
+
+.nav-menu {
   position: fixed;
   top: 56px;
-  left: 0;
   right: 0;
-  background-color: #2c3034;
+  width: 260px;
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+  background: #2c3034;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 1045;
+}
+
+.nav-menu-items {
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0;
+}
+
+.nav-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 0.9rem 1.25rem;
+  text-align: left;
+  color: #dee2e6;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nav-menu-item:last-child { border-bottom: none; }
+.nav-menu-item:hover { background: #343a40; }
+
+.nav-menu-chevron {
+  color: #6c757d;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* ── Settings side panel ─────────────────────────────────────────── */
+.settings-side-panel {
+  position: fixed;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  background: #2c3034;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  z-index: 1029;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-side-inner {
+  overflow-y: auto;
+  flex: 1;
+  padding: 1rem 1.25rem;
+  position: relative;
+}
+
+.settings-side-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #dee2e6;
+  margin: 0 0 1rem 0;
+  padding-right: 2rem;
+}
+
+.settings-side-footer {
   border-top: 1px solid rgba(255,255,255,0.1);
-  padding: 0 1rem;
-  z-index: 1030;
+  padding: 0.75rem 1.25rem;
+}
+
+.settings-side-inner .topo-detail-close { color: #6c757d; }
+.settings-side-inner .topo-detail-close:hover { color: #dee2e6; }
+
+.settings-side-inner .settings-form .row { flex-direction: column; }
+.settings-side-inner .settings-form [class*="col-"] { width: 100%; max-width: 100%; flex: none; }
+
+@media (max-width: 991px) {
+  .settings-side-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80vh;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    animation: slideInUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@media (max-width: 991px) {
+  .nav-menu-backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .nav-menu {
+    top: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 320px;
+    max-height: none;
+    border-bottom: none;
+    animation: slideInRight 0.22s ease;
+  }
 }
 
 .settings-form {
@@ -727,11 +838,11 @@ a.topo-tag-link:hover {
 /* ── Etymology Index Page ───────────────────────────────────────────────── */
 .etym-route {
   min-height: 100vh;
-  background: #0f172a;
+  background: #212529;
 }
 .etym-route .navbar {
-  background: #0f172a !important;
-  border-bottom: 1px solid #1e293b;
+  background: #212529 !important;
+  border-bottom: none;
   box-shadow: none;
 }
 
@@ -745,7 +856,7 @@ a.topo-tag-link:hover {
 .etym-page-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #dee2e6;
   margin: 0;
 }
 
@@ -771,8 +882,8 @@ a.topo-tag-link:hover {
   width: 100%;
   max-width: 760px;
   padding: 0.5rem 1rem;
-  background: #0f172a;
-  border-bottom: 1px solid #1e293b;
+  background: #212529;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   z-index: 1050;
 }
 
@@ -804,16 +915,16 @@ a.topo-tag-link:hover {
 .etym-search-input {
   flex: 1;
   min-width: 0;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #343a40;
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 2rem;
-  color: #f1f5f9;
+  color: #dee2e6;
   padding: 0.4rem 0.9rem;
   font-size: 0.9rem;
   outline: none;
 }
-.etym-search-input::placeholder { color: #64748b; }
-.etym-search-input:focus { border-color: #475569; }
+.etym-search-input::placeholder { color: #6c757d; }
+.etym-search-input:focus { border-color: rgba(255,255,255,0.3); }
 
 .etym-scope-toggle {
   display: flex;
@@ -822,9 +933,9 @@ a.topo-tag-link:hover {
 }
 
 .etym-scope-btn {
-  background: #1e293b;
-  color: #94a3b8;
-  border: 1px solid #334155;
+  background: #343a40;
+  color: #adb5bd;
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 999px;
   padding: 0.3rem 0.75rem;
   font-size: 0.78rem;
@@ -834,13 +945,13 @@ a.topo-tag-link:hover {
 }
 .etym-scope-btn.active,
 .etym-scope-btn:hover {
-  background: #334155;
-  color: #f1f5f9;
+  background: #495057;
+  color: #dee2e6;
 }
 
 .etym-count-line {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #6c757d;
   margin: 0;
 }
 
@@ -858,10 +969,10 @@ a.topo-tag-link:hover {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #475569;
+  color: #6c757d;
   margin: 0 0 0.6rem 0;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .etym-section-list {
@@ -874,8 +985,8 @@ a.topo-tag-link:hover {
 }
 
 .etym-card {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #2c3034;
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
   padding: 1rem 1.125rem;
 }
@@ -886,7 +997,7 @@ a.topo-tag-link:hover {
   justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 0.25rem;
-  color: #f1f5f9;
+  color: #dee2e6;
   font-size: 1rem;
   font-weight: 600;
 }
@@ -902,21 +1013,21 @@ a.topo-tag-link:hover {
 
 .etym-card-count {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #6c757d;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .etym-card-meaning {
   font-size: 0.88rem;
-  color: #94a3b8;
+  color: #adb5bd;
   font-style: italic;
   margin-bottom: 0.5rem;
 }
 
 .etym-card-notes {
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: #ced4da;
   margin-bottom: 0.5rem;
 }
 
@@ -937,25 +1048,25 @@ a.topo-tag-link:hover {
 
 .etym-card-refs-label {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #6c757d;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-right: 0.1rem;
 }
 
 .etym-ref-chip {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #343a40;
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 999px;
-  color: #93c5fd;
+  color: #74c0fc;
   font-size: 0.82rem;
   padding: 0.15rem 0.65rem;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
 .etym-ref-chip:hover {
-  background: #273548;
-  border-color: #60a5fa;
+  background: #495057;
+  border-color: #74c0fc;
 }
 .etym-ref-chip p { margin: 0; display: inline; }
 
@@ -969,16 +1080,42 @@ a.topo-tag-link:hover {
   background: none;
   border: none;
   padding: 0 0 0 0.3em;
-  color: #64748b;
+  color: #6c757d;
   cursor: pointer;
   font-size: 0.8em;
   line-height: 1;
   vertical-align: middle;
 }
-.etym-goto-btn:hover { color: #93c5fd; }
+.etym-goto-btn:hover { color: #74c0fc; }
+
+/* ── Toponym index cards ─────────────────────────────────────────── */
+.topo-index-card {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.topo-index-card:hover { background: #343a40; }
+
+.topo-index-name {
+  flex: 1;
+  color: #dee2e6;
+}
+
+.topo-index-type {
+  font-size: 0.7rem;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #adb5bd;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.topo-index-type--point { border-color: #2563eb; color: #60a5fa; }
+.topo-index-type--line  { border-color: #16a34a; color: #4ade80; }
+.topo-index-type--poly  { border-color: #7c3aed; color: #a78bfa; }
 
 .etym-empty {
-  color: #64748b;
+  color: #6c757d;
   font-size: 0.9rem;
   text-align: center;
   padding: 2rem 0;
@@ -1074,7 +1211,7 @@ a.topo-tag-link:hover {
   top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  background: #0f172a;
+  background: #212529;
   z-index: 100;
   overflow-y: auto;
 }
@@ -1085,7 +1222,7 @@ a.topo-tag-link:hover {
 }
 
 .about-hero {
-  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+  background: linear-gradient(160deg, #343a40 0%, #212529 100%);
   padding: 3.5rem 1.5rem 3rem;
   text-align: center;
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -1102,7 +1239,7 @@ a.topo-tag-link:hover {
   font-size: clamp(1.9rem, 5vw, 3rem);
   font-family: 'Cinzel Decorative', serif;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #dee2e6;
   line-height: 1.15;
   letter-spacing: 0.02em;
   margin-bottom: 1rem;
@@ -1110,7 +1247,7 @@ a.topo-tag-link:hover {
 
 .about-hero-sub {
   font-size: 1.05rem;
-  color: #94a3b8;
+  color: #adb5bd;
   max-width: 540px;
   margin: 0 auto;
   line-height: 1.6;
@@ -1128,29 +1265,29 @@ a.topo-tag-link:hover {
 
 .about-lead {
   font-size: 1.05rem;
-  color: #cbd5e1;
+  color: #ced4da;
   line-height: 1.75;
 }
 
 .about-content p {
-  color: #94a3b8;
+  color: #adb5bd;
   line-height: 1.75;
   margin-bottom: 0.9rem;
 }
 
 .about-content a {
-  color: #60a5fa;
+  color: #74c0fc;
   text-decoration: none;
 }
-.about-content a:hover { text-decoration: underline; color: #93c5fd; }
+.about-content a:hover { text-decoration: underline; color: #a5d8ff; }
 
-.about-content strong { color: #cbd5e1; }
-.about-content em { color: #94a3b8; }
+.about-content strong { color: #ced4da; }
+.about-content em { color: #adb5bd; }
 
 .about-h2 {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #e2e8f0;
+  color: #dee2e6;
   margin-bottom: 1rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -1161,7 +1298,7 @@ a.topo-tag-link:hover {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: #64748b;
+  color: #6c757d;
   margin-bottom: 0.6rem;
   margin-top: 1.5rem;
 }
@@ -1176,7 +1313,7 @@ a.topo-tag-link:hover {
 }
 
 .about-rules li {
-  color: #94a3b8;
+  color: #adb5bd;
   line-height: 1.65;
   padding-left: 1.2rem;
   position: relative;
@@ -1186,7 +1323,7 @@ a.topo-tag-link:hover {
   content: '·';
   position: absolute;
   left: 0;
-  color: #475569;
+  color: #6c757d;
   font-weight: 700;
 }
 
@@ -1198,8 +1335,8 @@ a.topo-tag-link:hover {
 }
 
 .about-section--contact {
-  background: rgba(96, 165, 250, 0.05);
-  border: 1px solid rgba(96, 165, 250, 0.12);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 0.75rem;
   padding: 1.5rem;
 }

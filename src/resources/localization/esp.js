@@ -3,6 +3,17 @@ export const esp =
     "brand_alt": "Logo del Toponomasticon",
 
     "nav_etymologies": "Índice de étimos",
+    "nav_toponyms": "Índice de topónimos",
+    "nav_settings": "Configuración",
+    "nav_back": "Volver",
+
+    "toponyms_title": "Índice de topónimos",
+    "toponyms_search_placeholder": "Buscar topónimo…",
+    "toponyms_result_singular": "topónimo",
+    "toponyms_result_plural": "topónimos",
+    "toponyms_type_point": "Puntual",
+    "toponyms_type_line": "Lineal",
+    "toponyms_type_poly": "Zonal",
 
     "etymologies_title": "Índice de étimos",
     "etymologies_search_placeholder": "Buscar en etimologías…",

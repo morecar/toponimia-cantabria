@@ -5,11 +5,12 @@ import {Container, Navbar} from 'react-bootstrap';
 import {List} from 'react-bootstrap-icons';
 
 import SearchBar from './SearchBar'
-import SettingsPopover from './SettingsPopover'
+import NavMenu from './NavMenu'
+import SettingsPanel from './SettingsPanel'
 import ResultsMap from './ResultsMap';
 import TopoDetailPanel from './TopoDetailPanel'
 
-import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_BACKOFFICE, ROUTE_ABOUT, ROUTE_ETYMOLOGIES } from '../resources/routes'
+import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_ABOUT, ROUTE_ETYMOLOGIES, ROUTE_TOPONYMS } from '../resources/routes'
 
 const QUERY_COLORS = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed']
 const MAX_QUERIES = 4
@@ -36,6 +37,7 @@ export default class ResultsPage extends Component {
       queries: initialQueries.map((q, i) => ({ id: i + 1, ...q, color: QUERY_COLORS[i % QUERY_COLORS.length] })),
       nextId: initialQueries.length + 1,
       showSettings: false,
+      showSettingsPanel: false,
       hasSearched: anyQuery,
       displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && anyQuery),
       displayTitle: (props.config.resultsTitle === 'always') || (props.config.resultsTitle === 'search' && anyQuery),
@@ -172,28 +174,28 @@ export default class ResultsPage extends Component {
           </button>
         </Navbar>
         {this.state.showSettings && (
-          <div className="settings-panel">
-            <SettingsPopover
-              onSettingsUpdated={this.handleSettingsUpdated.bind(this)}
-              config={this.props.config}
-              loc={this.props.loc}
-            />
-            <div className="settings-backoffice-link">
-              <span className="settings-author">
-                Creado por <a href="https://github.com/morecar" target="_blank" rel="noopener noreferrer" className="settings-author-link">morecar</a>
-                {' | '}
-                <button className="settings-toggle settings-backoffice-btn settings-inline-btn"
-                  onClick={() => this.props.history(ROUTE_ETYMOLOGIES)}>
-                  {this.props.loc.get('nav_etymologies')}
-                </button>
-                {' | '}
-                <button className="settings-toggle settings-backoffice-btn settings-inline-btn"
-                  onClick={() => this.props.history(ROUTE_ABOUT)}>
-                  Sobre el proyecto
-                </button>
-              </span>
-            </div>
-          </div>
+          <NavMenu
+            loc={this.props.loc}
+            onClose={() => this.setState({ showSettings: false })}
+            onNavigate={route => {
+              if (route === 'etymologies') this.props.history(ROUTE_ETYMOLOGIES)
+              else if (route === 'toponyms') this.props.history(ROUTE_TOPONYMS)
+              else if (route === 'about') this.props.history(ROUTE_ABOUT)
+            }}
+            onOpenSettings={() => this.setState({ showSettingsPanel: true })}
+          />
+        )}
+        {this.state.showSettingsPanel && (
+          <SettingsPanel
+            loc={this.props.loc}
+            config={this.props.config}
+            onSettingsUpdated={this.handleSettingsUpdated.bind(this)}
+            onClose={() => this.setState({ showSettingsPanel: false })}
+            onNavigate={route => {
+              this.setState({ showSettingsPanel: false })
+              if (route === 'about') this.props.history(ROUTE_ABOUT)
+            }}
+          />
         )}
 
         <div className={`search-wrapper${this.state.hasSearched ? '' : ' search-centered'}${this.state.panelHash ? ' panel-open' : ''}`}>
