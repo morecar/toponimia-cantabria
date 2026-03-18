@@ -839,6 +839,8 @@ a.topo-tag-link:hover {
 .etym-route {
   min-height: 100vh;
   background: #212529;
+  margin-top: -60px;
+  padding-top: 60px;
 }
 .etym-route .navbar {
   background: #212529 !important;
@@ -883,8 +885,12 @@ a.topo-tag-link:hover {
   max-width: 760px;
   padding: 0.5rem 1rem;
   background: #212529;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
   z-index: 1050;
+}
+@media (min-width: 992px) {
+  .etym-search-bar {
+    background: #1c2127;
+  }
 }
 
 @media (max-width: 991px) {
@@ -1092,7 +1098,8 @@ a.topo-tag-link:hover {
 .topo-index-card {
   cursor: pointer;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
 }
 .topo-index-card:hover { background: #343a40; }
 
@@ -1120,6 +1127,89 @@ a.topo-tag-link:hover {
   text-align: center;
   padding: 2rem 0;
   list-style: none;
+}
+
+/* ── Column background (desktop) ─────────────────────────────────── */
+@media (min-width: 992px) {
+  .etym-route {
+    background:
+      linear-gradient(to bottom, #0e1013 116px, transparent 116px),
+      linear-gradient(to right,
+        #0e1013 calc(50% - 380px),
+        #1c2127 calc(50% - 380px),
+        #1c2127 calc(50% + 380px),
+        #0e1013 calc(50% + 380px)
+      );
+  }
+  .etym-route .navbar {
+    background: #0e1013 !important;
+  }
+}
+
+/* ── Tags in toponym list cards ──────────────────────────────────── */
+.topo-index-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.tag-chip--sm {
+  font-size: 0.65rem !important;
+  padding: 0.1em 0.45em !important;
+}
+
+/* ── Toponym index detail view ───────────────────────────────────── */
+.etym-page--detail {
+  padding-top: 80px;
+}
+.topo-index-detail-hero {
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+}
+.topo-index-detail-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e2328;
+  margin: 0 0 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 3px solid #2563eb;
+  display: inline-block;
+}
+.topo-index-detail-map {
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.topo-index-detail-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.topo-index-detail-map-link {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.topo-index-open-map-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #adb5bd;
+  border-radius: 999px;
+  padding: 0.35em 1.1em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.topo-index-open-map-btn:hover {
+  border-color: rgba(255,255,255,0.5);
+  color: #dee2e6;
+}
+.topo-detail-empty {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-style: italic;
+  margin: 0;
 }
 
 @media (max-width: 991px) {

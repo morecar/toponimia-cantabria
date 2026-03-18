@@ -6,6 +6,7 @@ export default function ToponymsRoute(props) {
   return (
     <ToponymsPage
       repository={props.repository}
+      etymologyStore={props.etymologyStore}
       loc={props.loc}
       onBack={() => navigate(-1)}
     />

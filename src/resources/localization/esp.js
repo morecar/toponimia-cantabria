@@ -49,7 +49,8 @@ export const esp =
     "panel_etymology": "Etimología",
     "panel_origin": "Origen",
     "panel_meaning": "Significado",
-    "panel_attestations": "Atestaciones históricas",
+    "panel_attestations": "Historia de usos",
+    "panel_attestations_empty": "Sin atestaciones registradas.",
     "panel_source_link": "Ver fuente",
     "panel_tags": "Etiquetas",
     "tag_category_class": "Clase",
@@ -57,6 +58,7 @@ export const esp =
     "tag_category_feature": "Fenómeno lingüístico",
     "tag_category_status": "Estado",
     "panel_no_data": "Sin datos adicionales.",
+    "panel_open_map": "Ver en el mapa",
 
     "settings_category_other": "Otros",
     "toogle_search_regex": "Búsqueda con regex", 
