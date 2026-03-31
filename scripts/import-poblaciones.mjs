@@ -13,10 +13,14 @@ import path from 'path'
 import https from 'https'
 
 const ARCGIS_URL = 'https://services-eu1.arcgis.com/nA3ZoO5T3PsqLUnE/arcgis/rest/services/Toponimia_de_Cantabria_Registro_Principal/FeatureServer/0/query'
-// Exclude municipal districts (2.1.7, purely administrative)
-// and urban barrios of Santander (2.1.8 + MUNICIPIO='075') — modern housing estates, not traditional toponyms
-// Rural barrios (2.1.8) in other municipalities are valid toponyms and are included
-const WHERE = "CLASIFICACION_SECUNDARIA='2.1' AND CODIGO_NGBE <> '2.1.7' AND NOT (CODIGO_NGBE='2.1.8' AND MUNICIPIO='075')"
+// Include only quality settlement categories:
+//   2.1.3 = municipalities/main villages (núcleos principales)
+//   2.1.4 = hamlets and smaller named settlements
+//   2.1.5 = small entities
+//   2.1.6 = compound/associated entities
+//   2.1.9 = dispersed settlements (aldeas, diseminados)
+// Excluded: 2.1.7 (administrative districts), 2.1.8 (barrios), 2.1.1/2.1.2/2.1.10 (very few, low value)
+const WHERE = "CLASIFICACION_SECUNDARIA='2.1' AND CODIGO_NGBE IN ('2.1.3','2.1.4','2.1.5','2.1.6','2.1.9')"
 const PAGE_SIZE = 2000
 
 const MUNICIPALITIES = {
@@ -68,7 +72,7 @@ async function fetchPage(offset) {
   const params = new URLSearchParams({
     f: 'json',
     where: WHERE,
-    outFields: 'OBJECTID,IDENTIFICADOR_GEOGRAFICO,MUNICIPIO,TIPO,OBSERVACIONES_PUB',
+    outFields: 'OBJECTID,IDENTIFICADOR_GEOGRAFICO,MUNICIPIO,TIPO,CODIGO_NGBE,OBSERVACIONES_PUB',
     returnGeometry: 'true',
     outSR: '4326',
     resultOffset: offset,
@@ -233,21 +237,22 @@ async function main() {
       csvEscape(f.geometry?.x?.toFixed(6) ?? ''),
       csvEscape(municipality),
       csvEscape(TIPO_LABEL[a.TIPO] ?? a.TIPO ?? ''),
+      csvEscape(a.CODIGO_NGBE ?? ''),
       csvEscape(source),
       csvEscape(date),
       csvEscape(a.OBJECTID),
     ]
   })
 
-  const header = ['name', 'lat', 'lng', 'municipality', 'ngbe_type', 'source', 'date', 'arcgis_objectid']
+  const header = ['name', 'lat', 'lng', 'municipality', 'ngbe_type', 'ngbe_code', 'source', 'date', 'arcgis_objectid']
   const csv = [header, ...rows].map(r => r.join(',')).join('\n')
 
   const outPath = path.resolve(process.cwd(), outFile)
   fs.writeFileSync(outPath, csv, 'utf8')
   console.log(`\nSaved to: ${outPath}`)
 
-  const withLoc = rows.filter(r => r[5]?.includes('loc=')).length
-  const withSearch = rows.filter(r => r[5]?.includes('txtBusqueda')).length
+  const withLoc = rows.filter(r => r[6]?.includes('loc=')).length
+  const withSearch = rows.filter(r => r[6]?.includes('txtBusqueda')).length
   console.log(`PARES: ${withLoc} direct loc links, ${withSearch} search links`)
 }
 

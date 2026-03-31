@@ -37,10 +37,72 @@ function makePieIcon(colors, size = 'medium') {
   })
 }
 
+// House-shaped icon for human settlements
+function makeSettlementIcon(colors, size = 'medium') {
+  const scale = MARKER_RADII[size] || 5
+  const s = scale * 2.2  // overall scale unit
+  const w = s * 2, h = s * 2.2
+  const pad = 2
+  const tw = w + pad * 2, th = h + pad * 2
+  const color = colors[0] || '#2563eb'
+  // House: peaked roof triangle + square body
+  const roofH = h * 0.45
+  const bodyH = h * 0.58
+  const bodyY = pad + roofH - 2
+  const bx = pad, by = bodyY
+  const bw = w, bh = bodyH
+  // Roof points: apex, right, left
+  const rx = pad + w / 2, ry = pad
+  const rl = pad, rr = pad + w
+  const rb = pad + roofH
+  return L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="${tw}" height="${th}" viewBox="0 0 ${tw} ${th}">
+      <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="1" fill="${color}" stroke="white" stroke-width="1.2"/>
+      <polygon points="${rl},${rb} ${rr},${rb} ${rx},${ry}" fill="${color}" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
+    </svg>`,
+    className: '',
+    iconSize: [tw, th],
+    iconAnchor: [tw / 2, th - pad],
+    popupAnchor: [0, -(th - pad)],
+  })
+}
+
+// Mountain/peak icon for orographic features
+function makeMountainIcon(colors, size = 'medium') {
+  const scale = MARKER_RADII[size] || 5
+  const s = scale * 2.2
+  const w = s * 2.4, h = s * 1.8
+  const pad = 2
+  const tw = w + pad * 2, th = h + pad * 2
+  const color = colors[0] || '#2563eb'
+  // Two overlapping triangles (mountain silhouette)
+  const bx = pad, by = pad + h, bw = w
+  // Main peak
+  const p1 = `${pad},${pad + h} ${pad + w / 2},${pad} ${pad + w},${pad + h}`
+  // Secondary peak (left)
+  const p2 = `${pad},${pad + h} ${pad + w * 0.3},${pad + h * 0.4} ${pad + w * 0.6},${pad + h}`
+  return L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="${tw}" height="${th}" viewBox="0 0 ${tw} ${th}">
+      <polygon points="${p2}" fill="${color}" opacity="0.7"/>
+      <polygon points="${p1}" fill="${color}" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
+    </svg>`,
+    className: '',
+    iconSize: [tw, th],
+    iconAnchor: [tw / 2, th - pad],
+    popupAnchor: [0, -(th - pad)],
+  })
+}
+
+function pickIcon(tags, colors, size) {
+  if (tags && tags.includes('meta_category:settlement')) return makeSettlementIcon(colors, size)
+  if (tags && tags.includes('meta_category:mountain')) return makeMountainIcon(colors, size)
+  return makePieIcon(colors, size)
+}
+
 export default function MapMarker(props) {
   const colors = props.colors || [props.color || '#2563eb']
   return (
-    <Marker position={props.position} icon={makePieIcon(colors, props.markerSize)}>
+    <Marker position={props.position} icon={pickIcon(props.tags, colors, props.markerSize)}>
       <Popup>
         <button className="topo-popup-link" onClick={() => props.onMarkerClick(props.hash)}>
           {props.title}

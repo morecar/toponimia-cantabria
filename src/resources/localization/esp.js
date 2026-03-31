@@ -57,7 +57,18 @@ export const esp =
     "tag_category_etymology": "Etimología",
     "tag_category_feature": "Fenómeno lingüístico",
     "tag_category_municipality": "Municipio",
+    "tag_category_meta_category": "Categoría",
+    "tag_category_arcgis": "Clasificación NGBE",
     "tag_category_status": "Estado",
+
+    "tag_meta_category:settlement": "Asentamiento",
+    "tag_meta_category:mountain": "Montaña",
+
+    "tag_arcgis:2_1_3": "Núcleo principal",
+    "tag_arcgis:2_1_4": "Aldea",
+    "tag_arcgis:2_1_5": "Entidad menor",
+    "tag_arcgis:2_1_6": "Entidad compuesta",
+    "tag_arcgis:2_1_9": "Diseminado",
     "panel_no_data": "Sin datos adicionales.",
     "panel_open_map": "Ver en el mapa",
 

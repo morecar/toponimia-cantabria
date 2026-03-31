@@ -4,7 +4,8 @@
  *
  * Usage:
  *   node scripts/merge-arcgis.mjs
- *   node scripts/merge-arcgis.mjs --dry-run   (preview only, no file write)
+ *   node scripts/merge-arcgis.mjs --dry-run    (preview only, no file write)
+ *   node scripts/merge-arcgis.mjs --clean       (remove existing arc* entries first)
  */
 
 import fs from 'fs'
@@ -18,9 +19,22 @@ const TOPONYMS_FILE = path.join(ROOT, 'public/toponyms.json')
 const CSV_FILE = path.join(ROOT, 'poblaciones.csv')
 
 const dryRun = process.argv.includes('--dry-run')
+const clean = process.argv.includes('--clean')
 
 // --- Load existing data ---
 const existing = JSON.parse(fs.readFileSync(TOPONYMS_FILE, 'utf8'))
+
+if (clean) {
+  const before = Object.keys(existing.data).length
+  const cleaned = {}
+  let idx = 0
+  for (const v of Object.values(existing.data)) {
+    if (!v.hash.startsWith('arc')) cleaned[idx++] = v
+  }
+  existing.data = cleaned
+  console.log(`--clean: removed ${before - idx} arc* entries (${idx} remaining)`)
+}
+
 const entries = Object.values(existing.data)
 const existingNames = new Set(entries.map(e => e.name))
 console.log(`Existing toponyms: ${entries.length}`)
@@ -94,14 +108,19 @@ for (const row of rows) {
   if (existingNames.has(name)) { skipped.push(name); continue }
 
   const municipality = row[col('municipality')]
+  const ngbeCode = row[col('ngbe_code')] || ''
   const objectId = row[col('arcgis_objectid')]
+
+  const tagParts = ['meta_category:settlement']
+  if (municipality) tagParts.push(`municipality:${municipality.toLowerCase().replace(/\s+/g, '_')}`)
+  if (ngbeCode) tagParts.push(`arcgis:${ngbeCode.replace(/\./g, '_')}`)
 
   newEntries.push({
     hash: `arc${objectId}`,
     name,
     type: 'point',
     coordinates: `${lat},${lng}`,
-    tags: municipality ? `municipality:${municipality.toLowerCase().replace(/\s+/g, '_')}` : '',
+    tags: tagParts.join(','),
     attestations: [],
     etymology_ids: '',
   })
