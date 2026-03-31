@@ -40,7 +40,7 @@ function makePieIcon(colors, size = 'medium') {
 // House-shaped icon for human settlements
 function makeSettlementIcon(colors, size = 'medium') {
   const scale = MARKER_RADII[size] || 5
-  const s = scale * 2.2  // overall scale unit
+  const s = scale * 1.3  // keep close to the circle marker footprint
   const w = s * 2, h = s * 2.2
   const pad = 2
   const tw = w + pad * 2, th = h + pad * 2
