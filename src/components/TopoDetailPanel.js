@@ -1,4 +1,5 @@
 import Markdown from 'react-markdown'
+import React from 'react'
 
 function HighlightedQuote({ quote, highlight }) {
   if (!highlight) return <>{quote}</>
@@ -34,6 +35,12 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
         <button className="topo-detail-close" onClick={onClose} aria-label="Cerrar">×</button>
 
         <h2 className="topo-detail-title">{topo.title}</h2>
+
+        {topo.notes && (
+          <div className="topo-detail-notes topo-detail-topo-notes">
+            <Markdown>{topo.notes}</Markdown>
+          </div>
+        )}
 
         {etymologies.length > 0 && (
           <section className="topo-detail-section">

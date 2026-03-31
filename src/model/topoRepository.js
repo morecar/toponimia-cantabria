@@ -21,6 +21,7 @@ async function reloadLocalDatabase(newHash, rows) {
         tags: row.tags ? row.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
         etymology_ids: row.etymology_ids ? String(row.etymology_ids).split(',').map(s => s.trim()) : [],
         attestations: row.attestations || [],
+        notes: row.notes || '',
     }))
     localStorage.setItem("localIndex", JSON.stringify(remotedb))
     localStorage.setItem("localIndexHash", newHash)

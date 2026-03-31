@@ -61,6 +61,11 @@ function TopoIndexDetail({ hash, repository, etymologyStore, loc, onNavigateToEt
         <div className="topo-index-detail-hero">
           <h2 className="topo-index-detail-title">{topo.title}</h2>
         </div>
+        {topo.notes && (
+          <div className="topo-detail-notes topo-detail-topo-notes">
+            <Markdown>{topo.notes}</Markdown>
+          </div>
+        )}
         {etymologies.length > 0 && (
           <section className="topo-detail-section">
             <h3 className="topo-detail-section-title">{loc.get('panel_etymology')}</h3>
