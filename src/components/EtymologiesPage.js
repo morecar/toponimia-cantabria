@@ -157,7 +157,7 @@ export default function EtymologiesPage({ etymologyStore, repository, loc, onBac
                         <div className="etym-card-tags">
                           {tags.map(tag => (
                             <span key={tag} className={`tag-chip ${tagCategoryClass(tag)}`}>
-                              {loc.get(`tag_${tag}`) || tag}
+                              {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
                             </span>
                           ))}
                         </div>

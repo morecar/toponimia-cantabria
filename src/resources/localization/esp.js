@@ -56,6 +56,7 @@ export const esp =
     "tag_category_class": "Clase",
     "tag_category_etymology": "Etimología",
     "tag_category_feature": "Fenómeno lingüístico",
+    "tag_category_municipality": "Municipio",
     "tag_category_status": "Estado",
     "panel_no_data": "Sin datos adicionales.",
     "panel_open_map": "Ver en el mapa",

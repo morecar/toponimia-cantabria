@@ -112,7 +112,7 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                         rel="noopener noreferrer"
                         className={`tag-chip ${tagCategoryClass(tag)} topo-tag-link`}
                       >
-                        {loc.get(`tag_${tag}`) || tag}
+                        {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
                       </a>
                     ))}
                   </div>

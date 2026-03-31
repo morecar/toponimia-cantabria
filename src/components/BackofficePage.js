@@ -69,7 +69,7 @@ function TagInput({ tags, knownTags, loc, onChange }) {
       <div className="bo-tag-chips">
         {tags.map(tag => (
           <span key={tag} className="bo-tag-chip" style={{ background: tagColor(tag) }}>
-            {loc.get(`tag_${tag}`) || tag}
+            {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
             <button className="bo-tag-chip-remove" onClick={() => onChange(tags.filter(t => t !== tag))}>×</button>
           </span>
         ))}
@@ -87,7 +87,7 @@ function TagInput({ tags, knownTags, loc, onChange }) {
           {filtered.map(tag => (
             <button key={tag} className="bo-dropdown-item" onClick={() => addTag(tag)}>
               <span className="bo-dropdown-dot" style={{ background: tagColor(tag) }} />
-              {loc.get(`tag_${tag}`) || tag}
+              {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
             </button>
           ))}
           {canCreate && (

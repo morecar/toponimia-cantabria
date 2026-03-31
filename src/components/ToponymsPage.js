@@ -128,7 +128,7 @@ function TopoIndexDetail({ hash, repository, etymologyStore, loc, onNavigateToEt
                 <div className="topo-detail-tags">
                   {catTags.map(tag => (
                     <span key={tag} className={`tag-chip ${tagCategoryClass(tag)}`}>
-                      {loc.get(`tag_${tag}`) || tag}
+                      {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
                     </span>
                   ))}
                 </div>
@@ -245,7 +245,7 @@ export default function ToponymsPage({ repository, etymologyStore, loc, onBack }
                             <div className="topo-index-tags">
                               {entry.tags.map(tag => (
                                 <span key={tag} className={`tag-chip tag-chip--sm ${tagCategoryClass(tag)}`}>
-                                  {loc.get(`tag_${tag}`) || tag}
+                                  {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
                                 </span>
                               ))}
                             </div>
