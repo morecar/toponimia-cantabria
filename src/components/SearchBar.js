@@ -397,7 +397,7 @@ export default class SearchBar extends Component {
                                             className={`search-tag-palette-item ${tagCategoryClass(tag)}`}
                                             onMouseDown={e => { e.preventDefault(); this.handleInsertTag(tag) }}
                                         >
-                                            {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ')}
+                                            {loc.get(`tag_${tag}`) || tag.split(':').pop().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                                         </button>
                                     ))}
                                 </div>

@@ -1,0 +1,61 @@
+{
+  "data": [
+    {
+      "id": "etym001",
+      "origin": "*LAMA*",
+      "meaning": "ciénaga, lodazal, terreno encharcado y arcilloso",
+      "notes": "El latín *LAMA* designaba la ciénaga, el lodazal y el terreno encharcado y arcilloso. La palabra existía ya en latín, aunque su origen último es incierto. Se documenta con profusión en la toponimia de toda la franja cantábrica con el sentido de terreno encharcado y arcilloso, no necesariamente bajo. La *L-* inicial evoluciona a *Ll-* por palatalización, rasgo característico del asturleonés.",
+      "tags": "etymology:latin"
+    },
+    {
+      "id": "etym004",
+      "origin": "*MESSIS*",
+      "meaning": "cosecha, mies; época de segar",
+      "notes": "Del latín *MESSIS* (cosecha, recolección, época de segar), derivado del verbo *metĕre* (segar, cosechar). Designa los cereales maduros listos para la siega y, por extensión, el campo sembrado. Da lugar al romance *mies*, presente en numerosos topónimos que señalan tierras de cultivo cerealista.",
+      "tags": "etymology:latin"
+    },
+    {
+      "id": "etym003",
+      "origin": "***SANCTI EMETERII***",
+      "meaning": "«del santo Emeterio»; por elipsis de *monasterium*",
+      "notes": "Del genitivo latino **Sancti Emeterii**, con elisión del sustantivo *monasterium* y del segundo titular (*Sancti Celedoni*). La forma reconstruida *Monasterium Sancti Emeterii et Sancti Caledonii* evolucionó por síncopa y reducción consonántica:\n\n**Sancti Emetherii** → *Sanctemeter* → *Santemder* → *Sanctaender* → **Santander**\n\nEvolución fonética regular: pérdida del grupo **-ct-**, síncopa de la vocal postónica y sonorización de la dental intervocálica.",
+      "tags": "class:hagio,etymology:romance",
+      "refs": ["etym005", "etym006"]
+    },
+    {
+      "id": "etym005",
+      "origin": "*SANCTUS*",
+      "meaning": "santo, sagrado; consagrado",
+      "notes": "Adjetivo latino *sanctus* (participio de *sancire*, «consagrar, hacer inviolable»). Designa lo sagrado o consagrado a la divinidad. Es el elemento más productivo de la hagiotoponimia hispánica: antepuesto al nombre del santo titular genera topónimos como *San*, *Sant*, *Santo*, *Santa*.",
+      "tags": "etymology:latin"
+    },
+    {
+      "id": "etym006",
+      "origin": "*EMETERIUS*",
+      "meaning": "Emeterio; nombre propio de mártir hispanorromano",
+      "notes": "Nombre propio latino *Emeterius*, adaptación del griego *Ἡμετέριος* (*Hēmetérios*), de etimología discutida. Emeterio y su hermano Celedonio fueron mártires hispanorromanos venerados desde la Antigüedad tardía en Calahorra y, a través de su monasterio, en la bahía de Santander.",
+      "tags": "etymology:latin"
+    },
+    {
+      "id": "etym007",
+      "origin": "*VALLIS*",
+      "meaning": "valle, hondonada; terreno entre montañas",
+      "notes": "Del acusativo latino *vallem*, «depresión alargada entre alturas». Pierde la -m final al pasar al romance; la -e resultante cae por apócope, lo que deja la **-ll-** en posición final y permite su despalatalización: **VALLEM** → *valle* → *val*.\n\nLa forma *val* es muy común en topónimos arcaicos, donde el singular no ha sufrido aún la nivelación analógica que restaura la terminación *-le* por influjo del plural **VALLES**.",
+      "tags": "etymology:latin"
+    },
+    {
+      "id": "etym008",
+      "origin": "*NIGER*",
+      "meaning": "negro, oscuro; de color negro",
+      "notes": "Del acusativo latino *nigrum* (fem. *nigram*), «negro, oscuro». En la toponimia puede aludir al color oscuro del suelo, del agua o de la vegetación densa. Puede mantener o perder la -g- intervocálica, con el mismo proceso que **INTEGRUM** → *enteru*.",
+      "tags": "etymology:latin"
+    },
+    {
+      "id": "etym009",
+      "origin": "*CASTRUM*",
+      "meaning": "castro, campamento; recinto fortificado en alto",
+      "notes": "Del latín *castrum*, «campamento militar, recinto amurallado». En la toponimia del norte peninsular designa realidades diversas pero relacionadas: asentamientos castreños en altura con función defensiva, parajes rocosos con restos de estructuras prerromanas, y cimas planas y elevadas que reunían las condiciones de emplazamiento propias de estos campamentos. La forma asturleonesa *castru* (con conservación de la -u final) es característica del área cantábrica y se opone al castellano *castro*.",
+      "tags": "etymology:latin"
+    }
+  ]
+}
