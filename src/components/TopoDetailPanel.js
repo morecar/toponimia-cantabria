@@ -1,5 +1,4 @@
 import Markdown from 'react-markdown'
-import React from 'react'
 
 function HighlightedQuote({ quote, highlight }) {
   if (!highlight) return <>{quote}</>
