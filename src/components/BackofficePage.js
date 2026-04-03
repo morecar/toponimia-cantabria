@@ -34,8 +34,21 @@ const SOURCE_TEMPLATES = [
 ]
 
 // ── OSM / Overpass geometry enrichment ────────────────────────────────────────
-const OVERPASS_URL  = 'https://overpass-api.de/api/interpreter'
+const OVERPASS_URL   = 'https://overpass-api.de/api/interpreter'
 const CANTABRIA_BBOX = '42.8,-4.9,43.8,-3.1'
+
+// Serialises all Overpass POST requests to avoid rate-limiting when many
+// rivers are selected at once. Each request waits for the previous to finish,
+// plus a 250 ms cooling gap.
+let _overpassChain = Promise.resolve()
+function overpassPost(query) {
+  const req = _overpassChain
+    .then(() => new Promise(res => setTimeout(res, 250)))
+    .then(() => fetch(OVERPASS_URL, { method: 'POST', body: new URLSearchParams({ data: query }) }))
+    .then(r => r.text())
+  _overpassChain = req.catch(() => {})   // keep chain alive even on error
+  return req
+}
 
 // Which NGBE categories have real OSM geometry, and what type
 const OSM_GEO = {
@@ -103,9 +116,7 @@ async function fetchOsmGeometry(name, cat) {
     const q = `[out:json][timeout:25];(way${geo.tags}${nameFilter}(${CANTABRIA_BBOX});relation${geo.tags}${nameFilter}(${CANTABRIA_BBOX}););out geom;`
     console.log('[OSM] pattern:', JSON.stringify(pattern), '—', name, cat)
     try {
-      // URLSearchParams handles encoding correctly and sets Content-Type automatically
-      const res = await fetch(OVERPASS_URL, { method: 'POST', body: new URLSearchParams({ data: q }) })
-      const text = await res.text()
+      const text = await overpassPost(q)
 
       if (!text.trimStart().startsWith('{')) {
         // Overpass returned XML (query error) — don't treat as "not found", don't cache
