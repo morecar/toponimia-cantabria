@@ -36,11 +36,19 @@ describe('joinWaysOrdered', () => {
     ])
   })
 
-  test('disconnected way is appended when no neighbour found', () => {
+  test('disconnected way is dropped to avoid teleport lines', () => {
     const w1 = [[1, 0], [2, 0]]
-    const w2 = [[9, 0], [10, 0]]   // no connection
+    const w2 = [[9, 0], [10, 0]]   // no connection — would create a visual artefact
     const result = joinWaysOrdered([w1, w2])
-    expect(result).toEqual([[1, 0], [2, 0], [9, 0], [10, 0]])
+    // w2 cannot connect to w1, so it is dropped; only the connected chain is returned
+    expect(result).toEqual([[1, 0], [2, 0]])
+  })
+
+  test('extends from head when tail has no match but head does', () => {
+    const w1 = [[3, 0], [4, 0]]   // middle
+    const w0 = [[1, 0], [3, 0]]   // connects to head of chain
+    const result = joinWaysOrdered([w1, w0])
+    expect(result).toEqual([[1, 0], [3, 0], [3, 0], [4, 0]])
   })
 })
 

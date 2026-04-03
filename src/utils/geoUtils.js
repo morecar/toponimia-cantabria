@@ -13,6 +13,9 @@ export function ptDist(a, b) {
  * Join OSM ways into a single ordered polyline.
  * Ways in a relation can be stored in any order and direction; this greedy
  * algorithm finds the next connecting segment and reverses it if needed.
+ * Extends from BOTH ends of the chain so it works regardless of starting direction.
+ * Disconnected segments (gaps > 0.0005°) are silently dropped — force-connecting
+ * them with straight lines creates visual artefacts (diamonds, polygons).
  * Returns flat array of [lat, lng] pairs (junction endpoints are NOT deduplicated here).
  */
 export function joinWaysOrdered(ways) {
@@ -22,27 +25,36 @@ export function joinWaysOrdered(ways) {
   const segs = ways.map(w => [...w])      // shallow copies (we may reverse)
   const chain = [segs.shift()]
 
-  while (segs.length) {
-    const tail = chain[chain.length - 1].at(-1)
-    let picked = false
+  let progress = true
+  while (segs.length && progress) {
+    progress = false
 
+    // Try to extend from the tail
+    const tail = chain[chain.length - 1].at(-1)
     for (let i = 0; i < segs.length; i++) {
       const s = segs[i]
-      const dHead = ptDist(tail, s[0])
-      const dTail = ptDist(tail, s[s.length - 1])
-
-      if (dHead < 0.0005) {                     // head of s connects → append as-is
-        chain.push(segs.splice(i, 1)[0])
-        picked = true; break
+      if (ptDist(tail, s[0]) < 0.0005) {
+        chain.push(segs.splice(i, 1)[0]); progress = true; break
       }
-      if (dTail < 0.0005) {                     // tail of s connects → append reversed
-        chain.push(segs.splice(i, 1)[0].reverse())
-        picked = true; break
+      if (ptDist(tail, s[s.length - 1]) < 0.0005) {
+        chain.push(segs.splice(i, 1)[0].reverse()); progress = true; break
       }
     }
+    if (progress) continue
 
-    if (!picked) chain.push(segs.shift())       // disconnected segment, just append
+    // Try to extend from the head
+    const head = chain[0][0]
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i]
+      if (ptDist(head, s[s.length - 1]) < 0.0005) {
+        chain.unshift(segs.splice(i, 1)[0]); progress = true; break
+      }
+      if (ptDist(head, s[0]) < 0.0005) {
+        chain.unshift(segs.splice(i, 1)[0].reverse()); progress = true; break
+      }
+    }
   }
+  // Remaining segs that couldn't connect are dropped (avoids visual teleport lines)
 
   return chain.flat()
 }

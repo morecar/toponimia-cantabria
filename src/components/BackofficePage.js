@@ -50,15 +50,18 @@ function overpassPost(query) {
   return req
 }
 
-// Which NGBE categories have real OSM geometry, and what type
+// Which NGBE categories have real OSM geometry, and what type.
+// wayTags: filter for individual way elements (must be linear features, not area polygons).
+//   - Use specific values like "river|stream" to exclude waterway=riverbank area polygons.
+// relTags: filter for relation elements (waterway relations use type=waterway, not waterway=*).
 const OSM_GEO = {
-  '5.1': { tags: '["waterway"]',             type: 'line' },
-  '5.2': { tags: '["natural"~"water|wetland"]', type: 'poly' },
-  '5.3': { tags: '["waterway"="canal"]',     type: 'line' },
-  '5.4': { tags: '["water"="reservoir"]',    type: 'poly' },
-  '5.5': { tags: '["amenity"="fountain"]',   type: 'point' },
-  '6.1': { tags: '["natural"~"bay|estuary"]', type: 'poly' },
-  '6.2': { tags: '["natural"="beach"]',       type: 'poly' },
+  '5.1': { wayTags: '["waterway"~"river|stream"]', relTags: '["type"="waterway"]', type: 'line' },
+  '5.2': { wayTags: '["natural"~"water|wetland"]',                                  type: 'poly' },
+  '5.3': { wayTags: '["waterway"~"canal|drain"]',  relTags: '["type"="waterway"]', type: 'line' },
+  '5.4': { wayTags: '["water"="reservoir"]',                                        type: 'poly' },
+  '5.5': { wayTags: '["amenity"="fountain"]',                                       type: 'point' },
+  '6.1': { wayTags: '["natural"~"bay|estuary"]',                                    type: 'poly' },
+  '6.2': { wayTags: '["natural"="beach"]',                                          type: 'poly' },
 }
 
 function decimateCoords(coords, max = 400) {
@@ -70,7 +73,7 @@ function decimateCoords(coords, max = 400) {
 
 const OSM_GEOM_TTL = 30 * 24 * 60 * 60 * 1000  // 30 días
 
-const OSM_GEOM_CACHE_KEY = (cat, name) => `osm_geom_v4:${cat}:${name}`
+const OSM_GEOM_CACHE_KEY = (cat, name) => `osm_geom_v5:${cat}:${name}`
 
 function geomCacheGet(name, cat) {
   try {
@@ -117,9 +120,12 @@ async function fetchOsmGeometry(name, cat) {
 
   let gotValidJson = false
 
+  const wayTags = geo.wayTags ?? geo.tags ?? ''
+  const relTags = geo.relTags ?? wayTags
+
   for (const pattern of patterns) {
     const nameFilter = `["name"~"${pattern}",i]`
-    const q = `[out:json][timeout:25];(way${geo.tags}${nameFilter}(${CANTABRIA_BBOX});relation${geo.tags}${nameFilter}(${CANTABRIA_BBOX}););out geom;`
+    const q = `[out:json][timeout:25];(way${wayTags}${nameFilter}(${CANTABRIA_BBOX});relation${relTags}${nameFilter}(${CANTABRIA_BBOX}););out geom;`
     console.log('[OSM] pattern:', JSON.stringify(pattern), '—', name, cat)
     try {
       const text = await overpassPost(q)
