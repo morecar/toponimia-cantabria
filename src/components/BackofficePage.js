@@ -32,6 +32,8 @@ const SOURCE_TEMPLATES = [
   { label: 'Libro de la Montería', year: '1348', source: 'Libro de la Montería, Alfonso XI',       url: '' },
 ]
 
+import { joinWaysOrdered, sanitizeLineCoords } from '../utils/geoUtils'
+
 // ── OSM / Overpass geometry enrichment ────────────────────────────────────────
 const OVERPASS_URL  = 'https://overpass-api.de/api/interpreter'
 const CANTABRIA_BBOX = '42.8,-4.9,43.8,-3.1'
@@ -53,57 +55,25 @@ function decimateCoords(coords, max = 400) {
   return coords.filter((_, i) => i % step === 0 || i === coords.length - 1)
 }
 
-// Join OSM ways into a single ordered polyline.
-// Ways in a relation can be stored in any order and direction; this greedy
-// algorithm finds the next connecting segment and reverses it if needed.
-function joinWaysOrdered(ways) {
-  if (!ways.length) return []
-  if (ways.length === 1) return ways[0]
-
-  const segs = ways.map(w => [...w])      // shallow copies (we may reverse)
-  const chain = [segs.shift()]
-
-  while (segs.length) {
-    const tail = chain[chain.length - 1].at(-1)
-    let picked = false
-
-    for (let i = 0; i < segs.length; i++) {
-      const s = segs[i]
-      const dHead = Math.hypot(tail[0] - s[0][0],             tail[1] - s[0][1])
-      const dTail = Math.hypot(tail[0] - s[s.length - 1][0], tail[1] - s[s.length - 1][1])
-
-      if (dHead < 0.0005) {                     // head of s connects → append as-is
-        chain.push(segs.splice(i, 1)[0])
-        picked = true; break
-      }
-      if (dTail < 0.0005) {                     // tail of s connects → append reversed
-        chain.push(segs.splice(i, 1)[0].reverse())
-        picked = true; break
-      }
-    }
-
-    if (!picked) chain.push(segs.shift())       // disconnected segment, just append
-  }
-
-  return chain.flat()
-}
 
 const OSM_GEOM_TTL = 30 * 24 * 60 * 60 * 1000  // 30 días
 
+const OSM_GEOM_CACHE_KEY = (cat, name) => `osm_geom_v3:${cat}:${name}`
+
 function geomCacheGet(name, cat) {
   try {
-    const raw = localStorage.getItem(`osm_geom_v2:${cat}:${name}`)
+    const raw = localStorage.getItem(OSM_GEOM_CACHE_KEY(cat, name))
     if (!raw) return undefined
     const { ts, geom } = JSON.parse(raw)
     if (Date.now() - ts < OSM_GEOM_TTL) return geom  // null = "comprobado, no encontrado"
-    localStorage.removeItem(`osm_geom_v2:${cat}:${name}`)
+    localStorage.removeItem(OSM_GEOM_CACHE_KEY(cat, name))
   } catch {}
   return undefined
 }
 
 function geomCacheSet(name, cat, geom) {
   try {
-    localStorage.setItem(`osm_geom_v2:${cat}:${name}`, JSON.stringify({ ts: Date.now(), geom }))
+    localStorage.setItem(OSM_GEOM_CACHE_KEY(cat, name), JSON.stringify({ ts: Date.now(), geom }))
   } catch {}
 }
 
@@ -155,7 +125,8 @@ async function fetchOsmGeometry(name, cat) {
         const ways = relation.members
           .filter(m => m.type === 'way' && m.geometry?.length)
           .map(m => m.geometry.map(pt => [pt.lat, pt.lon]))
-        const coords = joinWaysOrdered(ways)
+        let coords = joinWaysOrdered(ways)
+        if (geo.type === 'line') coords = sanitizeLineCoords(coords)
         if (coords.length >= 2) {
           const result = { type: geo.type, coordinates: decimateCoords(coords) }
           geomCacheSet(name, cat, result)
@@ -167,7 +138,8 @@ async function fetchOsmGeometry(name, cat) {
       const ways = data.elements
         .filter(el => el.type === 'way' && el.geometry?.length)
         .map(el => el.geometry.map(pt => [pt.lat, pt.lon]))
-      const coords = joinWaysOrdered(ways)
+      let coords = joinWaysOrdered(ways)
+      if (geo.type === 'line') coords = sanitizeLineCoords(coords)
       if (coords.length >= 2) {
         const result = { type: geo.type, coordinates: decimateCoords(coords) }
         geomCacheSet(name, cat, result)
