@@ -57,7 +57,7 @@ function decimateCoords(coords, max = 400) {
 
 const OSM_GEOM_TTL = 30 * 24 * 60 * 60 * 1000  // 30 días
 
-const OSM_GEOM_CACHE_KEY = (cat, name) => `osm_geom_v3:${cat}:${name}`
+const OSM_GEOM_CACHE_KEY = (cat, name) => `osm_geom_v4:${cat}:${name}`
 
 function geomCacheGet(name, cat) {
   try {
