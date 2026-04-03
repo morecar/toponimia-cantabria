@@ -77,7 +77,13 @@ function geomCacheGet(name, cat) {
     const raw = localStorage.getItem(OSM_GEOM_CACHE_KEY(cat, name))
     if (!raw) return undefined
     const { ts, geom } = JSON.parse(raw)
-    if (Date.now() - ts < OSM_GEOM_TTL) return geom  // null = "comprobado, no encontrado"
+    if (Date.now() - ts < OSM_GEOM_TTL) {
+      // Apply sanitization on read so stale cache entries (pre-sanitization) get fixed
+      if (geom?.type === 'line' && geom.coordinates) {
+        return { ...geom, coordinates: sanitizeLineCoords(geom.coordinates) }
+      }
+      return geom  // null = "comprobado, no encontrado"
+    }
     localStorage.removeItem(OSM_GEOM_CACHE_KEY(cat, name))
   } catch {}
   return undefined
@@ -575,6 +581,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const [ngbeGroupsOpen,    setNgbeGroupsOpen]    = useState(new Set())  // collapsed by default
   const [ngbeImporting,     setNgbeImporting]     = useState(false)
   const [ngbeOsmCache,      setNgbeOsmCache]      = useState({}) // id → null|'loading'|{type,coordinates}
+  const ngbeGeomQueue = useRef(Promise.resolve())               // serializes Overpass fetches
 
   // ── Search existing ──────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('')
@@ -820,7 +827,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
       const entry = ngbeResults.find(e => e.id === id)
       if (entry && OSM_GEO[entry.cat]) {
         setNgbeOsmCache(p => ({ ...p, [id]: 'loading' }))
-        fetchOsmGeometry(entry.name, entry.cat)
+        // Serialize Overpass requests to avoid hitting the 2-concurrent-query limit
+        ngbeGeomQueue.current = ngbeGeomQueue.current
+          .then(() => fetchOsmGeometry(entry.name, entry.cat))
           .then(geom => {
             if (geom) {
               const first = geom.coordinates[0]
