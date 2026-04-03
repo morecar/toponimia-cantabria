@@ -816,37 +816,44 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   useEffect(() => { setNgbeOsmCache({}) }, [ngbeResults])
 
   const toggleNgbeItem = (id) => {
-    const isSelecting = !ngbeSelected.has(id)
     setNgbeSelected(prev => {
       const next = new Set(prev)
       next.has(id) ? next.delete(id) : next.add(id)
       return next
     })
-    // On select: fetch OSM geometry if category has real geometry (rivers, beaches, etc.)
-    if (isSelecting && !(id in ngbeOsmCache)) {
-      const entry = ngbeResults.find(e => e.id === id)
-      if (entry && OSM_GEO[entry.cat]) {
-        setNgbeOsmCache(p => ({ ...p, [id]: 'loading' }))
-        // Serialize Overpass requests to avoid hitting the 2-concurrent-query limit
-        ngbeGeomQueue.current = ngbeGeomQueue.current
-          .then(() => fetchOsmGeometry(entry.name, entry.cat))
-          .then(geom => {
-            if (geom) {
-              const first = geom.coordinates[0]
-              const last  = geom.coordinates[geom.coordinates.length - 1]
-              const dist  = Math.hypot(first[0] - last[0], first[1] - last[1])
-              console.log('[OSM geom]', entry.name, entry.cat, geom.type, geom.coordinates.length, 'pts', '| first↔last dist:', dist.toFixed(5))
-            } else {
-              console.log('[OSM geom]', entry.name, entry.cat, 'null')
-            }
-            setNgbeOsmCache(p => ({ ...p, [id]: geom }))
-          })
-          .catch(err => {
-            console.warn('[OSM geom] error', entry.name, err)
-            setNgbeOsmCache(p => ({ ...p, [id]: null }))
-          })
-      }
+  }
+
+  // Called when "Siguiente" is clicked on step 1.
+  // If any selected item has real OSM geometry → go to step 2 (geometry loading).
+  // Otherwise → skip to step 3 (etymology).
+  const enterGeomStep = () => {
+    const withGeom = ngbeResults
+      .filter(e => ngbeSelected.has(e.id) && OSM_GEO[e.cat] && OSM_GEO[e.cat].type !== 'point')
+
+    if (withGeom.length === 0) {
+      setNgbeStep(3)
+      return
     }
+
+    // Reset cache so step 2 starts clean, mark all as loading, then queue fetches
+    const initial = {}
+    withGeom.forEach(e => { initial[e.id] = 'loading' })
+    setNgbeOsmCache(initial)
+    setNgbeStep(2)
+    ngbeGeomQueue.current = Promise.resolve()   // reset queue for fresh batch
+
+    withGeom.forEach(entry => {
+      ngbeGeomQueue.current = ngbeGeomQueue.current
+        .then(() => fetchOsmGeometry(entry.name, entry.cat))
+        .then(geom => {
+          console.log('[OSM geom]', entry.name, entry.cat, geom ? `${geom.coordinates.length} pts` : 'null')
+          setNgbeOsmCache(p => ({ ...p, [entry.id]: geom }))
+        })
+        .catch(err => {
+          console.warn('[OSM geom] error', entry.name, err)
+          setNgbeOsmCache(p => ({ ...p, [entry.id]: null }))
+        })
+    })
   }
 
   const toggleAllNgbe = () => {
@@ -1483,7 +1490,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
               <div className="bo-wizard-steps">
                 <span className={`bo-wizard-step${ngbeStep === 1 ? ' active' : ''}`}>1 Seleccionar</span>
                 <span className="bo-wizard-arrow">→</span>
-                <span className={`bo-wizard-step${ngbeStep === 2 ? ' active' : ''}`}>2 Etimología</span>
+                <span className={`bo-wizard-step${ngbeStep === 2 ? ' active' : ''}`}>2 Geometría</span>
+                <span className="bo-wizard-arrow">→</span>
+                <span className={`bo-wizard-step${ngbeStep === 3 ? ' active' : ''}`}>3 Etimología</span>
               </div>
 
               {/* ── Step 1: search + select ── */}
@@ -1559,14 +1568,12 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
                       </div>
                       {ngbeVisible.map(e => {
                         const alreadyExists = existingNames.has(e.name.toLowerCase())
-                        const osmState = ngbeSelected.has(e.id) ? ngbeOsmCache[e.id] : undefined
                         return (
                           <label key={e.id} className={`bo-ngbe-item${ngbeSelected.has(e.id) ? ' selected' : ''}${alreadyExists ? ' exists' : ''}`}>
                             <input type="checkbox" checked={ngbeSelected.has(e.id)}
                               onChange={() => toggleNgbeItem(e.id)} />
                             <span className="bo-ngbe-name">{e.name}</span>
                             {alreadyExists && <span className="bo-ngbe-exists-badge">ya importado</span>}
-                            {osmState === 'loading' && <span className="bo-ngbe-geom-loading">⟳ geo…</span>}
                             <span className="bo-ngbe-mun">{NGBE_CAT_LABELS[e.cat] || e.cat}</span>
                           </label>
                         )
@@ -1580,11 +1587,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
 
                   <div className="bo-scanner-actions">
                     <button className="bo-btn bo-btn-primary"
-                      disabled={ngbeSelected.size === 0 || [...ngbeSelected].some(id => ngbeOsmCache[id] === 'loading')}
-                      onClick={() => setNgbeStep(2)}>
-                      {[...ngbeSelected].some(id => ngbeOsmCache[id] === 'loading')
-                        ? 'Cargando geometría…'
-                        : `Siguiente → (${ngbeSelected.size})`}
+                      disabled={ngbeSelected.size === 0}
+                      onClick={enterGeomStep}>
+                      {`Siguiente → (${ngbeSelected.size})`}
                     </button>
                     <button className="bo-btn" onClick={() => { setNgbeQuery(''); setNgbeResults([]); setNgbeSelected(new Set()); setView('list') }}>
                       Cancelar
@@ -1593,8 +1598,45 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
                 </>
               )}
 
-              {/* ── Step 2: assign etymology ── */}
-              {ngbeStep === 2 && (
+              {/* ── Step 2: geometry loading ── */}
+              {ngbeStep === 2 && (() => {
+                const geomEntries = ngbeResults.filter(e => ngbeSelected.has(e.id) && e.id in ngbeOsmCache)
+                const allDone = geomEntries.every(e => ngbeOsmCache[e.id] !== 'loading')
+                return (
+                  <>
+                    <div className="bo-form-section">
+                      <label className="bo-label">
+                        {allDone ? 'Geometría cargada' : 'Cargando geometría…'}
+                      </label>
+                      <div className="bo-ngbe-geom-list">
+                        {geomEntries.map(e => {
+                          const state = ngbeOsmCache[e.id]
+                          return (
+                            <div key={e.id} className={`bo-ngbe-geom-row${state === 'loading' ? ' loading' : ''}`}>
+                              <span className="bo-ngbe-geom-status">
+                                {state === 'loading' ? '⟳' : state ? '✓' : '–'}
+                              </span>
+                              <span className="bo-ngbe-name">{e.name}</span>
+                              <span className="bo-ngbe-mun">{NGBE_CAT_LABELS[e.cat] || e.cat}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                    <div className="bo-scanner-actions">
+                      <button className="bo-btn bo-btn-primary"
+                        disabled={!allDone}
+                        onClick={() => setNgbeStep(3)}>
+                        {allDone ? 'Siguiente →' : 'Esperando…'}
+                      </button>
+                      <button className="bo-btn" onClick={() => { setNgbeOsmCache({}); setNgbeStep(1) }}>← Atrás</button>
+                    </div>
+                  </>
+                )
+              })()}
+
+              {/* ── Step 3: assign etymology ── */}
+              {ngbeStep === 3 && (
                 <>
                   <div className="bo-form-section">
                     <label className="bo-label">Topónimos seleccionados ({ngbeSelected.size})</label>
@@ -1622,7 +1664,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
                         ? 'Obteniendo geometría OSM…'
                         : `↓ Importar ${ngbeSelected.size} topónimo${ngbeSelected.size !== 1 ? 's' : ''}`}
                     </button>
-                    <button className="bo-btn" disabled={ngbeImporting} onClick={() => setNgbeStep(1)}>← Atrás</button>
+                    <button className="bo-btn" disabled={ngbeImporting} onClick={() => setNgbeStep(Object.keys(ngbeOsmCache).length > 0 ? 2 : 1)}>← Atrás</button>
                   </div>
                   {!ngbeImporting && (
                     <p className="bo-form-hint" style={{ marginTop: '0.4rem' }}>
@@ -1655,7 +1697,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
               const topo = repository?.getFromId(hash)
               if (topo) handleEditExisting(topo)
             }}
-            ngbePreview={view === 'ngbe' && ngbeStep === 1 ? ngbeVisible : null}
+            ngbePreview={view === 'ngbe' && (ngbeStep === 1 ? ngbeVisible : ngbeStep === 2 ? ngbeResults.filter(e => ngbeSelected.has(e.id)) : null)}
             ngbeSelectedIds={ngbeSelected}
             onNgbeItemClick={toggleNgbeItem}
             ngbeOsmCache={ngbeOsmCache}
