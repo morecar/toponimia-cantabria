@@ -7,6 +7,7 @@ import {
   getDraftEtymologies, saveDraftEtymology, deleteDraftEtymology, newDraftEtymId,
 } from '../model/draftStore'
 import { ROUTE_BACKOFFICE } from '../resources/routes'
+import { joinWaysOrdered, sanitizeLineCoords } from '../utils/geoUtils'
 
 const EMPTY_FORM = () => ({
   draftId: null,
@@ -31,8 +32,6 @@ const SOURCE_TEMPLATES = [
   { label: 'Becerro Behetrías',    year: '1352', source: 'Becerro de las Behetrías de Castilla',   url: '' },
   { label: 'Libro de la Montería', year: '1348', source: 'Libro de la Montería, Alfonso XI',       url: '' },
 ]
-
-import { joinWaysOrdered, sanitizeLineCoords } from '../utils/geoUtils'
 
 // ── OSM / Overpass geometry enrichment ────────────────────────────────────────
 const OVERPASS_URL  = 'https://overpass-api.de/api/interpreter'
