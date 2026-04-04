@@ -12,11 +12,12 @@ import ResultsRoute from './components/routing/ResultsRoute'
 import CaptureRoute from './components/routing/CaptureRoute'
 import HomeRoute from './components/routing/HomeRoute'
 import BackofficeRoute from './components/routing/BackofficeRoute'
+import BackofficePage from './components/BackofficePage'
 import AboutRoute from './components/routing/AboutRoute'
 import EtymologiesRoute from './components/routing/EtymologiesRoute'
 import ToponymsRoute from './components/routing/ToponymsRoute'
 
-import { ROUTE_HOME, ROUTE_CAPTURE, ROUTE_SEARCH, ROUTE_RESULT, ROUTE_BACKOFFICE, ROUTE_ABOUT, ROUTE_ETYMOLOGIES, ROUTE_TOPONYMS } from './resources/routes'
+import { ROUTE_HOME, ROUTE_CAPTURE, ROUTE_SEARCH, ROUTE_RESULT, ROUTE_BACKOFFICE, ROUTE_BACKOFFICE_EDITOR, ROUTE_ABOUT, ROUTE_ETYMOLOGIES, ROUTE_TOPONYMS } from './resources/routes'
 
 export default function App(props) {
     return (
@@ -27,6 +28,7 @@ export default function App(props) {
                 <Route path={ROUTE_SEARCH} element={<ResultsRoute {...props} />} />
                 <Route path={ROUTE_RESULT} element={<ResultsRoute {...props} />} />
                 <Route path={ROUTE_BACKOFFICE} element={<BackofficeRoute {...props} />} />
+                <Route path={ROUTE_BACKOFFICE_EDITOR} element={<BackofficePage {...props} />} />
                 <Route path={ROUTE_ABOUT} element={<AboutRoute />} />
                 <Route path={ROUTE_ETYMOLOGIES} element={<EtymologiesRoute {...props} />} />
                 <Route path={ROUTE_TOPONYMS} element={<ToponymsRoute {...props} />} />

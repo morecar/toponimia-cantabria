@@ -1,5 +1,5 @@
-import BackofficePage from '../BackofficePage'
+import BackofficeLandingPage from '../BackofficeLandingPage'
 
 export default function BackofficeRoute(props) {
-  return <BackofficePage {...props} />
+  return <BackofficeLandingPage {...props} />
 }

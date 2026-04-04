@@ -35,27 +35,6 @@
       "meaning": "Emeterio; nombre propio de mártir hispanorromano",
       "notes": "Nombre propio latino *Emeterius*, adaptación del griego *Ἡμετέριος* (*Hēmetérios*), de etimología discutida. Emeterio y su hermano Celedonio fueron mártires hispanorromanos venerados desde la Antigüedad tardía en Calahorra y, a través de su monasterio, en la bahía de Santander.",
       "tags": "etymology:latin"
-    },
-    {
-      "id": "etym007",
-      "origin": "*VALLIS*",
-      "meaning": "valle, hondonada; terreno entre montañas",
-      "notes": "Del acusativo latino *vallem*, «depresión alargada entre alturas». Pierde la -m final al pasar al romance; la -e resultante cae por apócope, lo que deja la **-ll-** en posición final y permite su despalatalización: **VALLEM** → *valle* → *val*.\n\nLa forma *val* es muy común en topónimos arcaicos, donde el singular no ha sufrido aún la nivelación analógica que restaura la terminación *-le* por influjo del plural **VALLES**.",
-      "tags": "etymology:latin"
-    },
-    {
-      "id": "etym008",
-      "origin": "*NIGER*",
-      "meaning": "negro, oscuro; de color negro",
-      "notes": "Del acusativo latino *nigrum* (fem. *nigram*), «negro, oscuro». En la toponimia puede aludir al color oscuro del suelo, del agua o de la vegetación densa. Puede mantener o perder la -g- intervocálica, con el mismo proceso que **INTEGRUM** → *enteru*.",
-      "tags": "etymology:latin"
-    },
-    {
-      "id": "etym009",
-      "origin": "*CASTRUM*",
-      "meaning": "castro, campamento; recinto fortificado en alto",
-      "notes": "Del latín *castrum*, «campamento militar, recinto amurallado». En la toponimia del norte peninsular designa realidades diversas pero relacionadas: asentamientos castreños en altura con función defensiva, parajes rocosos con restos de estructuras prerromanas, y cimas planas y elevadas que reunían las condiciones de emplazamiento propias de estos campamentos. La forma asturleonesa *castru* (con conservación de la -u final) es característica del área cantábrica y se opone al castellano *castro*.",
-      "tags": "etymology:latin"
     }
   ]
 }

@@ -52,12 +52,13 @@ export function newDraftEtymId() {
 // ── Export ────────────────────────────────────────────────────────────────────
 export function exportDrafts(drafts) {
   const toponyms = drafts.map(d => ({
-    hash: 'PENDING',
+    hash: d.hash || 'PENDING',
     name: d.name,
     type: d.type,
     coordinates: coordsToString(d.type, d.coordinates),
     tags: (d.tags || []).join(','),
     ...(d.vernacular             ? { vernacular: d.vernacular }          : {}),
+    ...(d.notes                  ? { notes: d.notes }                    : {}),
     ...(d.attestations?.length   ? { attestations: d.attestations }     : {}),
     ...(d.etymology_ids?.length  ? { etymology_ids: d.etymology_ids }   : {}),
   }))
