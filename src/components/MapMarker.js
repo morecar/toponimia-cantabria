@@ -76,7 +76,6 @@ function makeMountainIcon(colors, size = 'medium') {
   const tw = w + pad * 2, th = h + pad * 2
   const color = colors[0] || '#2563eb'
   // Two overlapping triangles (mountain silhouette)
-  const bx = pad, by = pad + h, bw = w
   // Main peak
   const p1 = `${pad},${pad + h} ${pad + w / 2},${pad} ${pad + w},${pad + h}`
   // Secondary peak (left)
