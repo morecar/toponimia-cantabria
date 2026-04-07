@@ -1,154 +1,420 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { getDrafts, saveDraft, newDraftId } from '../../model/draftStore'
-import { SOURCE_TEMPLATES } from './constants'
-import { scanTextForToponyms } from './scanUtils'
-import ScanResult from './ScanResult'
+import { toFlexiblePattern } from './scanUtils'
+import {
+  getTextProjects, saveTextProject, deleteTextProject, newTextProjectId,
+} from './textProjectStore'
 
-export default function ScannerView({
-  scanSource, setScanSource, scanYear, setScanYear, scanUrl, setScanUrl,
-  scanText, setScanText, mapBounds, repository, refreshDrafts, onBack,
-}) {
-  const [scanResults,  setScanResults]  = useState([])
-  const [scanSelected, setScanSelected] = useState(new Set())
-
-  const runScanner = () => {
-    let entries = repository?.getAllEntries() || []
-    if (mapBounds) {
-      entries = entries.filter(e => {
-        const coords = e.coordinates || []
-        return coords.some(([lat, lng]) => mapBounds.contains([lat, lng]))
-      })
-    }
-    const results = scanTextForToponyms(scanText, entries)
-    setScanResults(results)
-    setScanSelected(new Set(results.map((_, i) => i)))
+// ── Context extraction ────────────────────────────────────────────────────────
+// Go left/right from a match position, stopping at punctuation or after maxWords.
+function extractContext(text, matchStart, matchEnd, maxWords = 10) {
+  // LEFT
+  let leftStart = matchStart
+  let words = 0
+  for (let i = matchStart - 1; i >= 0; i--) {
+    const c = text[i]
+    if (c === '.' || c === ',' || c === ';' || c === ':') { leftStart = i + 1; break }
+    if (/\s/.test(c)) words++
+    if (words > maxWords) { leftStart = i + 1; break }
+    leftStart = i
   }
 
-  const toggleScanResult = (i) => {
-    setScanSelected(prev => {
-      const next = new Set(prev)
-      next.has(i) ? next.delete(i) : next.add(i)
-      return next
-    })
+  // RIGHT
+  let rightEnd = matchEnd
+  words = 0
+  for (let i = matchEnd; i < text.length; i++) {
+    rightEnd = i + 1
+    const c = text[i]
+    if (c === '.' || c === ',' || c === ';' || c === ':') break
+    if (/\s/.test(c)) words++
+    if (words > maxWords) { rightEnd = i; break }
   }
 
-  const toggleAllScanResults = () => {
-    if (scanSelected.size === scanResults.length) setScanSelected(new Set())
-    else setScanSelected(new Set(scanResults.map((_, i) => i)))
-  }
+  return text.slice(leftStart, rightEnd).trim()
+}
 
-  const createDraftsFromScan = () => {
-    const att = { year: scanYear, highlight: '', source: scanSource, quote: '', url: scanUrl }
-    const currentDrafts = getDrafts()
+// ── Occurrence finder ─────────────────────────────────────────────────────────
+function findOccurrences(text, name, extraForms) {
+  if (!text || !name) return []
+  const forms = [name, ...extraForms].filter(f => f.trim().length >= 2)
+  const results = []
+  const seen = new Set()
 
-    scanResults.forEach((result, i) => {
-      if (!scanSelected.has(i)) return
-      const { entry, matchedForm, quote } = result
-      const thisAtt = { ...att, highlight: matchedForm, quote }
-      const existing = currentDrafts.find(d => d.hash === entry.hash)
-
-      if (existing) {
-        saveDraft({ ...existing, attestations: [...(existing.attestations || []), thisAtt] })
-      } else {
-        saveDraft({
-          draftId:      newDraftId(),
-          hash:         entry.hash,
-          name:         entry.title,
-          vernacular:   entry.vernacular || '',
-          type:         entry.type,
-          coordinates:  entry.coordinates || [],
-          tags:         entry.tags || [],
-          attestations: [thisAtt],
-          etymology_ids: entry.etymology_ids || [],
-          notes:        entry.notes || '',
+  for (const form of forms) {
+    try {
+      const pattern = toFlexiblePattern(form.trim())
+      const re = new RegExp(`(?<![\\wÀ-ÿ])${pattern}(?![\\wÀ-ÿ])`, 'gi')
+      let m
+      while ((m = re.exec(text)) !== null) {
+        const key = `${m.index}:${m[0].length}`
+        if (seen.has(key)) continue
+        seen.add(key)
+        results.push({
+          start:   m.index,
+          end:     m.index + m[0].length,
+          form:    m[0],
+          context: extractContext(text, m.index, m.index + m[0].length),
         })
       }
-      currentDrafts.length = 0
-      currentDrafts.push(...getDrafts())
-    })
-
-    refreshDrafts()
-    setScanResults([])
-    setScanSelected(new Set())
-    onBack()
+    } catch {}
   }
 
+  return results.sort((a, b) => a.start - b.start)
+}
+
+// ── Highlighted text renderer ─────────────────────────────────────────────────
+function HighlightedText({ text, occurrences, selected, onToggle }) {
+  if (!text) return <pre className="bo-text-display bo-text-empty">Sin texto cargado.</pre>
+
+  if (!occurrences.length) return <pre className="bo-text-display">{text}</pre>
+
+  const segments = []
+  let last = 0
+  occurrences.forEach((occ, i) => {
+    if (occ.start > last) segments.push({ t: 'text', s: text.slice(last, occ.start) })
+    segments.push({ t: 'mark', s: text.slice(occ.start, occ.end), i, sel: selected.has(i) })
+    last = occ.end
+  })
+  if (last < text.length) segments.push({ t: 'text', s: text.slice(last) })
+
   return (
+    <pre className="bo-text-display">
+      {segments.map((seg, k) =>
+        seg.t === 'text' ? seg.s : (
+          <mark key={k}
+            className={`bo-text-match${seg.sel ? ' selected' : ''}`}
+            onClick={() => onToggle(seg.i)}
+            title="Clic para seleccionar / deseleccionar"
+          >
+            {seg.s}
+          </mark>
+        )
+      )}
+    </pre>
+  )
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+const EMPTY_PROJ_FORM = () => ({ title: '', year: '', url: '', text: '' })
+
+export default function ScannerView({ repository, refreshDrafts, onBack }) {
+  const [projects,    setProjects]    = useState(() => getTextProjects())
+  const [subview,     setSubview]     = useState('projects')  // 'projects' | 'edit' | 'annotate'
+  const [projForm,    setProjForm]    = useState(EMPTY_PROJ_FORM)
+  const [activeProj,  setActiveProj]  = useState(null)
+
+  // Annotation state
+  const [topoSearch,   setTopoSearch]   = useState('')
+  const [selectedTopo, setSelectedTopo] = useState(null)
+  const [extraForms,   setExtraForms]   = useState([])
+  const [selected,     setSelected]     = useState(new Set())
+
+  const refreshProjects = () => setProjects(getTextProjects())
+
+  // Toponym search results
+  const topoResults = useMemo(() => {
+    const q = topoSearch.trim()
+    if (q.length < 2) return []
+    return (repository?.getFromQueryString(q, false) || []).slice(0, 10)
+  }, [topoSearch, repository])
+
+  // Occurrences of the selected toponym in the active project
+  const occurrences = useMemo(() => {
+    if (!activeProj?.text || !selectedTopo) return []
+    return findOccurrences(activeProj.text, selectedTopo.title, extraForms)
+  }, [activeProj, selectedTopo, extraForms])
+
+  // Reset selection when occurrences change
+  const prevOccKey = useMemo(() => occurrences.map(o => o.start).join(','), [occurrences])
+  const [lastOccKey, setLastOccKey] = useState('')
+  if (prevOccKey !== lastOccKey) {
+    setLastOccKey(prevOccKey)
+    setSelected(new Set(occurrences.map((_, i) => i)))
+  }
+
+  const toggleOcc = (i) => setSelected(prev => {
+    const next = new Set(prev)
+    next.has(i) ? next.delete(i) : next.add(i)
+    return next
+  })
+  const toggleAll = () => {
+    if (selected.size === occurrences.length) setSelected(new Set())
+    else setSelected(new Set(occurrences.map((_, i) => i)))
+  }
+
+  const openProject = (proj) => {
+    setActiveProj(proj)
+    setSelectedTopo(null)
+    setTopoSearch('')
+    setExtraForms([])
+    setSubview('annotate')
+  }
+
+  const openEdit = (proj) => {
+    setProjForm(proj
+      ? { id: proj.id, title: proj.title, year: proj.year, url: proj.url || '', text: proj.text }
+      : EMPTY_PROJ_FORM()
+    )
+    setSubview('edit')
+  }
+
+  const saveProject = () => {
+    if (!projForm.title.trim()) return
+    const id = projForm.id || newTextProjectId()
+    const saved = { ...projForm, id, createdAt: projForm.createdAt || new Date().toISOString() }
+    saveTextProject(saved)
+    refreshProjects()
+    if (activeProj?.id === id) setActiveProj(saved)
+    setSubview(activeProj ? 'annotate' : 'projects')
+  }
+
+  const deleteProject = (id) => {
+    deleteTextProject(id)
+    refreshProjects()
+    if (activeProj?.id === id) { setActiveProj(null); setSubview('projects') }
+  }
+
+  const importOccurrences = () => {
+    if (!selectedTopo || selected.size === 0 || !activeProj) return
+    const entry = repository?.getFromId(selectedTopo.hash)
+    const att = {
+      year:        activeProj.year,
+      source:      activeProj.title,
+      url:         activeProj.url || '',
+      occurrences: [...selected].sort((a, b) => a - b).map(i => ({
+        highlight: occurrences[i].form,
+        quote:     occurrences[i].context,
+      })),
+    }
+
+    const currentDrafts = getDrafts()
+    const existing = entry
+      ? currentDrafts.find(d => d.hash === entry.hash)
+      : currentDrafts.find(d => d.name?.toLowerCase() === selectedTopo.title?.toLowerCase())
+
+    if (existing) {
+      saveDraft({ ...existing, attestations: [...(existing.attestations || []), att] })
+    } else {
+      saveDraft({
+        draftId:      newDraftId(),
+        hash:         entry?.hash ?? null,
+        name:         selectedTopo.title,
+        vernacular:   entry?.vernacular || '',
+        type:         entry?.type || 'point',
+        coordinates:  entry?.coordinates || [],
+        tags:         entry?.tags || [],
+        attestations: [att],
+        etymology_ids: entry?.etymology_ids || [],
+        notes:        entry?.notes || '',
+      })
+    }
+
+    refreshDrafts()
+    // Clear selection, keep toponym in case user wants another source
+    setSelected(new Set(occurrences.map((_, i) => i)))
+    setSelectedTopo(null)
+    setTopoSearch('')
+    setExtraForms([])
+  }
+
+  // ── Subview: project list ─────────────────────────────────────────────────
+  if (subview === 'projects') return (
     <div className="bo-form">
       <div className="bo-scanner-header">
-        <h3 className="bo-scanner-title">Escanear texto histórico</h3>
+        <h3 className="bo-scanner-title">Textos históricos</h3>
         <p className="bo-scanner-desc">
-          Pega un fragmento de documento. El sistema detecta qué topónimos del índice aparecen en él
-          y te permite crear borradores con la cita en contexto.
+          Guarda documentos históricos como proyectos para anotar atestiguaciones topónimo a topónimo.
         </p>
       </div>
-
-      <div className="bo-form-section">
-        <label className="bo-label">Fuente</label>
-        <input
-          list="bo-source-list"
-          className="bo-input"
-          value={scanSource}
-          onChange={e => {
-            const val = e.target.value
-            setScanSource(val)
-            const match = SOURCE_TEMPLATES.find(t => t.source === val)
-            if (match) {
-              if (!scanYear) setScanYear(match.year)
-              if (!scanUrl && match.url) setScanUrl(match.url)
-            }
-          }}
-          placeholder="Catastro de Ensenada"
-        />
-      </div>
-      <div className="bo-form-section">
-        <label className="bo-label">Año</label>
-        <input className="bo-input" value={scanYear}
-          onChange={e => setScanYear(e.target.value)} placeholder="1749" />
-      </div>
-      <div className="bo-form-section">
-        <label className="bo-label">URL <span className="bo-optional">(opcional)</span></label>
-        <input className="bo-input" value={scanUrl}
-          onChange={e => setScanUrl(e.target.value)} placeholder="https://…" />
-      </div>
-      <div className="bo-form-section">
-        <label className="bo-label">Texto del documento</label>
-        <textarea className="bo-input bo-textarea" rows={8} value={scanText}
-          onChange={e => { setScanText(e.target.value); setScanResults([]) }}
-          placeholder="Pega aquí el texto histórico…" />
-      </div>
-
-      <div className="bo-scanner-actions">
-        <button className="bo-btn bo-btn-primary" disabled={!scanText.trim()} onClick={runScanner}>
-          ⌕ Escanear
-        </button>
+      <div className="bo-panel-header">
+        <button className="bo-btn bo-btn-primary" onClick={() => openEdit(null)}>+ Nuevo texto</button>
         <button className="bo-btn" onClick={onBack}>← Volver</button>
       </div>
+      {projects.length === 0 && (
+        <p className="bo-empty">Sin textos guardados todavía.</p>
+      )}
+      <div className="bo-proj-list">
+        {projects.map(p => (
+          <div key={p.id} className="bo-proj-item">
+            <div className="bo-proj-meta">
+              <span className="bo-proj-title">{p.title}</span>
+              {p.year && <span className="bo-proj-year">{p.year}</span>}
+              {p.text && <span className="bo-proj-chars">{p.text.length.toLocaleString()} car.</span>}
+            </div>
+            <div className="bo-proj-actions">
+              <button className="bo-btn bo-btn-primary bo-btn-sm" onClick={() => openProject(p)}>Abrir</button>
+              <button className="bo-btn bo-btn-sm" onClick={() => openEdit(p)}>Editar</button>
+              <button className="bo-btn bo-btn-sm bo-btn-danger" onClick={() => deleteProject(p.id)}>✕</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 
-      {scanResults.length > 0 && (
-        <div className="bo-scan-results-wrap">
-          <div className="bo-scan-results-header">
-            <span>{scanResults.length} coincidencia{scanResults.length !== 1 ? 's' : ''}</span>
-            <button className="bo-btn bo-btn-sm" onClick={toggleAllScanResults}>
-              {scanSelected.size === scanResults.length ? 'Deseleccionar todo' : 'Seleccionar todo'}
-            </button>
-          </div>
-          {scanResults.map((r, i) => (
-            <ScanResult key={i} result={r}
-              selected={scanSelected.has(i)} onToggle={() => toggleScanResult(i)} />
-          ))}
-          <div className="bo-scanner-actions" style={{ marginTop: '0.75rem' }}>
-            <button className="bo-btn bo-btn-primary"
-              disabled={scanSelected.size === 0} onClick={createDraftsFromScan}>
-              Crear borradores ({scanSelected.size})
-            </button>
-          </div>
+  // ── Subview: project editor ───────────────────────────────────────────────
+  if (subview === 'edit') return (
+    <div className="bo-form">
+      <h3 className="bo-scanner-title">{projForm.id ? 'Editar texto' : 'Nuevo texto histórico'}</h3>
+      <div className="bo-form-section">
+        <label className="bo-label">Título / Fuente <span className="bo-required">*</span></label>
+        <input className="bo-input" placeholder="p.ej. Catastro de Ensenada, Libro de la Montería…"
+          value={projForm.title}
+          onChange={e => setProjForm(f => ({ ...f, title: e.target.value }))} />
+      </div>
+      <div className="bo-form-row">
+        <div className="bo-form-section">
+          <label className="bo-label">Año</label>
+          <input className="bo-input" placeholder="1749"
+            value={projForm.year}
+            onChange={e => setProjForm(f => ({ ...f, year: e.target.value }))} />
         </div>
-      )}
+        <div className="bo-form-section" style={{ flex: 2 }}>
+          <label className="bo-label">URL <span className="bo-optional">(opcional)</span></label>
+          <input className="bo-input" placeholder="https://…"
+            value={projForm.url}
+            onChange={e => setProjForm(f => ({ ...f, url: e.target.value }))} />
+        </div>
+      </div>
+      <div className="bo-form-section bo-manual-text-section">
+        <label className="bo-label">Texto del documento</label>
+        <textarea className="bo-input bo-textarea bo-manual-textarea"
+          placeholder="Pega aquí el texto histórico completo…"
+          value={projForm.text}
+          onChange={e => setProjForm(f => ({ ...f, text: e.target.value }))} />
+      </div>
+      <div className="bo-form-actions">
+        <button className="bo-btn bo-btn-primary" disabled={!projForm.title.trim()} onClick={saveProject}>
+          Guardar
+        </button>
+        <button className="bo-btn" onClick={() => setSubview(activeProj ? 'annotate' : 'projects')}>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  )
 
-      {scanResults.length === 0 && scanText.trim() && (
-        <p className="bo-empty" style={{ marginTop: '0.5rem' }}>Pulsa "Escanear" para buscar coincidencias.</p>
-      )}
+  // ── Subview: annotate ─────────────────────────────────────────────────────
+  return (
+    <div className="bo-annotate-layout">
+      {/* ─── Left: text display ─── */}
+      <div className="bo-annotate-text">
+        <div className="bo-annotate-text-toolbar">
+          <button className="bo-btn bo-btn-sm" onClick={() => setSubview('projects')}>← Textos</button>
+          <span className="bo-annotate-proj-name">
+            {activeProj.title}{activeProj.year ? ` (${activeProj.year})` : ''}
+          </span>
+          <button className="bo-btn bo-btn-sm" onClick={() => openEdit(activeProj)}>Editar texto</button>
+        </div>
+        <HighlightedText
+          text={activeProj.text}
+          occurrences={occurrences}
+          selected={selected}
+          onToggle={toggleOcc}
+        />
+      </div>
+
+      {/* ─── Right: toponym panel ─── */}
+      <div className="bo-annotate-panel">
+        <div className="bo-form-section">
+          <label className="bo-label">Topónimo</label>
+          <input
+            className="bo-input"
+            placeholder="Buscar topónimo del índice…"
+            value={topoSearch}
+            onChange={e => { setTopoSearch(e.target.value); if (selectedTopo) { setSelectedTopo(null); setExtraForms([]) } }}
+          />
+          {topoResults.length > 0 && !selectedTopo && (
+            <div className="bo-search-results">
+              {topoResults.map(t => (
+                <button key={t.hash} className="bo-search-result-item"
+                  onClick={() => { setSelectedTopo(t); setTopoSearch(t.title) }}>
+                  <span className="bo-search-result-name">{t.title}</span>
+                  <span className="bo-search-result-hash">{t.hash}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {selectedTopo && (
+          <>
+            {/* Extra search patterns */}
+            <div className="bo-form-section">
+              <label className="bo-label bo-label-sm">Formas alternativas en el texto</label>
+              {extraForms.map((f, i) => (
+                <div key={i} className="bo-extra-form-row">
+                  <input className="bo-input bo-input-sm"
+                    value={f}
+                    onChange={e => setExtraForms(prev => prev.map((x, j) => j === i ? e.target.value : x))}
+                    placeholder="Forma histórica…"
+                  />
+                  <button className="bo-btn-icon" onClick={() => setExtraForms(prev => prev.filter((_, j) => j !== i))}>×</button>
+                </div>
+              ))}
+              <button className="bo-btn bo-btn-sm" style={{ marginTop: '0.25rem' }}
+                onClick={() => setExtraForms(prev => [...prev, ''])}>
+                + Añadir forma
+              </button>
+            </div>
+
+            {/* Occurrences */}
+            <div className="bo-form-section">
+              <div className="bo-occ-header">
+                <label className="bo-label">
+                  {occurrences.length === 0
+                    ? 'Sin apariciones'
+                    : `${occurrences.length} aparición${occurrences.length !== 1 ? 'es' : ''}`}
+                </label>
+                {occurrences.length > 1 && (
+                  <button className="bo-btn bo-btn-sm" onClick={toggleAll}>
+                    {selected.size === occurrences.length ? 'Deseleccionar todo' : 'Seleccionar todo'}
+                  </button>
+                )}
+              </div>
+
+              {occurrences.length === 0 && (
+                <p className="bo-empty bo-empty-sm">
+                  No se encontró «{selectedTopo.title}» en el texto.
+                  Prueba a añadir formas alternativas.
+                </p>
+              )}
+
+              <div className="bo-occ-list">
+                {occurrences.map((occ, i) => (
+                  <label key={i} className={`bo-occ-item${selected.has(i) ? ' selected' : ''}`}>
+                    <input type="checkbox" checked={selected.has(i)} onChange={() => toggleOcc(i)} />
+                    <span className="bo-occ-body">
+                      <span className="bo-occ-form">{occ.form}</span>
+                      <span className="bo-occ-context">{occ.context}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="bo-scanner-actions">
+              <button
+                className="bo-btn bo-btn-primary"
+                disabled={selected.size === 0}
+                onClick={importOccurrences}
+              >
+                ↓ Importar {selected.size > 0 ? `(${selected.size})` : ''}
+              </button>
+              <button className="bo-btn bo-btn-sm"
+                onClick={() => { setSelectedTopo(null); setTopoSearch(''); setExtraForms([]) }}>
+                Limpiar
+              </button>
+            </div>
+          </>
+        )}
+
+        {!selectedTopo && (
+          <p className="bo-empty bo-manual-hint">
+            Busca un topónimo para ver sus apariciones en el texto.
+          </p>
+        )}
+      </div>
     </div>
   )
 }

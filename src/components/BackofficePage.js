@@ -48,7 +48,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const [scanText,   setScanText]   = useState('')
 
   // Map state
-  const [mapBounds, setMapBounds]     = useState(null)
   const [ngbeMapData, setNgbeMapData] = useState(null)
 
   // Search
@@ -193,7 +192,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const canFinish = (form.type === 'line' && currentPoints.length >= 2)
                  || (form.type === 'poly' && currentPoints.length >= 3)
 
-  const isFullscreen = view === 'manual' || view === 'etymologies'
+  const isFullscreen = view === 'scanner' || view === 'manual' || view === 'etymologies'
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -407,11 +406,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
           {/* ── SCANNER VIEW ── */}
           {view === 'scanner' && (
             <ScannerView
-              scanSource={scanSource} setScanSource={setScanSource}
-              scanYear={scanYear}     setScanYear={setScanYear}
-              scanUrl={scanUrl}       setScanUrl={setScanUrl}
-              scanText={scanText}     setScanText={setScanText}
-              mapBounds={mapBounds}
               repository={repository}
               refreshDrafts={refreshDrafts}
               onBack={() => setView('list')}
@@ -467,7 +461,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
               if (d) handleEdit(d)
             }}
             repository={repository}
-            onBoundsChange={setMapBounds}
+            onBoundsChange={null}
             onTopoClick={hash => {
               const topo = repository?.getFromId(hash)
               if (topo) handleEditExisting(topo)

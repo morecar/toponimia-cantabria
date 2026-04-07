@@ -31,8 +31,10 @@ export default function EtymologySelector({ etymology_ids, etymologyStore, onCha
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // Prefer drafts over committed when IDs match (draft = edited override)
+  const draftIds = new Set(draftEtyms.map(e => e.id))
   const allEtymologies = [
-    ...Array.from(etymologyStore?.byId?.values() || []),
+    ...Array.from(etymologyStore?.byId?.values() || []).filter(e => !draftIds.has(e.id)),
     ...draftEtyms,
   ]
 

@@ -1,16 +1,22 @@
 import Markdown from 'react-markdown'
 
 function HighlightedQuote({ quote, highlight }) {
-  if (!highlight) return <>{quote}</>
-  const idx = quote.indexOf(highlight)
+  if (!highlight || !quote) return <>{quote}</>
+  const idx = quote.toLowerCase().indexOf(highlight.toLowerCase())
   if (idx === -1) return <>{quote}</>
   return (
     <>
       {quote.slice(0, idx)}
-      <mark className="topo-attestation-mark">{highlight}</mark>
+      <mark className="topo-attestation-mark">{quote.slice(idx, idx + highlight.length)}</mark>
       {quote.slice(idx + highlight.length)}
     </>
   )
+}
+
+// Normalise both schemas: { highlight, quote } and { occurrences: [...] }
+function getOccurrences(att) {
+  if (att.occurrences?.length) return att.occurrences
+  return [{ highlight: att.highlight || '', quote: att.quote || '' }]
 }
 
 function tagCategoryClass(tagKey) {
@@ -70,25 +76,38 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
           <section className="topo-detail-section">
             <h3 className="topo-detail-section-title">{loc.get('panel_attestations')}</h3>
             <ol className="topo-attestations-list">
-              {attestations.map((a, i) => (
-                <li key={i} className="topo-attestation-item">
-                  <div className="topo-attestation-header">
-                    <span className="topo-attestation-year">{a.year}</span>
-                    {a.highlight && <span className="topo-attestation-form">{a.highlight}</span>}
-                  </div>
-                  {a.source && <div className="topo-attestation-source">{a.source}</div>}
-                  {a.quote && (
-                    <blockquote className="topo-attestation-quote">
-                      <HighlightedQuote quote={a.quote} highlight={a.highlight} />
-                    </blockquote>
-                  )}
-                  {a.url && (
-                    <a href={a.url} target="_blank" rel="noopener noreferrer" className="topo-attestation-link">
-                      {loc.get('panel_source_link')}
-                    </a>
-                  )}
-                </li>
-              ))}
+              {attestations.map((a, i) => {
+                const occs = getOccurrences(a)
+                return (
+                  <li key={i} className="topo-attestation-item">
+                    <div className="topo-attestation-header">
+                      <span className="topo-attestation-year">{a.year}</span>
+                      {/* Show form only for single-occurrence flat schema */}
+                      {!a.occurrences && a.highlight && (
+                        <span className="topo-attestation-form">{a.highlight}</span>
+                      )}
+                    </div>
+                    {a.source && <div className="topo-attestation-source">{a.source}</div>}
+                    {occs.map((occ, j) => (
+                      <div key={j} className={a.occurrences ? 'topo-att-occurrence' : undefined}>
+                        {a.occurrences && occ.highlight && (
+                          <span className="topo-attestation-form topo-att-occ-form">{occ.highlight}</span>
+                        )}
+                        {occ.quote && (
+                          <blockquote className="topo-attestation-quote">
+                            <HighlightedQuote quote={occ.quote} highlight={occ.highlight} />
+                          </blockquote>
+                        )}
+                      </div>
+                    ))}
+                    {a.url && (
+                      <a href={a.url} target="_blank" rel="noopener noreferrer" className="topo-attestation-link">
+                        {loc.get('panel_source_link')}
+                      </a>
+                    )}
+                  </li>
+                )
+              })}
             </ol>
           </section>
         )}

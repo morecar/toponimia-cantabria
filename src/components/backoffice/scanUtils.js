@@ -2,7 +2,7 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-function toFlexiblePattern(str) {
+export function toFlexiblePattern(str) {
   const base = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   const vowelGroups = { a: 'aáàäâãå', e: 'eéèëê', i: 'iíìïî', o: 'oóòöôõ', u: 'uúùüû' }
   return base.split('').map(ch => {
