@@ -37,10 +37,10 @@ function TopoListItem({ item, isDraft, isDeleted, isOverride, onEdit, onDelete, 
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function ToponymsView({ repository, etymologyStore, loc, onBack }) {
+export default function ToponymsView({ repository, etymologyStore, loc, startSubview, onBack }) {
   const [drafts,   setDrafts]   = useState(() => getDrafts())
-  const [subview,  setSubview]  = useState('list')
-  const [form,     setForm]     = useState(EMPTY_FORM)
+  const [subview,  setSubview]  = useState(startSubview === 'new' ? 'form' : 'list')
+  const [form,     setForm]     = useState(() => startSubview === 'new' ? { ...EMPTY_FORM(), draftId: newDraftId() } : EMPTY_FORM())
   const [error,    setError]    = useState('')
   const [search,   setSearch]   = useState('')
   const [showBulk, setShowBulk] = useState(false)

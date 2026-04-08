@@ -17,10 +17,10 @@ function WiktLinksLocal({ origin }) {
   )
 }
 
-export default function EtymologiesView({ etymologyStore, onBack }) {
+export default function EtymologiesView({ etymologyStore, startSubview, onBack }) {
   const [draftEtyms, setDraftEtyms]   = useState(() => getDraftEtymologies())
-  const [subview, setSubview]         = useState('list')
-  const [etymForm, setEtymForm]       = useState(EMPTY_ETYM_FORM)
+  const [subview, setSubview]         = useState(startSubview === 'new' ? 'form' : 'list')
+  const [etymForm, setEtymForm]       = useState(startSubview === 'new' ? EMPTY_ETYM_FORM() : EMPTY_ETYM_FORM)
 
   const refresh = () => setDraftEtyms(getDraftEtymologies())
 

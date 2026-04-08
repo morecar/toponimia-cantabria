@@ -7,7 +7,8 @@ const VIEW_URLS = {
   etymologies: 'etymologies',
   toponyms:    'toponyms',
   scanner:     'scanner',
-  manual:      'manual',
+  manual:      'link',
+  ngbe:        'import',
 }
 
 function StatCard({ value, label }) {

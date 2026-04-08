@@ -23,8 +23,11 @@ import ToponymsView from './backoffice/ToponymsView'
 export default function BackofficePage({ repository, etymologyStore, loc }) {
   const navigate  = useNavigate()
   const location  = useLocation()
-  const params    = useParams()
-  const startView = params.view || location.state?.startView
+  const params      = useParams()
+  // Map URL slugs to internal view names
+  const URL_VIEW_MAP = { link: 'manual', import: 'ngbe' }
+  const startView   = URL_VIEW_MAP[params.view] || params.view || location.state?.startView
+  const startSubview = params.subview  // e.g. 'new'
 
   const [drafts, setDrafts] = useState(() => getDrafts())
   const [textProjects, setTextProjects] = useState(() => getTextProjects())
@@ -474,6 +477,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
           {view === 'etymologies' && (
             <EtymologiesView
               etymologyStore={etymologyStore}
+              startSubview={startSubview}
               onBack={() => setView('list')}
             />
           )}
@@ -484,6 +488,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
               repository={repository}
               etymologyStore={etymologyStore}
               loc={loc}
+              startSubview={startSubview}
               onBack={() => { refreshDrafts(); setView('list') }}
             />
           )}
