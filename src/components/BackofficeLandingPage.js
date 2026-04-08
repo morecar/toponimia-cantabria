@@ -12,7 +12,6 @@ const VIEW_URLS = {
   etymologies: 'etymologies',
   toponyms:    'toponyms',
   scanner:     'scanner',
-  manual:      'link',
   ngbe:        'import',
 }
 
@@ -178,12 +177,6 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
               title="Escanear texto"
               desc="Pega un documento histórico y asigna citas a los topónimos detectados"
               onClick={() => go('scanner')}
-            />
-            <ActionCard
-              icon="✎"
-              title="Enlazar citas"
-              desc="Selecciona fragmentos de un texto histórico y vincúlalos a topónimos"
-              onClick={() => go('manual')}
             />
           </div>
         </section>

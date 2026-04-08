@@ -15,7 +15,6 @@ import AttestationRow from './backoffice/AttestationRow'
 import DraftItem from './backoffice/DraftItem'
 import ScannerView from './backoffice/ScannerView'
 import { getTextProjects } from './backoffice/textProjectStore'
-import ManualLinkView from './backoffice/ManualLinkView'
 import EtymologiesView from './backoffice/EtymologiesView'
 import NgbeImportView from './backoffice/NgbeImportView'
 import ToponymsView from './backoffice/ToponymsView'
@@ -25,7 +24,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const location  = useLocation()
   const params      = useParams()
   // Map URL slugs to internal view names
-  const URL_VIEW_MAP = { link: 'manual', import: 'ngbe' }
+  const URL_VIEW_MAP = { link: 'scanner', import: 'ngbe' }
   const startView   = URL_VIEW_MAP[params.view] || params.view || location.state?.startView
   const startSubview = params.subview  // e.g. 'new'
 
@@ -45,7 +44,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
     if (startView === 'etymologies') return 'etymologies'
     if (startView === 'toponyms')    return 'toponyms'
     if (startView === 'ngbe')        return 'ngbe'
-    if (startView === 'manual')      return 'manual'
     return 'list'
   })
 
@@ -56,12 +54,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const [error, setError]           = useState('')
   const [bulkText, setBulkText]     = useState('')
   const [showBulk, setShowBulk]     = useState(false)
-
-  // Shared scanner/manual state (preserved when switching between the two views)
-  const [scanYear,   setScanYear]   = useState('')
-  const [scanSource, setScanSource] = useState('')
-  const [scanUrl,    setScanUrl]    = useState('')
-  const [scanText,   setScanText]   = useState('')
 
   // Map state
   const [ngbeMapData, setNgbeMapData] = useState(null)
@@ -208,7 +200,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const canFinish = (form.type === 'line' && currentPoints.length >= 2)
                  || (form.type === 'poly' && currentPoints.length >= 3)
 
-  const isFullscreen = view === 'scanner' || view === 'manual' || view === 'etymologies' || view === 'toponyms'
+  const isFullscreen = view === 'scanner' || view === 'etymologies' || view === 'toponyms'
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -229,9 +221,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
                 <button className="bo-btn bo-btn-primary" onClick={handleNew}>+ Nuevo</button>
                 <button className="bo-btn" onClick={() => setView('scanner')}>
                   ⌕ Escanear texto
-                </button>
-                <button className="bo-btn" onClick={() => setView('manual')}>
-                  ✎ Enlazar citas
                 </button>
                 <button className="bo-btn" onClick={() => setView('toponyms')}>
                   ☰ Topónimos
@@ -457,19 +446,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
               refreshTextProjects={refreshTextProjects}
               startProjectId={startProjectId}
               onBack={() => { setStartProjectId(null); setView('list') }}
-            />
-          )}
-
-          {/* ── MANUAL LINK VIEW ── */}
-          {view === 'manual' && (
-            <ManualLinkView
-              scanSource={scanSource} setScanSource={setScanSource}
-              scanYear={scanYear}     setScanYear={setScanYear}
-              scanUrl={scanUrl}       setScanUrl={setScanUrl}
-              scanText={scanText}     setScanText={setScanText}
-              repository={repository}
-              refreshDrafts={refreshDrafts}
-              onBack={() => setView('list')}
             />
           )}
 

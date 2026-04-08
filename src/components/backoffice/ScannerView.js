@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react'
 import { getDrafts, saveDraft, newDraftId } from '../../model/draftStore'
 import { toFlexiblePattern } from './scanUtils'
+import { EMPTY_FORM } from './constants'
 import {
   getTextProjects, saveTextProject, deleteTextProject, newTextProjectId,
 } from './textProjectStore'
 
 // ── Context extraction ────────────────────────────────────────────────────────
-// Go left/right from a match position, stopping at punctuation or after maxWords.
 function extractContext(text, matchStart, matchEnd, maxWords = 10) {
-  // LEFT
   let leftStart = matchStart
   let words = 0
   for (let i = matchStart - 1; i >= 0; i--) {
@@ -18,8 +17,6 @@ function extractContext(text, matchStart, matchEnd, maxWords = 10) {
     if (words > maxWords) { leftStart = i + 1; break }
     leftStart = i
   }
-
-  // RIGHT
   let rightEnd = matchEnd
   words = 0
   for (let i = matchEnd; i < text.length; i++) {
@@ -29,7 +26,6 @@ function extractContext(text, matchStart, matchEnd, maxWords = 10) {
     if (/\s/.test(c)) words++
     if (words > maxWords) { rightEnd = i; break }
   }
-
   return text.slice(leftStart, rightEnd).trim()
 }
 
@@ -39,7 +35,6 @@ function findOccurrences(text, name, extraForms) {
   const forms = [name, ...extraForms].filter(f => f.trim().length >= 2)
   const results = []
   const seen = new Set()
-
   for (const form of forms) {
     try {
       const pattern = toFlexiblePattern(form.trim())
@@ -58,15 +53,18 @@ function findOccurrences(text, name, extraForms) {
       }
     } catch {}
   }
-
   return results.sort((a, b) => a.start - b.start)
 }
 
 // ── Highlighted text renderer ─────────────────────────────────────────────────
-function HighlightedText({ text, occurrences, selected, onToggle }) {
-  if (!text) return <pre className="bo-text-display bo-text-empty">Sin texto cargado.</pre>
+function HighlightedText({ text, occurrences, selected, onToggle, onManualSelect }) {
+  const handleMouseUp = () => {
+    const sel = window.getSelection()?.toString().trim()
+    if (sel && onManualSelect) onManualSelect(sel)
+  }
 
-  if (!occurrences.length) return <pre className="bo-text-display">{text}</pre>
+  if (!text) return <pre className="bo-text-display bo-text-empty">Sin texto cargado.</pre>
+  if (!occurrences.length) return <pre className="bo-text-display" onMouseUp={handleMouseUp}>{text}</pre>
 
   const segments = []
   let last = 0
@@ -78,7 +76,7 @@ function HighlightedText({ text, occurrences, selected, onToggle }) {
   if (last < text.length) segments.push({ t: 'text', s: text.slice(last) })
 
   return (
-    <pre className="bo-text-display">
+    <pre className="bo-text-display" onMouseUp={handleMouseUp}>
       {segments.map((seg, k) =>
         seg.t === 'text' ? seg.s : (
           <mark key={k}
@@ -96,6 +94,7 @@ function HighlightedText({ text, occurrences, selected, onToggle }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 const EMPTY_PROJ_FORM = () => ({ title: '', year: '', url: '', text: '' })
+const EMPTY_NEW_TOPO  = (name = '') => ({ name, vernacular: '', type: 'point', notes: '' })
 
 export default function ScannerView({ repository, refreshDrafts, refreshTextProjects, startProjectId, onBack }) {
   const allProjects = getTextProjects()
@@ -106,23 +105,37 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
   const [projForm,    setProjForm]    = useState(EMPTY_PROJ_FORM)
   const [activeProj,  setActiveProj]  = useState(initialProj)
 
-  // Annotation state
+  // Auto-scan state
   const [topoSearch,   setTopoSearch]   = useState('')
   const [selectedTopo, setSelectedTopo] = useState(null)
   const [extraForms,   setExtraForms]   = useState([])
   const [selected,     setSelected]     = useState(new Set())
+
+  // Manual selection state
+  const [manualSelection,  setManualSelection]  = useState('')
+  const [manualTopoSearch, setManualTopoSearch] = useState('')
+  const [manualTopo,       setManualTopo]       = useState(null)
+  const [showNewTopo,      setShowNewTopo]      = useState(false)
+  const [newTopoForm,      setNewTopoForm]      = useState(EMPTY_NEW_TOPO)
 
   const refreshProjects = () => {
     setProjects(getTextProjects())
     refreshTextProjects?.()
   }
 
-  // Toponym search results
+  // Auto-scan toponym search results
   const topoResults = useMemo(() => {
     const q = topoSearch.trim()
     if (q.length < 2) return []
     return (repository?.getFromQueryString(q, false) || []).slice(0, 10)
   }, [topoSearch, repository])
+
+  // Manual toponym search results
+  const manualTopoResults = useMemo(() => {
+    const q = manualTopoSearch.trim()
+    if (q.length < 2) return []
+    return (repository?.getFromQueryString(q, false) || []).slice(0, 8)
+  }, [manualTopoSearch, repository])
 
   // Occurrences of the selected toponym in the active project
   const occurrences = useMemo(() => {
@@ -153,6 +166,9 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
     setSelectedTopo(null)
     setTopoSearch('')
     setExtraForms([])
+    setManualSelection('')
+    setManualTopo(null)
+    setManualTopoSearch('')
     setSubview('annotate')
   }
 
@@ -180,6 +196,7 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
     if (activeProj?.id === id) { setActiveProj(null); setSubview('projects') }
   }
 
+  // ── Auto-scan import ───────────────────────────────────────────────────────
   const importOccurrences = () => {
     if (!selectedTopo || selected.size === 0 || !activeProj) return
     const entry = repository?.getFromId(selectedTopo.hash)
@@ -192,12 +209,10 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
         quote:     occurrences[i].context,
       })),
     }
-
     const currentDrafts = getDrafts()
     const existing = entry
       ? currentDrafts.find(d => d.hash === entry.hash)
       : currentDrafts.find(d => d.name?.toLowerCase() === selectedTopo.title?.toLowerCase())
-
     if (existing) {
       saveDraft({ ...existing, attestations: [...(existing.attestations || []), att] })
     } else {
@@ -214,13 +229,79 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
         notes:        entry?.notes || '',
       })
     }
-
     refreshDrafts()
-    // Clear selection, keep toponym in case user wants another source
     setSelected(new Set(occurrences.map((_, i) => i)))
     setSelectedTopo(null)
     setTopoSearch('')
     setExtraForms([])
+  }
+
+  // ── Manual attestation ────────────────────────────────────────────────────
+  const addManualAttestation = () => {
+    if (!manualTopo || !manualSelection.trim() || !activeProj) return
+    const att = {
+      year:      activeProj.year,
+      source:    activeProj.title,
+      url:       activeProj.url || '',
+      highlight: manualSelection,
+      quote:     manualSelection,
+    }
+    const entry = manualTopo.hash ? repository?.getFromId(manualTopo.hash) : null
+    const currentDrafts = getDrafts()
+    const existing = manualTopo.draftId
+      ? currentDrafts.find(d => d.draftId === manualTopo.draftId)
+      : currentDrafts.find(d => d.hash === manualTopo.hash)
+    if (existing) {
+      saveDraft({ ...existing, attestations: [...(existing.attestations || []), att] })
+    } else {
+      saveDraft({
+        draftId:      manualTopo.draftId || newDraftId(),
+        hash:         manualTopo.hash,
+        name:         manualTopo.title,
+        vernacular:   entry?.vernacular || '',
+        type:         entry?.type || 'point',
+        coordinates:  entry?.coordinates || [],
+        tags:         entry?.tags || [],
+        attestations: [att],
+        etymology_ids: entry?.etymology_ids || [],
+        notes:        entry?.notes || '',
+      })
+    }
+    refreshDrafts()
+    setManualSelection('')
+    setManualTopo(null)
+    setManualTopoSearch('')
+  }
+
+  const clearManual = () => {
+    setManualSelection('')
+    setManualTopo(null)
+    setManualTopoSearch('')
+  }
+
+  // ── New toponym (from manual section) ────────────────────────────────────
+  const openNewTopo = () => {
+    setNewTopoForm(EMPTY_NEW_TOPO(manualTopoSearch.trim()))
+    setShowNewTopo(true)
+  }
+
+  const saveNewTopo = () => {
+    if (!newTopoForm.name.trim()) return
+    const draftId = newDraftId()
+    const draft = {
+      ...EMPTY_FORM(),
+      draftId,
+      hash:       null,
+      name:       newTopoForm.name.trim(),
+      vernacular: newTopoForm.vernacular.trim(),
+      type:       newTopoForm.type,
+      notes:      newTopoForm.notes.trim(),
+    }
+    saveDraft(draft)
+    refreshDrafts()
+    setManualTopo({ draftId, hash: null, title: draft.name })
+    setManualTopoSearch(draft.name)
+    setShowNewTopo(false)
   }
 
   // ── Subview: project list ─────────────────────────────────────────────────
@@ -317,16 +398,57 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
           occurrences={occurrences}
           selected={selected}
           onToggle={toggleOcc}
+          onManualSelect={sel => { setManualSelection(sel); setManualTopo(null); setManualTopoSearch('') }}
         />
       </div>
 
       {/* ─── Right: toponym panel ─── */}
       <div className="bo-annotate-panel">
+
+        {/* ── Manual selection section ── */}
+        {manualSelection && (
+          <div className="bo-manual-section">
+            <div className="bo-manual-section-header">
+              <label className="bo-label">Cita seleccionada</label>
+              <button className="bo-btn-icon" onClick={clearManual} title="Limpiar selección">×</button>
+            </div>
+            <blockquote className="bo-scan-quote">{manualSelection}</blockquote>
+            <input
+              className="bo-input"
+              placeholder="Buscar topónimo…"
+              value={manualTopoSearch}
+              onChange={e => { setManualTopoSearch(e.target.value); setManualTopo(null) }}
+            />
+            {!manualTopo && manualTopoSearch.trim().length >= 2 && (
+              <div className="bo-search-results">
+                {manualTopoResults.map(t => (
+                  <button key={t.hash} className="bo-search-result-item"
+                    onClick={() => { setManualTopo(t); setManualTopoSearch(t.title) }}>
+                    <span className="bo-search-result-name">{t.title}</span>
+                    <span className="bo-search-result-hash">{t.hash}</span>
+                  </button>
+                ))}
+                <button className="bo-search-result-item bo-search-result-new" onClick={openNewTopo}>
+                  <span className="bo-search-result-name">+ Crear «{manualTopoSearch.trim()}»</span>
+                </button>
+              </div>
+            )}
+            <div className="bo-scanner-actions" style={{ marginTop: '0.75rem' }}>
+              <button className="bo-btn bo-btn-primary" disabled={!manualTopo} onClick={addManualAttestation}>
+                Añadir cita
+              </button>
+            </div>
+          </div>
+        )}
+
+        {manualSelection && <hr className="bo-panel-divider" />}
+
+        {/* ── Auto-scan section ── */}
         <div className="bo-form-section">
-          <label className="bo-label">Topónimo</label>
+          <label className="bo-label">Detectar en el texto</label>
           <input
             className="bo-input"
-            placeholder="Buscar topónimo del índice…"
+            placeholder="Busca un topónimo para resaltar sus apariciones…"
             value={topoSearch}
             onChange={e => { setTopoSearch(e.target.value); if (selectedTopo) { setSelectedTopo(null); setExtraForms([]) } }}
           />
@@ -345,7 +467,6 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
 
         {selectedTopo && (
           <>
-            {/* Extra search patterns */}
             <div className="bo-form-section">
               <label className="bo-label bo-label-sm">Formas alternativas en el texto</label>
               {extraForms.map((f, i) => (
@@ -364,7 +485,6 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
               </button>
             </div>
 
-            {/* Occurrences */}
             <div className="bo-form-section">
               <div className="bo-occ-header">
                 <label className="bo-label">
@@ -415,10 +535,66 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
           </>
         )}
 
-        {!selectedTopo && (
+        {!selectedTopo && !manualSelection && (
           <p className="bo-empty bo-manual-hint">
-            Busca un topónimo para ver sus apariciones en el texto.
+            Selecciona texto con el ratón para añadir una cita, o busca un topónimo para detectar sus apariciones.
           </p>
+        )}
+
+        {/* ── New toponym overlay ── */}
+        {showNewTopo && (
+          <div className="bo-new-topo-overlay">
+            <div className="bo-new-topo-header">
+              <span className="bo-new-topo-title">Nuevo topónimo</span>
+              <button className="bo-btn-icon" onClick={() => setShowNewTopo(false)}>×</button>
+            </div>
+            <div className="bo-form-section">
+              <label className="bo-label">Nombre <span className="bo-required">*</span></label>
+              <input className="bo-input" autoFocus
+                value={newTopoForm.name}
+                onChange={e => setNewTopoForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="Nombre del topónimo"
+              />
+            </div>
+            <div className="bo-form-section">
+              <label className="bo-label">Forma patrimonial <span className="bo-optional">(opcional)</span></label>
+              <input className="bo-input"
+                value={newTopoForm.vernacular}
+                onChange={e => setNewTopoForm(f => ({ ...f, vernacular: e.target.value }))}
+                placeholder="Forma dialectal o popular"
+              />
+            </div>
+            <div className="bo-form-section">
+              <label className="bo-label">Tipo</label>
+              <div className="bo-type-btns">
+                {['point', 'line', 'poly'].map(t => (
+                  <button key={t}
+                    className={`bo-type-btn${newTopoForm.type === t ? ' active' : ''}`}
+                    onClick={() => setNewTopoForm(f => ({ ...f, type: t }))}>
+                    {{ point: 'Punto', line: 'Línea', poly: 'Área' }[t]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="bo-form-section">
+              <label className="bo-label">Notas <span className="bo-optional">(opcional)</span></label>
+              <textarea className="bo-input bo-textarea" rows={3}
+                value={newTopoForm.notes}
+                onChange={e => setNewTopoForm(f => ({ ...f, notes: e.target.value }))}
+                placeholder="Evolución fonética, contexto histórico…"
+              />
+            </div>
+            <p className="bo-new-topo-hint">
+              La geometría se puede añadir después desde la lista de topónimos.
+            </p>
+            <div className="bo-form-actions">
+              <button className="bo-btn bo-btn-primary"
+                disabled={!newTopoForm.name.trim()} onClick={saveNewTopo}>
+                Crear y seleccionar
+              </button>
+              <button className="bo-btn" onClick={() => setShowNewTopo(false)}>Cancelar</button>
+            </div>
+          </div>
         )}
       </div>
     </div>

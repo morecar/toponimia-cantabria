@@ -2410,7 +2410,7 @@ a.topo-tag-link:hover {
 .bo-scan-form { color: #6c757d; font-style: italic; }
 .bo-scan-hash { margin-left: auto; font-size: 0.7rem; color: #aaa; font-family: monospace; }
 .bo-scan-quote {
-  margin: 0;
+  margin: 0.25rem 0 0;
   padding: 0.3rem 0.5rem;
   border-left: 3px solid #dee2e6;
   font-size: 0.78rem;
@@ -2418,6 +2418,27 @@ a.topo-tag-link:hover {
   font-style: italic;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* ── Manual selection section (inside annotate panel) ── */
+.bo-manual-section {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bo-manual-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bo-panel-divider {
+  border: none;
+  border-top: 1px solid #dee2e6;
+  margin: 0.5rem 0;
 }
 
 .bo-btn-template {
