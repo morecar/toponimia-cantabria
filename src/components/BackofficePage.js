@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import BackofficeMap from './BackofficeMap'
 import {
@@ -23,7 +23,8 @@ import ToponymsView from './backoffice/ToponymsView'
 export default function BackofficePage({ repository, etymologyStore, loc }) {
   const navigate  = useNavigate()
   const location  = useLocation()
-  const startView = location.state?.startView
+  const params    = useParams()
+  const startView = params.view || location.state?.startView
 
   const [drafts, setDrafts] = useState(() => getDrafts())
   const [textProjects, setTextProjects] = useState(() => getTextProjects())

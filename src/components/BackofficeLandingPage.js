@@ -3,6 +3,13 @@ import { Navbar } from 'react-bootstrap'
 import { getDrafts } from '../model/draftStore'
 import { ROUTE_HOME, ROUTE_BACKOFFICE_EDITOR } from '../resources/routes'
 
+const VIEW_URLS = {
+  etymologies: 'etymologies',
+  toponyms:    'toponyms',
+  scanner:     'scanner',
+  manual:      'manual',
+}
+
 function StatCard({ value, label }) {
   return (
     <div className="bol-stat">
@@ -26,7 +33,9 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
   const navigate = useNavigate()
   const drafts   = getDrafts()
 
-  const go = (startView) => navigate(ROUTE_BACKOFFICE_EDITOR, { state: { startView } })
+  const go = (startView) => VIEW_URLS[startView]
+    ? navigate(`${ROUTE_BACKOFFICE_EDITOR}/${VIEW_URLS[startView]}`)
+    : navigate(ROUTE_BACKOFFICE_EDITOR, { state: { startView } })
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   const entries    = repository?.getAllEntries() || []
@@ -49,16 +58,10 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
         <section className="bol-section">
           <div className="bol-actions">
             <ActionCard
-              icon="✎"
-              title="Editar topónimo"
-              desc="Busca uno existente y añade etimología, atestaciones o notas"
-              onClick={() => go('list')}
-            />
-            <ActionCard
-              icon="⌕"
-              title="Escanear texto"
-              desc="Pega un documento histórico y asigna citas a los topónimos detectados"
-              onClick={() => go('scanner')}
+              icon="☰"
+              title="Topónimos"
+              desc="Lista, edita o borra topónimos del índice y gestiona borradores"
+              onClick={() => go('toponyms')}
             />
             <ActionCard
               icon="+"
@@ -67,28 +70,28 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
               onClick={() => go('new')}
             />
             <ActionCard
-              icon="∴"
-              title="Etimologías"
-              desc="Crea o edita entradas etimológicas reutilizables"
-              onClick={() => go('etymologies')}
-            />
-            <ActionCard
               icon="↓"
               title="Importar NGBE"
               desc="Importa topónimos del sistema cartográfico con sus coordenadas GPS"
               onClick={() => go('ngbe')}
             />
             <ActionCard
+              icon="∴"
+              title="Etimologías"
+              desc="Crea o edita entradas etimológicas reutilizables"
+              onClick={() => go('etymologies')}
+            />
+            <ActionCard
+              icon="⌕"
+              title="Escanear texto"
+              desc="Pega un documento histórico y asigna citas a los topónimos detectados"
+              onClick={() => go('scanner')}
+            />
+            <ActionCard
               icon="✎"
               title="Enlazar citas"
               desc="Selecciona fragmentos de un texto histórico y vincúlalos a topónimos"
               onClick={() => go('manual')}
-            />
-            <ActionCard
-              icon="☰"
-              title="Topónimos"
-              desc="Lista, edita o borra topónimos del índice y gestiona borradores"
-              onClick={() => go('toponyms')}
             />
           </div>
         </section>
