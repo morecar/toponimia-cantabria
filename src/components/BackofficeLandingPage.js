@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
-import { getDrafts } from '../model/draftStore'
+import { getDrafts, getDraftEtymologies } from '../model/draftStore'
 import { getTextProjects } from './backoffice/textProjectStore'
 import { ROUTE_HOME, ROUTE_BACKOFFICE_EDITOR } from '../resources/routes'
 
@@ -12,10 +12,19 @@ const VIEW_URLS = {
   ngbe:        'import',
 }
 
-function StatCard({ value, label }) {
+function StatCard({ value, label, added, removed }) {
+  const hasDelta = added || removed
   return (
     <div className="bol-stat">
-      <span className="bol-stat-value">{value}</span>
+      <span className="bol-stat-value">
+        {value}
+        {hasDelta && (
+          <span className="bol-stat-delta">
+            {added   > 0 && <span className="bol-stat-added">+{added}</span>}
+            {removed > 0 && <span className="bol-stat-removed">−{removed}</span>}
+          </span>
+        )}
+      </span>
       <span className="bol-stat-label">{label}</span>
     </div>
   )
@@ -47,6 +56,13 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
   const withAtt    = entries.filter(e => e.attestations?.length).length
   const withNotes  = entries.filter(e => e.notes).length
   const totalEtyms = etymologyStore?.byId?.size ?? 0
+
+  // Draft deltas
+  const draftEtyms       = getDraftEtymologies()
+  const newTopos         = drafts.filter(d => !d.hash && !d.deleted).length
+  const deletedTopos     = drafts.filter(d =>  d.deleted).length
+  const newEtyms         = draftEtyms.filter(e => !e.deleted && !(etymologyStore?.byId?.has(e.id))).length
+  const deletedEtyms     = draftEtyms.filter(e =>  e.deleted).length
 
   return (
     <div className="bol-layout">
@@ -103,11 +119,12 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
         <section className="bol-section">
           <h2 className="bol-section-title">Índice</h2>
           <div className="bol-stats">
-            <StatCard value={total}      label="topónimos" />
+            <StatCard value={total}      label="topónimos"  added={newTopos}   removed={deletedTopos} />
+            <StatCard value={totalEtyms} label="etimologías" added={newEtyms}  removed={deletedEtyms} />
+            <div className="bol-stats-divider" />
             <StatCard value={withEtym}   label="con etimología" />
             <StatCard value={withAtt}    label="con atestaciones" />
             <StatCard value={withNotes}  label="con notas" />
-            <StatCard value={totalEtyms} label="etimologías" />
           </div>
         </section>
 

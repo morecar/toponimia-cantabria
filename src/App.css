@@ -1576,6 +1576,24 @@ a.topo-tag-link:hover {
   text-align: center;
 }
 
+.bol-stat-delta {
+  display: inline-flex;
+  gap: 0.2rem;
+  margin-left: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.bol-stat-added   { color: #16a34a; }
+.bol-stat-removed { color: #dc2626; }
+
+.bol-stats-divider {
+  width: 1px;
+  background: #dee2e6;
+  align-self: stretch;
+  margin: 0 0.25rem;
+}
+
 /* ── Draft list ── */
 .bol-draft-count {
   background: #0d6efd;
