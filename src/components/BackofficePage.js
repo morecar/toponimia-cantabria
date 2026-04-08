@@ -30,7 +30,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
 
   const [drafts, setDrafts] = useState(() => getDrafts())
   const [textProjects, setTextProjects] = useState(() => getTextProjects())
-  const [startProjectId, setStartProjectId] = useState(() => location.state?.startProjectId ?? null)
+  const [startProjectId, setStartProjectId] = useState(() =>
+    location.state?.startProjectId ?? new URLSearchParams(location.search).get('proj') ?? null
+  )
 
   const refreshTextProjects = () => setTextProjects(getTextProjects())
 

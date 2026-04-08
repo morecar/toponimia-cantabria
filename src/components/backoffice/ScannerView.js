@@ -207,6 +207,21 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
     if (activeProj?.id === id) { setActiveProj(null); setSubview('projects') }
   }
 
+  // Drafts linked to the active project (for summary panel)
+  const linkedDrafts = useMemo(() => {
+    if (!activeProj) return []
+    return getDrafts()
+      .filter(d => !d.deleted && d.attestations?.some(
+        a => a.projectId === activeProj.id || a.source === activeProj.title
+      ))
+      .map(d => ({
+        ...d,
+        projectAtts: d.attestations.filter(
+          a => a.projectId === activeProj.id || a.source === activeProj.title
+        ),
+      }))
+  }, [activeProj, selectedTopo, manualSelection]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Auto-scan import ───────────────────────────────────────────────────────
   const importOccurrences = () => {
     if (!selectedTopo || selected.size === 0 || !activeProj) return
@@ -215,6 +230,7 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
       year:        activeProj.year,
       source:      activeProj.title,
       url:         activeProj.url || '',
+      projectId:   activeProj.id,
       occurrences: [...selected].sort((a, b) => a - b).map(i => ({
         highlight: occurrences[i].form,
         quote:     occurrences[i].context,
@@ -254,6 +270,7 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
       year:      activeProj.year,
       source:    activeProj.title,
       url:       activeProj.url || '',
+      projectId: activeProj.id,
       highlight: manualSelection,
       quote:     manualSelection,
     }
@@ -552,6 +569,49 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
           <p className="bo-empty bo-manual-hint">
             Selecciona texto con el ratón para añadir una cita, o busca un topónimo para detectar sus apariciones.
           </p>
+        )}
+
+        {/* ── Linked toponyms summary ── */}
+        {(linkedDrafts.length > 0 || (!selectedTopo && !manualSelection)) && (
+          <>
+            <hr className="bo-panel-divider" />
+            <div className="bo-form-section">
+              <label className="bo-label">
+                En este texto
+                {linkedDrafts.length > 0 && (
+                  <span className="bo-linked-count">{linkedDrafts.length}</span>
+                )}
+              </label>
+              {linkedDrafts.length === 0 ? (
+                <p className="bo-empty bo-empty-sm">Sin topónimos vinculados todavía.</p>
+              ) : (
+                <div className="bo-linked-list">
+                  {linkedDrafts.map(d => (
+                    <div key={d.draftId || d.hash} className="bo-linked-item">
+                      <button
+                        className="bo-linked-name"
+                        onClick={() => { setSelectedTopo({ hash: d.hash, title: d.name }); setTopoSearch(d.name) }}
+                        title="Buscar apariciones en el texto"
+                      >
+                        {d.name}
+                      </button>
+                      {d.projectAtts.map((att, ai) => {
+                        const occs = att.occurrences
+                          ? att.occurrences
+                          : [{ highlight: att.highlight, quote: att.quote }]
+                        return occs.map((occ, oi) => occ.quote && (
+                          <blockquote key={`${ai}-${oi}`} className="bo-linked-quote">
+                            {occ.highlight && <span className="bo-linked-form">{occ.highlight}</span>}
+                            {occ.quote}
+                          </blockquote>
+                        ))
+                      })}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
 
         {/* ── New toponym overlay ── */}

@@ -809,6 +809,7 @@ a.topo-tag-link:hover {
 .topo-attestation-link {
   font-size: 0.8rem;
 }
+.topo-attestation-link--proj { margin-left: 0.5rem; color: #0d6efd; }
 
 .topo-popup-link {
   background: none;
@@ -2439,6 +2440,61 @@ a.topo-tag-link:hover {
   border: none;
   border-top: 1px solid #dee2e6;
   margin: 0.5rem 0;
+}
+
+/* ── Linked toponyms summary (scanner right panel) ── */
+.bo-linked-count {
+  background: #0d6efd;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.1em 0.45em;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+.bo-linked-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+.bo-linked-item {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.bo-linked-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0d6efd;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.bo-linked-name:hover { text-decoration: underline; }
+.bo-linked-quote {
+  margin: 0;
+  padding: 0.2rem 0.4rem;
+  border-left: 2px solid #dee2e6;
+  font-size: 0.72rem;
+  color: #495057;
+  font-style: italic;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.bo-linked-form {
+  font-style: normal;
+  font-weight: 600;
+  color: #212529;
+  margin-right: 0.3rem;
+  font-size: 0.68rem;
 }
 
 .bo-btn-template {

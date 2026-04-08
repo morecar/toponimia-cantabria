@@ -1,4 +1,5 @@
 import Markdown from 'react-markdown'
+import { getTextProjects } from './backoffice/textProjectStore'
 
 function HighlightedQuote({ quote, highlight }) {
   if (!highlight || !quote) return <>{quote}</>
@@ -24,8 +25,11 @@ function tagCategoryClass(tagKey) {
   return `tag-chip--cat-${prefix}`
 }
 
+const textProjectsById = () => Object.fromEntries(getTextProjects().map(p => [p.id, p]))
+
 export default function TopoDetailPanel({ hash, repository, etymologyStore, loc, onClose, onNavigateToEtym }) {
   const topo = repository.getFromId(hash)
+  const projectsById = textProjectsById()
   if (!topo) return null
 
   const attestations = (topo.attestations || []).slice().reverse()
@@ -103,6 +107,15 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                     {a.url && (
                       <a href={a.url} target="_blank" rel="noopener noreferrer" className="topo-attestation-link">
                         {loc.get('panel_source_link')}
+                      </a>
+                    )}
+                    {a.projectId && projectsById[a.projectId] && (
+                      <a
+                        href={`${process.env.PUBLIC_URL}/backoffice/editor/scanner?proj=${a.projectId}`}
+                        className="topo-attestation-link topo-attestation-link--proj"
+                        title={projectsById[a.projectId].title}
+                      >
+                        📄 Ver en texto
                       </a>
                     )}
                   </li>
