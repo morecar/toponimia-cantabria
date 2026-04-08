@@ -51,7 +51,10 @@ export function newDraftEtymId() {
 
 // ── Export ────────────────────────────────────────────────────────────────────
 export function exportDrafts(drafts) {
-  const toponyms = drafts.map(d => ({
+  const active   = drafts.filter(d => !d.deleted)
+  const deleted  = drafts.filter(d =>  d.deleted && d.hash)
+
+  const toponyms = active.map(d => ({
     hash: d.hash || 'PENDING',
     name: d.name,
     type: d.type,
@@ -62,11 +65,16 @@ export function exportDrafts(drafts) {
     ...(d.attestations?.length   ? { attestations: d.attestations }     : {}),
     ...(d.etymology_ids?.length  ? { etymology_ids: d.etymology_ids }   : {}),
   }))
-  const newEtymologies = getDraftEtymologies()
-  return JSON.stringify(
-    newEtymologies.length ? { toponyms, new_etymologies: newEtymologies } : { toponyms },
-    null, 2
-  )
+
+  const allDraftEtyms = getDraftEtymologies()
+  const newEtymologies    = allDraftEtyms.filter(e => !e.deleted)
+  const deletedEtymologies = allDraftEtyms.filter(e =>  e.deleted).map(e => e.id)
+
+  const out = { toponyms }
+  if (deleted.length)            out.to_delete_toponyms   = deleted.map(d => d.hash)
+  if (newEtymologies.length)     out.new_etymologies      = newEtymologies
+  if (deletedEtymologies.length) out.to_delete_etymologies = deletedEtymologies
+  return JSON.stringify(out, null, 2)
 }
 
 function coordsToString(type, coordinates) {

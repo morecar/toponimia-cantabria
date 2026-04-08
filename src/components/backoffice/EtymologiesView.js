@@ -41,6 +41,11 @@ export default function EtymologiesView({ etymologyStore, onBack }) {
 
   const handleDelete = (id) => { deleteDraftEtymology(id); refresh() }
 
+  const handleMarkDeleted = (etym) => {
+    saveDraftEtymology({ ...etym, deleted: true })
+    refresh()
+  }
+
   if (subview === 'form') {
     const isCommittedEdit = etymForm.id && etymologyStore?.byId?.has(etymForm.id)
     const hasDraftOverride = etymForm.id && draftEtyms.some(e => e.id === etymForm.id)
@@ -101,10 +106,12 @@ export default function EtymologiesView({ etymologyStore, onBack }) {
     )
   }
 
-  // Draft IDs: some may be committed-ID overrides (same id as a committed etymology)
-  const draftIds = new Set(draftEtyms.map(e => e.id))
+  // Separate drafts by kind
+  const draftIds     = new Set(draftEtyms.map(e => e.id))
+  const activeDrafts = draftEtyms.filter(e => !e.deleted)
+  const deletedDrafts = draftEtyms.filter(e => e.deleted)
 
-  // Committed etymologies that don't yet have a draft override
+  // Committed etymologies that don't yet have a draft of any kind
   const uncommittedEtyms = (etymologyStore?.byId?.size ?? 0) > 0
     ? Array.from(etymologyStore.byId.values()).filter(e => !draftIds.has(e.id))
     : []
@@ -116,10 +123,10 @@ export default function EtymologiesView({ etymologyStore, onBack }) {
         <button className="bo-btn" onClick={onBack}>← Volver</button>
       </div>
 
-      {draftEtyms.length > 0 && (
+      {(activeDrafts.length > 0 || deletedDrafts.length > 0) && (
         <div className="bo-etym-section">
           <h4 className="bo-etym-section-title">Borradores</h4>
-          {draftEtyms.map(e => {
+          {activeDrafts.map(e => {
             const isOverride = etymologyStore?.byId?.has(e.id)
             return (
               <div key={e.id} className="bo-etym-list-item">
@@ -137,6 +144,18 @@ export default function EtymologiesView({ etymologyStore, onBack }) {
               </div>
             )
           })}
+          {deletedDrafts.map(e => (
+            <div key={e.id} className="bo-etym-list-item bo-etym-list-item--deleted">
+              <div className="bo-etym-list-body">
+                <strong>{stripFmt(e.origin)}</strong>
+                <span className="bo-deleted-badge">borrado</span>
+                {e.meaning && <span className="bo-etym-meaning"> — {stripFmtInline(e.meaning)}</span>}
+              </div>
+              <div className="bo-etym-list-actions">
+                <button className="bo-btn bo-btn-sm" onClick={() => handleDelete(e.id)}>Deshacer</button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -153,6 +172,7 @@ export default function EtymologiesView({ etymologyStore, onBack }) {
               </div>
               <div className="bo-etym-list-actions">
                 <button className="bo-btn bo-btn-sm" onClick={() => handleEdit(e)}>Editar</button>
+                <button className="bo-btn bo-btn-sm bo-btn-danger" onClick={() => handleMarkDeleted(e)}>Borrar</button>
                 <span className="bo-etym-committed-badge">{e.id}</span>
               </div>
             </div>

@@ -2668,6 +2668,24 @@ a.topo-tag-link:hover {
   font-weight: 500;
 }
 
+.bo-deleted-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  background: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+  border-radius: 0.2rem;
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+.bo-etym-list-item--deleted {
+  opacity: 0.65;
+  background: #fff5f5;
+}
+
 .bo-etym-list-item--committed .bo-etym-list-actions {
   display: flex;
   align-items: center;

@@ -18,6 +18,7 @@ import { getTextProjects } from './backoffice/textProjectStore'
 import ManualLinkView from './backoffice/ManualLinkView'
 import EtymologiesView from './backoffice/EtymologiesView'
 import NgbeImportView from './backoffice/NgbeImportView'
+import ToponymsView from './backoffice/ToponymsView'
 
 export default function BackofficePage({ repository, etymologyStore, loc }) {
   const navigate  = useNavigate()
@@ -38,6 +39,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
     if (startView === 'scanner')     return 'scanner'
     if (startView === 'new')         return 'form'
     if (startView === 'etymologies') return 'etymologies'
+    if (startView === 'toponyms')    return 'toponyms'
     if (startView === 'ngbe')        return 'ngbe'
     if (startView === 'manual')      return 'manual'
     return 'list'
@@ -202,7 +204,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const canFinish = (form.type === 'line' && currentPoints.length >= 2)
                  || (form.type === 'poly' && currentPoints.length >= 3)
 
-  const isFullscreen = view === 'scanner' || view === 'manual' || view === 'etymologies'
+  const isFullscreen = view === 'scanner' || view === 'manual' || view === 'etymologies' || view === 'toponyms'
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -226,6 +228,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
                 </button>
                 <button className="bo-btn" onClick={() => setView('manual')}>
                   ✎ Enlazar citas
+                </button>
+                <button className="bo-btn" onClick={() => setView('toponyms')}>
+                  ☰ Topónimos
                 </button>
                 {drafts.length > 0 && (
                   <button className="bo-btn" onClick={handleExport}>↓ Exportar</button>
@@ -469,6 +474,16 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
             <EtymologiesView
               etymologyStore={etymologyStore}
               onBack={() => setView('list')}
+            />
+          )}
+
+          {/* ── TOPONYMS VIEW ── */}
+          {view === 'toponyms' && (
+            <ToponymsView
+              repository={repository}
+              etymologyStore={etymologyStore}
+              loc={loc}
+              onBack={() => { refreshDrafts(); setView('list') }}
             />
           )}
 
