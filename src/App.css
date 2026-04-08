@@ -1508,12 +1508,16 @@ a.topo-tag-link:hover {
 /* ── Action cards ── */
 .bol-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
 }
-@media (max-width: 640px) {
-  .bol-actions { grid-template-columns: repeat(2, 1fr); }
+.bol-actions--3 {
+  grid-template-columns: repeat(3, 1fr);
 }
+@media (max-width: 640px) {
+  .bol-actions--3 { grid-template-columns: repeat(2, 1fr); }
+}
+.bol-actions + .bol-actions { margin-top: 0.75rem; }
 
 .bol-action {
   background: #fff;

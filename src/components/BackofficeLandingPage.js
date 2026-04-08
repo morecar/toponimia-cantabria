@@ -160,16 +160,18 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
               onClick={() => go('toponyms')}
             />
             <ActionCard
-              icon="↓"
-              title="Importar NGBE"
-              desc="Importa topónimos del sistema cartográfico con sus coordenadas GPS"
-              onClick={() => go('ngbe')}
-            />
-            <ActionCard
               icon="∴"
               title="Etimologías"
               desc="Crea o edita entradas etimológicas reutilizables"
               onClick={() => go('etymologies')}
+            />
+          </div>
+          <div className="bol-actions bol-actions--3">
+            <ActionCard
+              icon="↓"
+              title="Importar NGBE"
+              desc="Importa topónimos del sistema cartográfico con sus coordenadas GPS"
+              onClick={() => go('ngbe')}
             />
             <ActionCard
               icon="⌕"
