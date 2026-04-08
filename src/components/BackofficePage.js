@@ -24,7 +24,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const location  = useLocation()
   const params      = useParams()
   // Map URL slugs to internal view names
-  const URL_VIEW_MAP = { link: 'scanner', import: 'ngbe' }
+  const URL_VIEW_MAP = { import: 'ngbe' }
   const startView   = URL_VIEW_MAP[params.view] || params.view || location.state?.startView
   const startSubview = params.subview  // e.g. 'new'
 
