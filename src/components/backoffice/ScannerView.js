@@ -123,19 +123,30 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
     refreshTextProjects?.()
   }
 
+  // Merge indexed results with new (hash-less) drafts matching a query
+  const searchWithDrafts = (q, limit = 10) => {
+    const indexed = (repository?.getFromQueryString(q, false) || []).slice(0, limit)
+    const indexedTitles = new Set(indexed.map(t => t.title?.toLowerCase()))
+    const draftMatches = getDrafts()
+      .filter(d => !d.deleted && !d.hash && d.name?.toLowerCase().includes(q.toLowerCase()))
+      .map(d => ({ draftId: d.draftId, hash: null, title: d.name }))
+      .filter(d => !indexedTitles.has(d.title?.toLowerCase()))
+    return [...indexed, ...draftMatches].slice(0, limit)
+  }
+
   // Auto-scan toponym search results
   const topoResults = useMemo(() => {
     const q = topoSearch.trim()
     if (q.length < 2) return []
-    return (repository?.getFromQueryString(q, false) || []).slice(0, 10)
-  }, [topoSearch, repository])
+    return searchWithDrafts(q, 10)
+  }, [topoSearch, repository]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Manual toponym search results
   const manualTopoResults = useMemo(() => {
     const q = manualTopoSearch.trim()
     if (q.length < 2) return []
-    return (repository?.getFromQueryString(q, false) || []).slice(0, 8)
-  }, [manualTopoSearch, repository])
+    return searchWithDrafts(q, 8)
+  }, [manualTopoSearch, repository]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Occurrences of the selected toponym in the active project
   const occurrences = useMemo(() => {
