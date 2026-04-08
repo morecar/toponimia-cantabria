@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import { getDrafts } from '../model/draftStore'
+import { getTextProjects } from './backoffice/textProjectStore'
 import { ROUTE_HOME, ROUTE_BACKOFFICE_EDITOR } from '../resources/routes'
 
 const VIEW_URLS = {
@@ -32,7 +33,8 @@ function ActionCard({ icon, title, desc, onClick }) {
 
 export default function BackofficeLandingPage({ repository, etymologyStore }) {
   const navigate = useNavigate()
-  const drafts   = getDrafts()
+  const drafts       = getDrafts()
+  const textProjects = getTextProjects()
 
   const go = (startView) => VIEW_URLS[startView]
     ? navigate(`${ROUTE_BACKOFFICE_EDITOR}/${VIEW_URLS[startView]}`)
@@ -108,6 +110,24 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
             <StatCard value={totalEtyms} label="etimologías" />
           </div>
         </section>
+
+        {/* ── Text projects ── */}
+        {textProjects.length > 0 && (
+          <section className="bol-section">
+            <h2 className="bol-section-title">Textos históricos</h2>
+            <div className="bol-draft-list">
+              {textProjects.map(p => (
+                <button key={p.id} className="bol-draft-item"
+                  onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/scanner`, { state: { startProjectId: p.id } })}>
+                  <span className="bol-draft-name">{p.title}</span>
+                  <span className="bol-draft-meta">
+                    {p.year && `${p.year} · `}{p.text ? `${p.text.length.toLocaleString()} car.` : 'sin texto'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── Drafts ── */}
         <section className="bol-section">
