@@ -97,11 +97,14 @@ function HighlightedText({ text, occurrences, selected, onToggle }) {
 // ── Main component ────────────────────────────────────────────────────────────
 const EMPTY_PROJ_FORM = () => ({ title: '', year: '', url: '', text: '' })
 
-export default function ScannerView({ repository, refreshDrafts, onBack }) {
-  const [projects,    setProjects]    = useState(() => getTextProjects())
-  const [subview,     setSubview]     = useState('projects')  // 'projects' | 'edit' | 'annotate'
+export default function ScannerView({ repository, refreshDrafts, refreshTextProjects, startProjectId, onBack }) {
+  const allProjects = getTextProjects()
+  const initialProj = startProjectId ? allProjects.find(p => p.id === startProjectId) ?? null : null
+
+  const [projects,    setProjects]    = useState(allProjects)
+  const [subview,     setSubview]     = useState(initialProj ? 'annotate' : 'projects')
   const [projForm,    setProjForm]    = useState(EMPTY_PROJ_FORM)
-  const [activeProj,  setActiveProj]  = useState(null)
+  const [activeProj,  setActiveProj]  = useState(initialProj)
 
   // Annotation state
   const [topoSearch,   setTopoSearch]   = useState('')
@@ -109,7 +112,10 @@ export default function ScannerView({ repository, refreshDrafts, onBack }) {
   const [extraForms,   setExtraForms]   = useState([])
   const [selected,     setSelected]     = useState(new Set())
 
-  const refreshProjects = () => setProjects(getTextProjects())
+  const refreshProjects = () => {
+    setProjects(getTextProjects())
+    refreshTextProjects?.()
+  }
 
   // Toponym search results
   const topoResults = useMemo(() => {

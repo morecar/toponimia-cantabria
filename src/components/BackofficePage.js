@@ -14,6 +14,7 @@ import EtymologySelector from './backoffice/EtymologySelector'
 import AttestationRow from './backoffice/AttestationRow'
 import DraftItem from './backoffice/DraftItem'
 import ScannerView from './backoffice/ScannerView'
+import { getTextProjects } from './backoffice/textProjectStore'
 import ManualLinkView from './backoffice/ManualLinkView'
 import EtymologiesView from './backoffice/EtymologiesView'
 import NgbeImportView from './backoffice/NgbeImportView'
@@ -24,6 +25,15 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const startView = location.state?.startView
 
   const [drafts, setDrafts] = useState(() => getDrafts())
+  const [textProjects, setTextProjects] = useState(() => getTextProjects())
+  const [startProjectId, setStartProjectId] = useState(null)
+
+  const refreshTextProjects = () => setTextProjects(getTextProjects())
+
+  const openTextProject = (proj) => {
+    setStartProjectId(proj.id)
+    setView('scanner')
+  }
   const [view, setView]     = useState(() => {
     if (startView === 'scanner')     return 'scanner'
     if (startView === 'new')         return 'form'
@@ -242,6 +252,33 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
                 )}
               </div>
 
+              {textProjects.length > 0 && (
+                <div className="bo-home-section">
+                  <div className="bo-home-section-header">
+                    <span className="bo-home-section-title">Textos históricos</span>
+                    <button className="bo-btn bo-btn-sm" onClick={() => { setStartProjectId(null); setView('scanner') }}>
+                      Ver todos
+                    </button>
+                  </div>
+                  <div className="bo-proj-list">
+                    {textProjects.map(p => (
+                      <div key={p.id} className="bo-proj-item">
+                        <div className="bo-proj-meta">
+                          <span className="bo-proj-title">{p.title}</span>
+                          {p.year && <span className="bo-proj-year">{p.year}</span>}
+                          {p.text && <span className="bo-proj-chars">{p.text.length.toLocaleString()} car.</span>}
+                        </div>
+                        <div className="bo-proj-actions">
+                          <button className="bo-btn bo-btn-primary bo-btn-sm" onClick={() => openTextProject(p)}>
+                            Abrir
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {drafts.length === 0 ? (
                 <p className="bo-empty">Sin borradores guardados.</p>
               ) : (
@@ -408,7 +445,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
             <ScannerView
               repository={repository}
               refreshDrafts={refreshDrafts}
-              onBack={() => setView('list')}
+              refreshTextProjects={refreshTextProjects}
+              startProjectId={startProjectId}
+              onBack={() => { setStartProjectId(null); setView('list') }}
             />
           )}
 
