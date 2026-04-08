@@ -428,10 +428,12 @@ export default function ScannerView({ repository, refreshDrafts, refreshTextProj
                     <span className="bo-search-result-hash">{t.hash}</span>
                   </button>
                 ))}
-                <button className="bo-search-result-item bo-search-result-new" onClick={openNewTopo}>
-                  <span className="bo-search-result-name">+ Crear «{manualTopoSearch.trim()}»</span>
-                </button>
               </div>
+            )}
+            {!manualTopo && (
+              <button className="bo-btn bo-btn-sm" style={{ marginTop: '0.25rem' }} onClick={openNewTopo}>
+                + Crear nuevo topónimo{manualTopoSearch.trim().length >= 2 ? ` «${manualTopoSearch.trim()}»` : ''}
+              </button>
             )}
             <div className="bo-scanner-actions" style={{ marginTop: '0.75rem' }}>
               <button className="bo-btn bo-btn-primary" disabled={!manualTopo} onClick={addManualAttestation}>
