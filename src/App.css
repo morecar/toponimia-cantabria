@@ -1763,6 +1763,49 @@ a.topo-tag-link:hover {
   position: relative;
 }
 
+/* ── Geometry map slide-in panel (ToponymsView form) ── */
+.bo-geom-map-panel {
+  position: fixed;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  width: 52%;
+  z-index: 300;
+  background: #fff;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bo-geom-map-panel.open {
+  transform: translateX(0);
+}
+.bo-geom-map-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+.bo-geom-map-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+.bo-geom-map-controls {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.bo-geom-map-body {
+  flex: 1;
+  min-height: 0;
+}
+
 /* ── New toponym overlay (inside right column) ── */
 .bo-new-topo-overlay {
   position: absolute;

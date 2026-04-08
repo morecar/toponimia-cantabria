@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import {
   getDrafts, saveDraft, deleteDraft, newDraftId,
 } from '../../model/draftStore'
@@ -8,6 +8,7 @@ import {
 import TagInput from './TagInput'
 import EtymologySelector from './EtymologySelector'
 import AttestationRow from './AttestationRow'
+import BackofficeMap from '../BackofficeMap'
 
 // ── Toponym list item ─────────────────────────────────────────────────────────
 function TopoListItem({ item, isDraft, isDeleted, isOverride, onEdit, onDelete, onMarkDeleted, onUndelete }) {
@@ -38,13 +39,16 @@ function TopoListItem({ item, isDraft, isDeleted, isOverride, onEdit, onDelete, 
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function ToponymsView({ repository, etymologyStore, loc, startSubview, onBack }) {
-  const [drafts,   setDrafts]   = useState(() => getDrafts())
-  const [subview,  setSubview]  = useState(startSubview === 'new' ? 'form' : 'list')
-  const [form,     setForm]     = useState(() => startSubview === 'new' ? { ...EMPTY_FORM(), draftId: newDraftId() } : EMPTY_FORM())
-  const [error,    setError]    = useState('')
-  const [search,   setSearch]   = useState('')
-  const [showBulk, setShowBulk] = useState(false)
-  const [bulkText, setBulkText] = useState('')
+  const [drafts,        setDrafts]        = useState(() => getDrafts())
+  const [subview,       setSubview]       = useState(startSubview === 'new' ? 'form' : 'list')
+  const [form,          setForm]          = useState(() => startSubview === 'new' ? { ...EMPTY_FORM(), draftId: newDraftId() } : EMPTY_FORM())
+  const [error,         setError]         = useState('')
+  const [search,        setSearch]        = useState('')
+  const [showBulk,      setShowBulk]      = useState(false)
+  const [bulkText,      setBulkText]      = useState('')
+  const [showMap,       setShowMap]       = useState(false)
+  const [isDrawing,     setIsDrawing]     = useState(false)
+  const [currentPoints, setCurrentPoints] = useState([])
 
   const refresh = () => setDrafts(getDrafts())
 
@@ -113,6 +117,40 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
     }
     refresh()
   }
+
+  // ── Drawing ─────────────────────────────────────────────────────────────────
+  const handleAddPoint = useCallback((latlng) => {
+    if (form.type === 'point') {
+      setCurrentPoints([latlng])
+      setIsDrawing(false)
+    } else {
+      setCurrentPoints(prev => [...prev, latlng])
+    }
+  }, [form.type])
+
+  const handleStartDrawing  = () => { setCurrentPoints([]); setIsDrawing(true) }
+  const handleFinishDrawing = () => setIsDrawing(false)
+  const handleClearDrawing  = () => { setCurrentPoints([]); setIsDrawing(false) }
+
+  const handleConfirmGeometry = () => {
+    setForm(f => ({ ...f, coordinates: currentPoints }))
+    setShowMap(false)
+    setIsDrawing(false)
+  }
+
+  const openMap = () => {
+    setCurrentPoints(form.coordinates || [])
+    setShowMap(true)
+  }
+
+  const closeMap = () => {
+    setCurrentPoints([])
+    setShowMap(false)
+    setIsDrawing(false)
+  }
+
+  const canFinish = (form.type === 'line' && currentPoints.length >= 2)
+                 || (form.type === 'poly' && currentPoints.length >= 3)
 
   // ── Attestations ────────────────────────────────────────────────────────────
   const addAttestation = () =>
@@ -192,7 +230,7 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
             {['point', 'line', 'poly'].map(t => (
               <button key={t}
                 className={`bo-type-btn${form.type === t ? ' active' : ''}`}
-                onClick={() => setForm(f => ({ ...f, type: t, coordinates: [] }))}>
+                onClick={() => { setForm(f => ({ ...f, type: t, coordinates: [] })); setCurrentPoints([]); setIsDrawing(false) }}>
                 {{ point: 'Punto', line: 'Línea', poly: 'Área' }[t]}
               </button>
             ))}
@@ -201,10 +239,17 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
 
         <div className="bo-form-section">
           <label className="bo-label">Geometría</label>
+          <div className="bo-draw-row">
+            <button className="bo-btn bo-btn-primary" onClick={openMap}>
+              ✎ Marcar en mapa
+            </button>
+            {(form.coordinates?.length > 0) && (
+              <button className="bo-btn bo-btn-sm" onClick={() => setForm(f => ({ ...f, coordinates: [] }))}>
+                ✕ Limpiar
+              </button>
+            )}
+          </div>
           <span className="bo-coords-label">{coordsLabel}</span>
-          <p className="bo-draw-hint" style={{ marginTop: '0.25rem' }}>
-            Para marcar en el mapa usa la vista principal del backoffice.
-          </p>
         </div>
 
         <div className="bo-form-section">
@@ -284,6 +329,52 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
             </button>
           )}
           <button className="bo-btn" onClick={() => setSubview('list')}>Cancelar</button>
+        </div>
+
+        {/* ── Slide-in map panel ── */}
+        <div className={`bo-geom-map-panel${showMap ? ' open' : ''}`}>
+          <div className="bo-geom-map-toolbar">
+            <span className="bo-geom-map-title">
+              Geometría · {{ point: 'Punto', line: 'Línea', poly: 'Área' }[form.type]}
+            </span>
+            <div className="bo-geom-map-controls">
+              {!isDrawing ? (
+                <button className="bo-btn bo-btn-primary bo-btn-sm" onClick={handleStartDrawing}>
+                  ✎ Dibujar
+                </button>
+              ) : (
+                <>
+                  {(form.type === 'line' || form.type === 'poly') && (
+                    <button className="bo-btn bo-btn-primary bo-btn-sm"
+                      disabled={!canFinish} onClick={handleFinishDrawing}>
+                      ✓ Finalizar
+                    </button>
+                  )}
+                  <button className="bo-btn bo-btn-sm" onClick={handleClearDrawing}>✕ Limpiar</button>
+                </>
+              )}
+              {currentPoints.length > 0 && !isDrawing && (
+                <button className="bo-btn bo-btn-primary bo-btn-sm" onClick={handleConfirmGeometry}>
+                  ✓ Confirmar
+                </button>
+              )}
+              <button className="bo-btn bo-btn-sm" onClick={closeMap}>Cerrar</button>
+            </div>
+          </div>
+          {showMap && (
+            <div className="bo-geom-map-body">
+              <BackofficeMap
+                isDrawing={isDrawing}
+                drawingType={form.type}
+                currentPoints={currentPoints}
+                onAddPoint={handleAddPoint}
+                drafts={drafts.filter(d => d.draftId !== form.draftId)}
+                selectedDraftId={null}
+                onDraftClick={() => {}}
+                repository={repository}
+              />
+            </div>
+          )}
         </div>
       </div>
     )
