@@ -1,4 +1,4 @@
-# El Toponomicón de Cantabria
+# El Toponomasticón de Cantabria
 
 Una aplicación web interactiva para explorar la toponimia histórica de Cantabria, con énfasis en las huellas fonéticas del romance cántabro: metafonía, aspiración de la F inicial latina, y otros rasgos del habla tradicional.
 
