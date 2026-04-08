@@ -28,6 +28,7 @@ jobs:
           REACT_APP_TOPONYMS_HASH_URL: https://raw.githubusercontent.com/morecar/toponimia-cantabria/data/toponyms-hash.json
           REACT_APP_ETYMOLOGIES_URL: https://raw.githubusercontent.com/morecar/toponimia-cantabria/data/etymologies.json
           REACT_APP_ETYMOLOGIES_HASH_URL: https://raw.githubusercontent.com/morecar/toponimia-cantabria/data/etymologies-hash.json
+          REACT_APP_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_OAUTH_CLIENT_ID }}
         run: yarn build
 
       - name: Deploy
