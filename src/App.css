@@ -1622,7 +1622,13 @@ a.topo-tag-link:hover {
   gap: 0.5rem;
 }
 .bol-draft-item:hover { background: #f0f4ff; border-color: #bfdbfe; }
+.bol-draft-item--new     { background: #f0fdf4; border-color: #bbf7d0; }
+.bol-draft-item--new:hover { background: #dcfce7; border-color: #86efac; }
+.bol-draft-item--deleted { background: #fff5f5; border-color: #fecaca; }
+.bol-draft-item--deleted:hover { background: #fee2e2; border-color: #fca5a5; }
 .bol-draft-name { font-size: 0.875rem; font-weight: 500; color: #212529; }
+.bol-draft-item--new     .bol-draft-name { color: #15803d; }
+.bol-draft-item--deleted .bol-draft-name { color: #dc2626; }
 .bol-draft-meta { font-size: 0.72rem; color: #6c757d; white-space: nowrap; }
 .bol-empty { color: #6c757d; font-size: 0.85rem; margin: 0; }
 

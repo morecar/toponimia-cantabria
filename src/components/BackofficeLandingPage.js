@@ -227,25 +227,34 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
             <p className="bol-empty">Sin cambios pendientes.</p>
           ) : (
             <div className="bol-draft-list">
-              {drafts.map(d => (
-                <button key={d.draftId} className="bol-draft-item"
-                  onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/toponyms`)}>
-                  <span className="bol-draft-name">{d.name || <em>Sin nombre</em>}</span>
-                  <span className="bol-draft-meta">
-                    topónimo · {d.deleted ? 'borrado' : d.hash ? 'edición' : 'nuevo'}
-                    {!d.deleted && ` · ${d.attestations?.length ?? 0} atestaciones`}
-                  </span>
-                </button>
-              ))}
-              {draftEtyms.map(e => (
-                <button key={e.id} className="bol-draft-item"
-                  onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/etymologies`)}>
-                  <span className="bol-draft-name">{e.origin || e.id}</span>
-                  <span className="bol-draft-meta">
-                    etimología · {e.deleted ? 'borrada' : etymologyStore?.byId?.has(e.id) ? 'edición' : 'nueva'}
-                  </span>
-                </button>
-              ))}
+              {drafts.map(d => {
+                const mod = d.deleted ? 'deleted' : !d.hash ? 'new' : null
+                return (
+                  <button key={d.draftId}
+                    className={`bol-draft-item${mod ? ` bol-draft-item--${mod}` : ''}`}
+                    onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/toponyms`)}>
+                    <span className="bol-draft-name">{d.name || <em>Sin nombre</em>}</span>
+                    <span className="bol-draft-meta">
+                      topónimo · {d.deleted ? 'borrado' : d.hash ? 'edición' : 'nuevo'}
+                      {!d.deleted && ` · ${d.attestations?.length ?? 0} atestaciones`}
+                    </span>
+                  </button>
+                )
+              })}
+              {draftEtyms.map(e => {
+                const isNew = !etymologyStore?.byId?.has(e.id)
+                const mod = e.deleted ? 'deleted' : isNew ? 'new' : null
+                return (
+                  <button key={e.id}
+                    className={`bol-draft-item${mod ? ` bol-draft-item--${mod}` : ''}`}
+                    onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/etymologies`)}>
+                    <span className="bol-draft-name">{e.origin || e.id}</span>
+                    <span className="bol-draft-meta">
+                      etimología · {e.deleted ? 'borrada' : isNew ? 'nueva' : 'edición'}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           )}
         </section>
