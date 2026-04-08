@@ -78,6 +78,18 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
               desc="Importa topónimos del sistema cartográfico con sus coordenadas GPS"
               onClick={() => go('ngbe')}
             />
+            <ActionCard
+              icon="✎"
+              title="Enlazar citas"
+              desc="Selecciona fragmentos de un texto histórico y vincúlalos a topónimos"
+              onClick={() => go('manual')}
+            />
+            <ActionCard
+              icon="☰"
+              title="Topónimos"
+              desc="Lista, edita o borra topónimos del índice y gestiona borradores"
+              onClick={() => go('toponyms')}
+            />
           </div>
         </section>
 
