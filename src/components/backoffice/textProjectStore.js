@@ -1,3 +1,5 @@
+import { scheduleDriveSync } from '../../model/driveSync'
+
 const KEY = 'textProjects_v1'
 
 export function getTextProjects() {
@@ -11,10 +13,12 @@ export function saveTextProject(project) {
   if (idx >= 0) all[idx] = project
   else all.push(project)
   localStorage.setItem(KEY, JSON.stringify(all))
+  scheduleDriveSync()
 }
 
 export function deleteTextProject(id) {
   localStorage.setItem(KEY, JSON.stringify(getTextProjects().filter(p => p.id !== id)))
+  scheduleDriveSync()
 }
 
 export function newTextProjectId() {

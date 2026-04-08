@@ -1,3 +1,5 @@
+import { scheduleDriveSync } from './driveSync'
+
 const KEY      = 'draftToponyms'
 const ETYM_KEY = 'draftEtymologies'
 
@@ -13,10 +15,12 @@ export function saveDraft(draft) {
   if (idx >= 0) drafts[idx] = draft
   else drafts.push(draft)
   localStorage.setItem(KEY, JSON.stringify(drafts))
+  scheduleDriveSync()
 }
 
 export function deleteDraft(draftId) {
   localStorage.setItem(KEY, JSON.stringify(getDrafts().filter(d => d.draftId !== draftId)))
+  scheduleDriveSync()
 }
 
 export function newDraftId() {
@@ -37,10 +41,12 @@ export function saveDraftEtymology(etym) {
   if (idx >= 0) all[idx] = etym
   else all.push(etym)
   localStorage.setItem(ETYM_KEY, JSON.stringify(all))
+  scheduleDriveSync()
 }
 
 export function deleteDraftEtymology(id) {
   localStorage.setItem(ETYM_KEY, JSON.stringify(getDraftEtymologies().filter(e => e.id !== id)))
+  scheduleDriveSync()
 }
 
 export function newDraftEtymId() {

@@ -1,7 +1,11 @@
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import { getDrafts, getDraftEtymologies } from '../model/draftStore'
 import { getTextProjects } from './backoffice/textProjectStore'
+import {
+  trySilentAuth, syncFromDrive, requestAuth, isAuthenticated, disconnect,
+} from '../model/driveSync'
 import { ROUTE_HOME, ROUTE_BACKOFFICE_EDITOR } from '../resources/routes'
 
 const VIEW_URLS = {
@@ -13,7 +17,7 @@ const VIEW_URLS = {
 }
 
 function StatCard({ value, label, added, removed }) {
-  const hasDelta = added || removed
+  const hasDelta = (added > 0) || (removed > 0)
   return (
     <div className="bol-stat">
       <span className="bol-stat-value">
@@ -40,14 +44,85 @@ function ActionCard({ icon, title, desc, onClick }) {
   )
 }
 
+// sync status: 'idle' | 'syncing' | 'synced' | 'offline' | 'no-config'
+function DriveIndicator({ status, onConnect, onDisconnect }) {
+  const hasClientId = !!process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID
+  if (!hasClientId) return null
+  if (status === 'no-config') return null
+
+  const dots = {
+    idle:     { color: '#6c757d', title: 'Drive: no conectado' },
+    syncing:  { color: '#f59e0b', title: 'Sincronizando…' },
+    synced:   { color: '#16a34a', title: 'Drive sincronizado' },
+    offline:  { color: '#dc2626', title: 'Sin conexión — trabajando offline' },
+  }
+  const dot = dots[status] || dots.idle
+
+  return (
+    <div className="bol-drive-indicator">
+      <span className="bol-drive-dot" style={{ background: dot.color }} title={dot.title} />
+      <span className="bol-drive-label">{dot.title}</span>
+      {status === 'idle'   && <button className="bol-drive-btn" onClick={onConnect}>Conectar</button>}
+      {status === 'synced' && <button className="bol-drive-btn bol-drive-btn--ghost" onClick={onDisconnect}>Desconectar</button>}
+    </div>
+  )
+}
+
 export default function BackofficeLandingPage({ repository, etymologyStore }) {
   const navigate = useNavigate()
-  const drafts       = getDrafts()
+  const [syncStatus,  setSyncStatus]  = useState('idle')
+  const [refreshKey,  setRefreshKey]  = useState(0)  // bump to force re-read from localStorage
+
+  const drafts       = getDrafts()       // re-read on every render (fast, sync)
   const textProjects = getTextProjects()
 
   const go = (startView) => VIEW_URLS[startView]
     ? navigate(`${ROUTE_BACKOFFICE_EDITOR}/${VIEW_URLS[startView]}`)
     : navigate(ROUTE_BACKOFFICE_EDITOR, { state: { startView } })
+
+  const doSync = useCallback(async () => {
+    setSyncStatus('syncing')
+    const loaded = await syncFromDrive()
+    setSyncStatus('synced')
+    if (loaded) setRefreshKey(k => k + 1)
+  }, [])
+
+  // On mount: try silent auth then sync from Drive
+  useEffect(() => {
+    if (!process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID) { setSyncStatus('no-config'); return }
+    if (!navigator.onLine) { setSyncStatus('offline'); return }
+    if (isAuthenticated()) { doSync(); return }
+    trySilentAuth().then(ok => {
+      if (ok) doSync()
+      else setSyncStatus(navigator.onLine ? 'idle' : 'offline')
+    })
+  }, [doSync])
+
+  // Track online/offline
+  useEffect(() => {
+    const goOffline = () => setSyncStatus(s => s === 'synced' ? 'offline' : s)
+    const goOnline  = () => {
+      if (isAuthenticated()) doSync()
+    }
+    window.addEventListener('offline', goOffline)
+    window.addEventListener('online',  goOnline)
+    return () => {
+      window.removeEventListener('offline', goOffline)
+      window.removeEventListener('online',  goOnline)
+    }
+  }, [doSync])
+
+  const handleConnect = async () => {
+    setSyncStatus('syncing')
+    const ok = await requestAuth()
+    if (ok) doSync()
+    else setSyncStatus('idle')
+  }
+
+  const handleDisconnect = () => {
+    disconnect()
+    setSyncStatus('idle')
+  }
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   const entries    = repository?.getAllEntries() || []
@@ -63,12 +138,14 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
   const deletedTopos     = drafts.filter(d =>  d.deleted).length
   const newEtyms         = draftEtyms.filter(e => !e.deleted && !(etymologyStore?.byId?.has(e.id))).length
   const deletedEtyms     = draftEtyms.filter(e =>  e.deleted).length
+  const totalChanges     = drafts.length + draftEtyms.length
 
   return (
     <div className="bol-layout">
       <Navbar fixed="top" bg="dark" variant="dark" className="bo-navbar">
         <button className="bo-back-btn" onClick={() => navigate(ROUTE_HOME)}>←</button>
         <Navbar.Brand className="bo-brand">Editor</Navbar.Brand>
+        <DriveIndicator status={syncStatus} onConnect={handleConnect} onDisconnect={handleDisconnect} />
       </Navbar>
 
       <div className="bol-body">
@@ -81,12 +158,6 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
               title="Topónimos"
               desc="Lista, edita o borra topónimos del índice y gestiona borradores"
               onClick={() => go('toponyms')}
-            />
-            <ActionCard
-              icon="+"
-              title="Nuevo topónimo"
-              desc="Crea una entrada nueva marcando su posición en el mapa"
-              onClick={() => go('new')}
             />
             <ActionCard
               icon="↓"
@@ -146,21 +217,32 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
           </section>
         )}
 
-        {/* ── Drafts ── */}
-        <section className="bol-section">
+        {/* ── Pending changes ── */}
+        <section className="bol-section" key={refreshKey}>
           <h2 className="bol-section-title">
-            Borradores pendientes
-            {drafts.length > 0 && <span className="bol-draft-count">{drafts.length}</span>}
+            Cambios pendientes
+            {totalChanges > 0 && <span className="bol-draft-count">{totalChanges}</span>}
           </h2>
-          {drafts.length === 0 ? (
-            <p className="bol-empty">Sin borradores guardados.</p>
+          {totalChanges === 0 ? (
+            <p className="bol-empty">Sin cambios pendientes.</p>
           ) : (
             <div className="bol-draft-list">
               {drafts.map(d => (
-                <button key={d.draftId} className="bol-draft-item" onClick={() => go('list')}>
+                <button key={d.draftId} className="bol-draft-item"
+                  onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/toponyms`)}>
                   <span className="bol-draft-name">{d.name || <em>Sin nombre</em>}</span>
                   <span className="bol-draft-meta">
-                    {d.hash ? 'edición' : 'nuevo'} · {d.attestations?.length ?? 0} atestaciones
+                    topónimo · {d.deleted ? 'borrado' : d.hash ? 'edición' : 'nuevo'}
+                    {!d.deleted && ` · ${d.attestations?.length ?? 0} atestaciones`}
+                  </span>
+                </button>
+              ))}
+              {draftEtyms.map(e => (
+                <button key={e.id} className="bol-draft-item"
+                  onClick={() => navigate(`${ROUTE_BACKOFFICE_EDITOR}/etymologies`)}>
+                  <span className="bol-draft-name">{e.origin || e.id}</span>
+                  <span className="bol-draft-meta">
+                    etimología · {e.deleted ? 'borrada' : etymologyStore?.byId?.has(e.id) ? 'edición' : 'nueva'}
                   </span>
                 </button>
               ))}
