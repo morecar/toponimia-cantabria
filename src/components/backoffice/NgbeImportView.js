@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { saveDraft, newDraftId } from '../../model/draftStore'
+import { useDraftStore, saveDraft, newDraftId } from '../../model/draftStore'
 import { NGBE_URL, NGBE_GROUP_LABELS, NGBE_CAT_LABELS } from './constants'
 import { fetchOsmGeometry, OSM_GEO } from './osmUtils'
 import EtymologySelector from './EtymologySelector'
 
 export default function NgbeImportView({
-  repository, etymologyStore, drafts, refreshDrafts, onBack, onMapSync,
+  repository, etymologyStore, onBack, onMapSync,
 }) {
+  const drafts = useDraftStore(s => s.drafts)
   const [ngbeQuery,      setNgbeQuery]      = useState('')
   const [ngbeResults,    setNgbeResults]    = useState([])
   const [ngbeLoading,    setNgbeLoading]    = useState(false)
@@ -153,7 +154,6 @@ export default function NgbeImportView({
           notes:         osm ? 'Geometría importada desde OpenStreetMap.' : '',
         })
       })
-      refreshDrafts()
       onBack()
     } finally {
       setNgbeImporting(false)

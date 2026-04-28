@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
-import { getDrafts, getDraftEtymologies } from '../model/draftStore'
-import { getTextProjects } from './backoffice/textProjectStore'
+import { useDraftStore } from '../model/draftStore'
+import { useTextProjectStore } from './backoffice/textProjectStore'
 import {
   trySilentAuth, syncFromDrive, requestAuth, isAuthenticated, disconnect,
 } from '../model/driveSync'
@@ -68,12 +68,12 @@ function DriveIndicator({ status, onConnect, onDisconnect }) {
 }
 
 export default function BackofficeLandingPage({ repository, etymologyStore }) {
-  const navigate = useNavigate()
-  const [syncStatus,  setSyncStatus]  = useState('idle')
-  const [refreshKey,  setRefreshKey]  = useState(0)  // bump to force re-read from localStorage
+  const navigate     = useNavigate()
+  const [syncStatus, setSyncStatus] = useState('idle')
 
-  const drafts       = getDrafts()       // re-read on every render (fast, sync)
-  const textProjects = getTextProjects()
+  const drafts       = useDraftStore(s => s.drafts)
+  const draftEtyms   = useDraftStore(s => s.draftEtymologies)
+  const textProjects = useTextProjectStore(s => s.projects)
 
   const go = (startView) => VIEW_URLS[startView]
     ? navigate(`${ROUTE_BACKOFFICE_EDITOR}/${VIEW_URLS[startView]}`)
@@ -83,7 +83,10 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
     setSyncStatus('syncing')
     const loaded = await syncFromDrive()
     setSyncStatus('synced')
-    if (loaded) setRefreshKey(k => k + 1)
+    if (loaded) {
+      useDraftStore.persist.rehydrate()
+      useTextProjectStore.persist.rehydrate()
+    }
   }, [])
 
   // On mount: try silent auth then sync from Drive
@@ -132,7 +135,6 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
   const totalEtyms = etymologyStore?.byId?.size ?? 0
 
   // Draft deltas
-  const draftEtyms       = getDraftEtymologies()
   const newTopos         = drafts.filter(d => !d.hash && !d.deleted).length
   const deletedTopos     = drafts.filter(d =>  d.deleted).length
   const newEtyms         = draftEtyms.filter(e => !e.deleted && !(etymologyStore?.byId?.has(e.id))).length
@@ -213,7 +215,7 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
         )}
 
         {/* ── Pending changes ── */}
-        <section className="bol-section" key={refreshKey}>
+        <section className="bol-section">
           <h2 className="bol-section-title">
             Cambios pendientes
             {totalChanges > 0 && <span className="bol-draft-count">{totalChanges}</span>}

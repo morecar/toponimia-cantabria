@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Navbar, Container } from 'react-bootstrap'
 import { ArrowLeft } from 'react-bootstrap-icons'
 import Markdown from 'react-markdown'
@@ -13,7 +13,8 @@ function stripMarkdown(text) {
   return (text || '').replace(/\*+/g, '').replace(/#+/g, '').trim()
 }
 
-export default function EtymologiesPage({ etymologyStore, repository, loc, onBack }) {
+export default function EtymologiesPage({ etymologyStore, repository, loc }) {
+  const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [scope, setScope] = useState('all') // 'all' | 'etym'
   const [highlighted, setHighlighted] = useState(null)
@@ -96,11 +97,9 @@ export default function EtymologiesPage({ etymologyStore, repository, loc, onBac
         <div className="navbar-brand-center">
           <Navbar.Brand className="main-brand"><span className="brand-el">El </span>Toponomasticon</Navbar.Brand>
         </div>
-        {onBack && (
-          <button className="settings-toggle" onClick={onBack} title="Volver">
-            <ArrowLeft />
-          </button>
-        )}
+        <button className="settings-toggle" onClick={() => navigate(-1)} title="Volver">
+          <ArrowLeft />
+        </button>
       </Navbar>
 
       <div className="etym-page">

@@ -11,7 +11,16 @@ export default class ConfigService {
         return new ConfigService(JSON.parse(localStorage.getItem(CONFIG_LOCALSTORAGE_KEY) ?? "{}"))
     }
 
+    _scheduleWrite() {
+        clearTimeout(this._writeTimer)
+        this._writeTimer = setTimeout(() => {
+            localStorage.setItem(CONFIG_LOCALSTORAGE_KEY, JSON.stringify(this._config))
+        }, 0)
+    }
+
+    // Synchronous write used during construction so the initial state is persisted immediately.
     writeToLocalStorage() {
+        clearTimeout(this._writeTimer)
         localStorage.setItem(CONFIG_LOCALSTORAGE_KEY, JSON.stringify(this._config))
     }
 
@@ -20,84 +29,30 @@ export default class ConfigService {
         this.writeToLocalStorage()
     }
 
-    get locale() {
-        return this._config.locale
-    }
+    get locale() { return this._config.locale }
+    set locale(v) { this._config.locale = v; this._scheduleWrite() }
 
-    set locale(newLocale) {
-        this._config.locale = newLocale;
-        this.writeToLocalStorage()
-    }
+    get resultsTitle() { return this._config.results_title }
+    set resultsTitle(v) { this._config.results_title = v; this._scheduleWrite() }
 
-    get resultsTitle() {
-        return this._config.results_title
-    }
+    get resultsTags() { return this._config.results_tags }
+    set resultsTags(v) { this._config.results_tags = v; this._scheduleWrite() }
 
-    set resultsTitle(newResultsTitle) {
-        this._config.results_title = newResultsTitle;
-        this.writeToLocalStorage()
-    }
+    get resultsTypes() { return this._config.results_types }
+    set resultsTypes(v) { this._config.results_types = v; this._scheduleWrite() }
 
-    get resultsTags() {
-        return this._config.results_tags
-    }
+    get searchAutocompleteUnderdoth() { return this._config.search_autocomplete_underdoth }
+    set searchAutocompleteUnderdoth(v) { this._config.search_autocomplete_underdoth = v; this._scheduleWrite() }
 
-    set resultsTags(newResultsTags) {
-        this._config.results_tags = newResultsTags;
-        this.writeToLocalStorage()
-    }
+    get searchAutocompleteTags() { return this._config.search_autocomplete_tags }
+    set searchAutocompleteTags(v) { this._config.search_autocomplete_tags = v; this._scheduleWrite() }
 
-    get resultsTypes() {
-        return this._config.results_types
-    }
+    get searchDisplayTagPalette() { return this._config.search_display_tag_palette }
+    set searchDisplayTagPalette(v) { this._config.search_display_tag_palette = v; this._scheduleWrite() }
 
-    set resultsTypes(newResultsTypes) {
-        this._config.results_types = newResultsTypes;
-        this.writeToLocalStorage()
-    }
+    get searchUseRegex() { return this._config.search_use_regex }
+    set searchUseRegex(v) { this._config.search_use_regex = v; this._scheduleWrite() }
 
-    get searchAutocompleteUnderdoth() {
-        return this._config.search_autocomplete_underdoth
-    }
-
-    set searchAutocompleteUnderdoth(newSearchAutocompleteUnderdoth) {
-        this._config.search_autocomplete_underdoth = newSearchAutocompleteUnderdoth;
-        this.writeToLocalStorage()
-    }
-
-    get searchAutocompleteTags() {
-        return this._config.search_autocomplete_tags
-    }
-
-    set searchAutocompleteTags(newSearchAutocompleteTags) {
-        this._config.search_autocomplete_tags = newSearchAutocompleteTags;
-        this.writeToLocalStorage()
-    }
-
-    get searchDisplayTagPalette() {
-        return this._config.search_display_tag_palette
-    }
-
-    set searchDisplayTagPalette(newSearchDisplayTagPalette) {
-        this._config.search_display_tag_palette = newSearchDisplayTagPalette;
-        this.writeToLocalStorage()
-    }
-
-    get searchUseRegex() {
-        return this._config.search_use_regex
-    }
-
-    set searchUseRegex(newSearchUseRegex) {
-        this._config.search_use_regex = newSearchUseRegex;
-        this.writeToLocalStorage()
-    }
-
-    get markerSize() {
-        return this._config.marker_size
-    }
-
-    set markerSize(newMarkerSize) {
-        this._config.marker_size = newMarkerSize;
-        this.writeToLocalStorage()
-    }
+    get markerSize() { return this._config.marker_size }
+    set markerSize(v) { this._config.marker_size = v; this._scheduleWrite() }
 }

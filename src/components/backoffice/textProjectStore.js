@@ -1,28 +1,52 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { scheduleDriveSync } from '../../model/driveSync'
 
 const KEY = 'textProjects_v1'
 
-export function getTextProjects() {
-  try { return JSON.parse(localStorage.getItem(KEY)) || [] }
-  catch { return [] }
+const legacyStorage = {
+  getItem: () => ({
+    state: { projects: JSON.parse(localStorage.getItem(KEY) ?? '[]') },
+  }),
+  setItem: (_, { state }) => {
+    localStorage.setItem(KEY, JSON.stringify(state.projects))
+  },
+  removeItem: () => localStorage.removeItem(KEY),
 }
 
-export function saveTextProject(project) {
-  const all = getTextProjects()
-  const idx = all.findIndex(p => p.id === project.id)
-  if (idx >= 0) all[idx] = project
-  else all.push(project)
-  localStorage.setItem(KEY, JSON.stringify(all))
-  scheduleDriveSync()
-}
+export const useTextProjectStore = create(
+  persist(
+    (set, get) => ({
+      projects: [],
 
-export function deleteTextProject(id) {
-  localStorage.setItem(KEY, JSON.stringify(getTextProjects().filter(p => p.id !== id)))
-  scheduleDriveSync()
-}
+      saveTextProject: (project) => {
+        set(s => {
+          const idx = s.projects.findIndex(p => p.id === project.id)
+          return {
+            projects: idx >= 0
+              ? s.projects.map((p, i) => i === idx ? project : p)
+              : [...s.projects, project],
+          }
+        })
+        scheduleDriveSync()
+      },
 
-export function newTextProjectId() {
-  const nums = getTextProjects().map(p => parseInt(p.id.replace('proj-', '')) || 0)
-  const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
-  return `proj-${String(next).padStart(3, '0')}`
-}
+      deleteTextProject: (id) => {
+        set(s => ({ projects: s.projects.filter(p => p.id !== id) }))
+        scheduleDriveSync()
+      },
+
+      newTextProjectId: () => {
+        const nums = get().projects.map(p => parseInt(p.id.replace('proj-', '')) || 0)
+        return `proj-${String(Math.max(0, ...nums) + 1).padStart(3, '0')}`
+      },
+    }),
+    { name: 'text-project-store', storage: legacyStorage }
+  )
+)
+
+// ── Backwards-compatible non-hook accessors ───────────────────────────────────
+export const getTextProjects    = ()    => useTextProjectStore.getState().projects
+export const saveTextProject    = (p)   => useTextProjectStore.getState().saveTextProject(p)
+export const deleteTextProject  = (id)  => useTextProjectStore.getState().deleteTextProject(id)
+export const newTextProjectId   = ()    => useTextProjectStore.getState().newTextProjectId()

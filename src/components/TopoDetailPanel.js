@@ -1,5 +1,5 @@
 import Markdown from 'react-markdown'
-import { getTextProjects } from './backoffice/textProjectStore'
+import { useTextProjectStore } from './backoffice/textProjectStore'
 
 function HighlightedQuote({ quote, highlight }) {
   if (!highlight || !quote) return <>{quote}</>
@@ -14,22 +14,15 @@ function HighlightedQuote({ quote, highlight }) {
   )
 }
 
-// Normalise both schemas: { highlight, quote } and { occurrences: [...] }
-function getOccurrences(att) {
-  if (att.occurrences?.length) return att.occurrences
-  return [{ highlight: att.highlight || '', quote: att.quote || '' }]
-}
-
 function tagCategoryClass(tagKey) {
   const prefix = tagKey.split(':')[0]
   return `tag-chip--cat-${prefix}`
 }
 
-const textProjectsById = () => Object.fromEntries(getTextProjects().map(p => [p.id, p]))
-
 export default function TopoDetailPanel({ hash, repository, etymologyStore, loc, onClose, onNavigateToEtym }) {
   const topo = repository.getFromId(hash)
-  const projectsById = textProjectsById()
+  const textProjects = useTextProjectStore(s => s.projects)
+  const projectsById = Object.fromEntries(textProjects.map(p => [p.id, p]))
   if (!topo) return null
 
   const attestations = (topo.attestations || []).slice().reverse()
@@ -80,21 +73,15 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
           <section className="topo-detail-section">
             <h3 className="topo-detail-section-title">{loc.get('panel_attestations')}</h3>
             <ol className="topo-attestations-list">
-              {attestations.map((a, i) => {
-                const occs = getOccurrences(a)
-                return (
+              {attestations.map((a, i) => (
                   <li key={i} className="topo-attestation-item">
                     <div className="topo-attestation-header">
                       <span className="topo-attestation-year">{a.year}</span>
-                      {/* Show form only for single-occurrence flat schema */}
-                      {!a.occurrences && a.highlight && (
-                        <span className="topo-attestation-form">{a.highlight}</span>
-                      )}
                     </div>
                     {a.source && <div className="topo-attestation-source">{a.source}</div>}
-                    {occs.map((occ, j) => (
-                      <div key={j} className={a.occurrences ? 'topo-att-occurrence' : undefined}>
-                        {a.occurrences && occ.highlight && (
+                    {(a.occurrences || [{ highlight: a.highlight, quote: a.quote }]).map((occ, j) => (
+                      <div key={j} className="topo-att-occurrence">
+                        {occ.highlight && (
                           <span className="topo-attestation-form topo-att-occ-form">{occ.highlight}</span>
                         )}
                         {occ.quote && (
@@ -119,8 +106,7 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                       </a>
                     )}
                   </li>
-                )
-              })}
+              ))}
             </ol>
           </section>
         )}

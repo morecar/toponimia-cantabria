@@ -9,6 +9,7 @@ import NavMenu from './NavMenu'
 import SettingsPanel from './SettingsPanel'
 import ResultsMap from './ResultsMap';
 import TopoDetailPanel from './TopoDetailPanel'
+import ErrorBoundary from './ErrorBoundary'
 
 import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_ABOUT, ROUTE_ETYMOLOGIES, ROUTE_TOPONYMS } from '../resources/routes'
 
@@ -248,7 +249,14 @@ export default class ResultsPage extends Component {
           )}
         </div>
 
-        <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} displayTitle={this.state.displayTitle} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)} flyToHash={this.state.panelHash}/>
+        <ErrorBoundary fallback={(err, reset) => (
+          <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', color: '#6c757d' }}>
+            <p>El mapa no ha podido cargarse.</p>
+            <button onClick={reset} style={{ padding: '0.3rem 0.8rem', cursor: 'pointer' }}>Reintentar</button>
+          </div>
+        )}>
+          <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} displayTitle={this.state.displayTitle} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)} flyToHash={this.state.panelHash}/>
+        </ErrorBoundary>
       </Container>
       {this.state.panelHash && (
         <TopoDetailPanel

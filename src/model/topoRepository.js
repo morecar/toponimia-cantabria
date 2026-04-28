@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { parseExpression, evaluateExpression, shouldShowPreview } from './queryParser'
 
 export async function buildRepositoryFromSheet(spreadsheet) {
@@ -40,7 +39,7 @@ function shouldReload(newHash) {
 class TopoRepository {
 
     constructor(database) {
-        this.database = _(database).orderBy(['title'])
+        this.database = [...(database || [])].sort((a, b) => (a.title || '').localeCompare(b.title))
         this.etymologyStore = null
     }
 
@@ -55,41 +54,41 @@ class TopoRepository {
     }
 
     getFromQueryString(queryString, regex = true) {
-        if (!queryString.trim()) return this.database.value()
+        if (!queryString.trim()) return this.database
 
         if (regex) {
             const knownTags = this.getAllTags()
             const groups = parseExpression(queryString, knownTags)
             if (groups && shouldShowPreview(groups)) {
-                return this.database.filter(entry => evaluateExpression(this._withEtymologyTags(entry), groups, true)).value()
+                return this.database.filter(entry => evaluateExpression(this._withEtymologyTags(entry), groups, true))
             }
             try {
                 const re = RegExp(`^${queryString}$`, 'i')
-                return this.database.filter(entry => re.test(entry.title)).value()
+                return this.database.filter(entry => re.test(entry.title))
             } catch {
-                return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase())).value()
+                return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase()))
             }
         } else {
-            return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase())).value()
+            return this.database.filter(entry => entry.title.toLowerCase().includes(queryString.toLowerCase()))
         }
     }
 
     getFromId(wordId) {
-        const result = this.database.filter(entry => entry.hash === wordId).value()
-        return result?.[0] ?? undefined
+        return this.database.find(entry => entry.hash === wordId)
     }
 
     getAllEntries() {
-        return this.database.value()
+        return this.database
     }
 
     getAllTags() {
         const tags = new Set()
         this.database.forEach(entry => {
-            (entry.tags || []).forEach(tag => { if (tag) tags.add(tag) })
             const withEtym = this._withEtymologyTags(entry)
             ;(withEtym.tags || []).forEach(tag => { if (tag) tags.add(tag) })
         })
         return Array.from(tags)
     }
 }
+
+export { TopoRepository as _TopoRepository }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { getDraftEtymologies, saveDraftEtymology, newDraftEtymId } from '../../model/draftStore'
+import { useDraftStore, saveDraftEtymology, newDraftEtymId } from '../../model/draftStore'
 import { EMPTY_NEW_ETYM, stripFmt, stripFmtInline } from './constants'
 
 // ── Wiktionary links for single-word Latin etyma ─────────────────────────────
@@ -20,7 +20,7 @@ export default function EtymologySelector({ etymology_ids, etymologyStore, onCha
   const [showDropdown, setShowDropdown] = useState(false)
   const [creating, setCreating]         = useState(false)
   const [newEtym, setNewEtym]           = useState(EMPTY_NEW_ETYM)
-  const [draftEtyms, setDraftEtyms]     = useState(() => getDraftEtymologies())
+  const draftEtyms = useDraftStore(s => s.draftEtymologies)
   const wrapRef = useRef(null)
 
   useEffect(() => {
@@ -62,7 +62,6 @@ export default function EtymologySelector({ etymology_ids, etymologyStore, onCha
     const id   = newDraftEtymId()
     const etym = { ...newEtym, id }
     saveDraftEtymology(etym)
-    setDraftEtyms(getDraftEtymologies())
     onChange([...etymology_ids, id])
     setCreating(false)
     setNewEtym(EMPTY_NEW_ETYM)

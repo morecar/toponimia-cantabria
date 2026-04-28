@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import {
-  getDrafts, saveDraft, deleteDraft, newDraftId,
+  useDraftStore, saveDraft, deleteDraft, newDraftId,
 } from '../../model/draftStore'
 import {
   EMPTY_FORM, EMPTY_ATTESTATION, SOURCE_TEMPLATES,
@@ -39,7 +39,7 @@ function TopoListItem({ item, isDraft, isDeleted, isOverride, onEdit, onDelete, 
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function ToponymsView({ repository, etymologyStore, loc, startSubview, onBack }) {
-  const [drafts,        setDrafts]        = useState(() => getDrafts())
+  const drafts = useDraftStore(s => s.drafts)
   const [subview,       setSubview]       = useState(startSubview === 'new' ? 'form' : 'list')
   const [form,          setForm]          = useState(() => startSubview === 'new' ? { ...EMPTY_FORM(), draftId: newDraftId() } : EMPTY_FORM())
   const [error,         setError]         = useState('')
@@ -49,8 +49,6 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
   const [showMap,       setShowMap]       = useState(false)
   const [isDrawing,     setIsDrawing]     = useState(false)
   const [currentPoints, setCurrentPoints] = useState([])
-
-  const refresh = () => setDrafts(getDrafts())
 
   const knownTags = loc
     ? Object.keys(loc.repository).filter(k => k.startsWith('tag_')).map(k => k.slice(4))
@@ -91,11 +89,10 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
   const handleSave = () => {
     if (!form.name.trim()) { setError('El nombre es obligatorio.'); return }
     saveDraft(form)
-    refresh()
     setSubview('list')
   }
 
-  const handleDelete = (draftId) => { deleteDraft(draftId); refresh() }
+  const handleDelete = (draftId) => { deleteDraft(draftId) }
 
   const handleMarkDeleted = (topo) => {
     const existing = drafts.find(d => d.hash === topo.hash)
@@ -115,7 +112,6 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
         deleted:      true,
       })
     }
-    refresh()
   }
 
   // ── Drawing ─────────────────────────────────────────────────────────────────
@@ -165,8 +161,8 @@ export default function ToponymsView({ repository, etymologyStore, loc, startSub
   const parseBulkImport = () => {
     const newAtts = bulkText.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
       const [year = '', highlight = '', source = '', quote = '', url = ''] = line.split('|').map(p => p.trim())
-      return { year, highlight, source, quote, url }
-    }).filter(a => a.year || a.highlight)
+      return { year, source, url, occurrences: [{ highlight, quote }] }
+    }).filter(a => a.year || a.occurrences[0].highlight)
     if (!newAtts.length) return
     setForm(f => ({ ...f, attestations: [...f.attestations, ...newAtts] }))
     setBulkText('')

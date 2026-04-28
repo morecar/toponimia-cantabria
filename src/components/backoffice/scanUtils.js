@@ -1,3 +1,5 @@
+import { getCachedRegex } from '../../utils/regexCache'
+
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -30,7 +32,7 @@ export function scanTextForToponyms(text, entries) {
 
   const tryMatch = (entry, pattern, matchedToken) => {
     try {
-      const re = new RegExp(`(?<![\\wÀ-ÿ])${pattern}(?![\\wÀ-ÿ])`, 'gi')
+      const re = getCachedRegex(`(?<![\\wÀ-ÿ])${pattern}(?![\\wÀ-ÿ])`, 'gi')
       let match
       while ((match = re.exec(text)) !== null) {
         const key = `${entry.hash}:${match.index}`

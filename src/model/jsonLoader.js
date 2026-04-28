@@ -22,7 +22,9 @@ export default class JsonLoader {
         localStorage.setItem(`${this.cacheKey}Hash`, hash)
         return json.data
       }
-    } catch {} // fall through
+    } catch (e) {
+      console.warn(`[JsonLoader:${this.cacheKey}] Hash check failed, falling back to direct load:`, e)
+    }
 
     const response = await fetch(this.dataUrl)
     if (!response.ok) throw new Error(`Failed to fetch ${this.dataUrl}: ${response.status}`)

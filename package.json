@@ -10,7 +10,6 @@
     "google-auth-library": "^9",
     "google-spreadsheet": "^4",
     "leaflet": "^1.9.0",
-    "lodash": "^4.17.21",
     "react": "^18",
     "react-bootstrap": "^2",
     "react-bootstrap-icons": "^1.11.0",
@@ -18,16 +17,19 @@
     "react-leaflet": "^4",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^6",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^3"
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4",
+    "happy-dom": "14",
+    "vitest": "2"
   },
   "scripts": {
-    "start": "export PUBLIC_URL=http://localhost:3000/toponimia-cantabria && react-scripts start",
-    "test": "react-scripts test",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
-    "predeploy": "node scripts/update-data-hash.js && yarn build",
-    "deploy": "gh-pages -d build"
+    "start": "vite",
+    "build": "tsc && vite build",
+    "test": "vitest",
+    "predeploy": "node scripts/update-data-hash.js && npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "eslintConfig": {
     "extends": [

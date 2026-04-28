@@ -102,11 +102,16 @@ function TopoIndexDetail({ hash, repository, etymologyStore, loc, onNavigateToEt
                     {a.highlight && <span className="topo-attestation-form">{a.highlight}</span>}
                   </div>
                   {a.source && <div className="topo-attestation-source">{a.source}</div>}
-                  {a.quote && (
-                    <blockquote className="topo-attestation-quote">
-                      <HighlightedQuote quote={a.quote} highlight={a.highlight} />
-                    </blockquote>
-                  )}
+                  {(a.occurrences || [{ highlight: a.highlight, quote: a.quote }]).map((occ, j) => (
+                    occ.quote ? (
+                      <div key={j} className={a.occurrences ? 'topo-att-occurrence' : undefined}>
+                        {a.occurrences && occ.highlight && <span className="topo-attestation-form topo-att-occ-form">{occ.highlight}</span>}
+                        <blockquote className="topo-attestation-quote">
+                          <HighlightedQuote quote={occ.quote} highlight={occ.highlight} />
+                        </blockquote>
+                      </div>
+                    ) : null
+                  ))}
                   {a.url && (
                     <a href={a.url} target="_blank" rel="noopener noreferrer" className="topo-attestation-link">
                       {loc.get('panel_source_link')}
@@ -146,7 +151,7 @@ function TopoIndexDetail({ hash, repository, etymologyStore, loc, onNavigateToEt
   )
 }
 
-export default function ToponymsPage({ repository, etymologyStore, loc, onBack }) {
+export default function ToponymsPage({ repository, etymologyStore, loc }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedHash = searchParams.get('h')
 
@@ -180,11 +185,8 @@ export default function ToponymsPage({ repository, etymologyStore, loc, onBack }
   }, [filtered])
 
   function handleBack() {
-    if (selectedHash) {
-      setSearchParams({})
-    } else {
-      onBack && onBack()
-    }
+    if (selectedHash) setSearchParams({})
+    else navigate(-1)
   }
 
   function openOnMap(hash) {

@@ -11,7 +11,15 @@ export const EMPTY_FORM = () => ({
   notes: '',
 })
 
-export const EMPTY_ATTESTATION = () => ({ year: '', highlight: '', source: '', quote: '', url: '' })
+export const EMPTY_ATTESTATION = () => ({ year: '', source: '', url: '', occurrences: [{ highlight: '', quote: '' }] })
+
+// Convert flat {highlight, quote} schema to nested {occurrences} schema.
+// Safe to call on attestations that are already in nested form.
+export function normalizeAttestation(att) {
+  if (att.occurrences) return att
+  const { highlight = '', quote = '', ...rest } = att
+  return { ...rest, occurrences: [{ highlight, quote }] }
+}
 export const EMPTY_NEW_ETYM    = () => ({ origin: '', meaning: '', notes: '' })
 export const EMPTY_ETYM_FORM   = () => ({ id: null, origin: '', meaning: '', notes: '', tags: '' })
 

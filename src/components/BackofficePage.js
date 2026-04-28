@@ -3,18 +3,18 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { Navbar } from 'react-bootstrap'
 import BackofficeMap from './BackofficeMap'
 import {
-  getDrafts, saveDraft, deleteDraft, newDraftId, exportDrafts,
+  useDraftStore, saveDraft, deleteDraft, newDraftId, exportDrafts,
 } from '../model/draftStore'
+import { useTextProjectStore } from './backoffice/textProjectStore'
 import { ROUTE_BACKOFFICE } from '../resources/routes'
 import {
-  EMPTY_FORM, EMPTY_ATTESTATION, SOURCE_TEMPLATES,
+  EMPTY_FORM, EMPTY_ATTESTATION, SOURCE_TEMPLATES, normalizeAttestation,
 } from './backoffice/constants'
 import TagInput from './backoffice/TagInput'
 import EtymologySelector from './backoffice/EtymologySelector'
 import AttestationRow from './backoffice/AttestationRow'
 import DraftItem from './backoffice/DraftItem'
 import ScannerView from './backoffice/ScannerView'
-import { getTextProjects } from './backoffice/textProjectStore'
 import EtymologiesView from './backoffice/EtymologiesView'
 import NgbeImportView from './backoffice/NgbeImportView'
 import ToponymsView from './backoffice/ToponymsView'
@@ -28,13 +28,11 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const startView   = URL_VIEW_MAP[params.view] || params.view || location.state?.startView
   const startSubview = params.subview  // e.g. 'new'
 
-  const [drafts, setDrafts] = useState(() => getDrafts())
-  const [textProjects, setTextProjects] = useState(() => getTextProjects())
+  const drafts       = useDraftStore(s => s.drafts)
+  const textProjects = useTextProjectStore(s => s.projects)
   const [startProjectId, setStartProjectId] = useState(() =>
     location.state?.startProjectId ?? new URLSearchParams(location.search).get('proj') ?? null
   )
-
-  const refreshTextProjects = () => setTextProjects(getTextProjects())
 
   const openTextProject = (proj) => {
     setStartProjectId(proj.id)
@@ -71,8 +69,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
     : []
 
   // ── Draft CRUD ──────────────────────────────────────────────────────────────
-  const refreshDrafts = () => setDrafts(getDrafts())
-
   const handleNew = () => {
     setForm({ ...EMPTY_FORM(), draftId: newDraftId() })
     setCurrentPoints([])
@@ -82,7 +78,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   }
 
   const handleEdit = (draft) => {
-    setForm({ ...draft })
+    setForm({ ...draft, attestations: (draft.attestations || []).map(normalizeAttestation) })
     setCurrentPoints(draft.coordinates || [])
     setIsDrawing(false)
     setError('')
@@ -100,7 +96,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
       type:         topo.type,
       coordinates:  topo.coordinates || [],
       tags:         topo.tags || [],
-      attestations: topo.attestations || [],
+      attestations: (topo.attestations || []).map(normalizeAttestation),
       etymology_ids: topo.etymology_ids || [],
       notes:        topo.notes || '',
     })
@@ -113,7 +109,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
 
   const handleDelete = (draftId) => {
     deleteDraft(draftId)
-    refreshDrafts()
   }
 
   const handleCancel = () => {
@@ -125,7 +120,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
   const handleSave = () => {
     if (!form.name.trim()) { setError('El nombre es obligatorio.'); return }
     saveDraft({ ...form, coordinates: currentPoints })
-    refreshDrafts()
     setIsDrawing(false)
     setCurrentPoints([])
     setView('list')
@@ -171,9 +165,9 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
       .filter(Boolean)
       .map(line => {
         const [year = '', highlight = '', source = '', quote = '', url = ''] = line.split('|').map(p => p.trim())
-        return { year, highlight, source, quote, url }
+        return { year, source, url, occurrences: [{ highlight, quote }] }
       })
-      .filter(a => a.year || a.highlight)
+      .filter(a => a.year || a.occurrences[0].highlight)
     if (!newAtts.length) return
     setForm(f => ({ ...f, attestations: [...f.attestations, ...newAtts] }))
     setBulkText('')
@@ -444,8 +438,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
           {view === 'scanner' && (
             <ScannerView
               repository={repository}
-              refreshDrafts={refreshDrafts}
-              refreshTextProjects={refreshTextProjects}
               startProjectId={startProjectId}
               onBack={() => { setStartProjectId(null); setView('list') }}
             />
@@ -467,7 +459,7 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
               etymologyStore={etymologyStore}
               loc={loc}
               startSubview={startSubview}
-              onBack={() => { refreshDrafts(); setView('list') }}
+              onBack={() => setView('list')}
             />
           )}
 
@@ -476,8 +468,6 @@ export default function BackofficePage({ repository, etymologyStore, loc }) {
             <NgbeImportView
               repository={repository}
               etymologyStore={etymologyStore}
-              drafts={drafts}
-              refreshDrafts={refreshDrafts}
               onBack={() => { setNgbeMapData(null); setView('list') }}
               onMapSync={setNgbeMapData}
             />

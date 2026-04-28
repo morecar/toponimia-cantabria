@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  getDraftEtymologies, saveDraftEtymology, deleteDraftEtymology, newDraftEtymId,
+  useDraftStore, saveDraftEtymology, deleteDraftEtymology, newDraftEtymId,
 } from '../../model/draftStore'
 import { EMPTY_ETYM_FORM, stripFmt, stripFmtInline } from './constants'
 
@@ -18,11 +18,9 @@ function WiktLinksLocal({ origin }) {
 }
 
 export default function EtymologiesView({ etymologyStore, startSubview, onBack }) {
-  const [draftEtyms, setDraftEtyms]   = useState(() => getDraftEtymologies())
+  const draftEtyms = useDraftStore(s => s.draftEtymologies)
   const [subview, setSubview]         = useState(startSubview === 'new' ? 'form' : 'list')
   const [etymForm, setEtymForm]       = useState(startSubview === 'new' ? EMPTY_ETYM_FORM() : EMPTY_ETYM_FORM)
-
-  const refresh = () => setDraftEtyms(getDraftEtymologies())
 
   const handleNew = () => { setEtymForm(EMPTY_ETYM_FORM); setSubview('form') }
 
@@ -35,16 +33,12 @@ export default function EtymologiesView({ etymologyStore, startSubview, onBack }
     if (!etymForm.origin.trim()) return
     const id = etymForm.id || newDraftEtymId()
     saveDraftEtymology({ ...etymForm, id })
-    refresh()
     setSubview('list')
   }
 
-  const handleDelete = (id) => { deleteDraftEtymology(id); refresh() }
+  const handleDelete = (id) => { deleteDraftEtymology(id) }
 
-  const handleMarkDeleted = (etym) => {
-    saveDraftEtymology({ ...etym, deleted: true })
-    refresh()
-  }
+  const handleMarkDeleted = (etym) => { saveDraftEtymology({ ...etym, deleted: true }) }
 
   if (subview === 'form') {
     const isCommittedEdit = etymForm.id && etymologyStore?.byId?.has(etymForm.id)
