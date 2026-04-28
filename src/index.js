@@ -28,8 +28,8 @@ Promise.all([
     .then(data => data ? buildRepositoryFromSheet(data) : buildRepositoryFromLocalStorage())
     .catch(() => buildRepositoryFromLocalStorage()),
   new JsonLoader({
-    dataUrl: process.env.REACT_APP_ETYMOLOGIES_URL || `${process.env.PUBLIC_URL}/etymologies.json`,
-    hashUrl: process.env.REACT_APP_ETYMOLOGIES_HASH_URL || `${process.env.PUBLIC_URL}/etymologies-hash.json`,
+    dataUrl: import.meta.env.REACT_APP_ETYMOLOGIES_URL || `${import.meta.env.BASE_URL}etymologies.json`,
+    hashUrl: import.meta.env.REACT_APP_ETYMOLOGIES_HASH_URL || `${import.meta.env.BASE_URL}etymologies-hash.json`,
     cacheKey: 'localEtymologies',
   }).load().catch(() => []),
 ]).then(([repository, etymologyRows]) => {

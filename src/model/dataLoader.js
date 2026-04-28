@@ -1,5 +1,5 @@
-const DATA_URL = process.env.REACT_APP_TOPONYMS_URL || `${process.env.PUBLIC_URL}/toponyms.json`
-const HASH_URL = process.env.REACT_APP_TOPONYMS_HASH_URL || `${process.env.PUBLIC_URL}/toponyms-hash.json`
+const DATA_URL = import.meta.env.REACT_APP_TOPONYMS_URL || `${import.meta.env.BASE_URL}toponyms.json`
+const HASH_URL = import.meta.env.REACT_APP_TOPONYMS_HASH_URL || `${import.meta.env.BASE_URL}toponyms-hash.json`
 
 export default class DataLoader {
   static async load() {

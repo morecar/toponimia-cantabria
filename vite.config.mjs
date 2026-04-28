@@ -14,10 +14,6 @@ export default defineConfig({
   base: '/toponimia-cantabria/',
   plugins: [jsAsJsx, react()],
   envPrefix: 'REACT_APP_',
-  define: {
-    'process.env.PUBLIC_URL': JSON.stringify('/toponimia-cantabria'),
-    'process.env': 'import.meta.env',
-  },
   optimizeDeps: {
     esbuildOptions: {
       loader: { '.js': 'jsx' },

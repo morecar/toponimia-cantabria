@@ -45,7 +45,7 @@ function ActionCard({ icon, title, desc, onClick }) {
 
 // sync status: 'idle' | 'syncing' | 'synced' | 'offline' | 'no-config'
 function DriveIndicator({ status, onConnect, onDisconnect }) {
-  const hasClientId = !!process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID
+  const hasClientId = !!import.meta.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID
   if (!hasClientId) return null
   if (status === 'no-config') return null
 
@@ -91,7 +91,7 @@ export default function BackofficeLandingPage({ repository, etymologyStore }) {
 
   // On mount: try silent auth then sync from Drive
   useEffect(() => {
-    if (!process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID) { setSyncStatus('no-config'); return }
+    if (!import.meta.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID) { setSyncStatus('no-config'); return }
     if (!navigator.onLine) { setSyncStatus('offline'); return }
     if (isAuthenticated()) { doSync(); return }
     trySilentAuth().then(ok => {

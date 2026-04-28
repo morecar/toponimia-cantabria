@@ -101,7 +101,7 @@ export default class SettingsPopover extends Component {
               </div>
             </div>
           </Form>
-          {process.env.NODE_ENV === 'development' && (
+          {import.meta.env.DEV && (
             <button
               style={{marginTop:'0.5rem', marginBottom:'0.5rem', background:'red', color:'white', border:'3px dashed yellow', fontWeight:'bold', padding:'4px 10px', cursor:'pointer'}}
               onClick={() => { localStorage.clear(); window.location.reload() }}

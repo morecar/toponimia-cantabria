@@ -79,7 +79,7 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                       <span className="topo-attestation-year">{a.year}</span>
                     </div>
                     {a.source && <div className="topo-attestation-source">{a.source}</div>}
-                    {(a.occurrences || [{ highlight: a.highlight, quote: a.quote }]).map((occ, j) => (
+                    {(a.occurrences || []).map((occ, j) => (
                       <div key={j} className="topo-att-occurrence">
                         {occ.highlight && (
                           <span className="topo-attestation-form topo-att-occ-form">{occ.highlight}</span>
@@ -98,7 +98,7 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                     )}
                     {a.projectId && projectsById[a.projectId] && (
                       <a
-                        href={`${process.env.PUBLIC_URL}/backoffice/editor/scanner?proj=${a.projectId}`}
+                        href={`${import.meta.env.BASE_URL}backoffice/editor/scanner?proj=${a.projectId}`}
                         className="topo-attestation-link topo-attestation-link--proj"
                         title={projectsById[a.projectId].title}
                       >
@@ -131,7 +131,7 @@ export default function TopoDetailPanel({ hash, repository, etymologyStore, loc,
                     {catTags.map(tag => (
                       <a
                         key={tag}
-                        href={`${process.env.PUBLIC_URL}/busqueda?q=${encodeURIComponent(tag)}`}
+                        href={`${import.meta.env.BASE_URL}busqueda?q=${encodeURIComponent(tag)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`tag-chip ${tagCategoryClass(tag)} topo-tag-link`}

@@ -1,13 +1,12 @@
-import React, { Component } from 'react';
-
-import {Container, Navbar} from 'react-bootstrap';
-
-import {List} from 'react-bootstrap-icons';
+import React, { useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Container, Navbar } from 'react-bootstrap'
+import { List } from 'react-bootstrap-icons'
 
 import SearchBar from './SearchBar'
 import NavMenu from './NavMenu'
 import SettingsPanel from './SettingsPanel'
-import ResultsMap from './ResultsMap';
+import ResultsMap from './ResultsMap'
 import TopoDetailPanel from './TopoDetailPanel'
 import ErrorBoundary from './ErrorBoundary'
 
@@ -16,194 +15,155 @@ import { ROUTE_SEARCH, ROUTE_HOME, ROUTE_ABOUT, ROUTE_ETYMOLOGIES, ROUTE_TOPONYM
 const QUERY_COLORS = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed']
 const MAX_QUERIES = 4
 
-function buildResults(props) {
-  if (!props.search || props.search === 'false') {
-    return [{ queryString: '', queryResults: props.repository.getFromQueryString('') }]
+function buildInitialQueries(repository, search, queryStrings) {
+  if (!search || search === 'false') {
+    return [{ queryString: '', queryResults: repository.getFromQueryString('') }]
   }
-
-  const queryStrings = props.queryStrings || []
-  if (queryStrings.length === 0) return [{ queryString: '', queryResults: [] }]
+  if (!queryStrings?.length) return [{ queryString: '', queryResults: [] }]
   return queryStrings.map(qs => ({
     queryString: qs,
-    queryResults: props.repository.getFromQueryString(qs)
+    queryResults: repository.getFromQueryString(qs),
   }))
 }
 
-export default class ResultsPage extends Component {
-  constructor(props) {
-    super(props);
-    const initialQueries = buildResults(props)
-    const anyQuery = initialQueries.some(q => !!q.queryString)
-    this.state = {
-      queries: initialQueries.map((q, i) => ({ id: i + 1, ...q, color: QUERY_COLORS[i % QUERY_COLORS.length] })),
-      nextId: initialQueries.length + 1,
-      showSettings: false,
-      showSettingsPanel: false,
-      hasSearched: anyQuery,
-      displayTags: (props.config.resultsTags === 'always') || (props.config.resultsTags === 'search' && anyQuery),
-      displayTitle: (props.config.resultsTitle === 'always') || (props.config.resultsTitle === 'search' && anyQuery),
-      displayLines: (props.config.resultsTypes.includes('line')),
-      displayPolys: (props.config.resultsTypes.includes('poly')),
-      displayPoints: (props.config.resultsTypes.includes('point')),
-      useRegex: props.config.searchUseRegex,
-      panelHash: new URLSearchParams(window.location.search).get('h') || null,
+export default function ResultsPage({ repository, config, loc, etymologyStore, search, queryStrings }) {
+  const navigate = useNavigate()
+
+  const [queries, setQueries] = useState(() => {
+    const initial = buildInitialQueries(repository, search, queryStrings)
+    return initial.map((q, i) => ({ id: i + 1, ...q, color: QUERY_COLORS[i % QUERY_COLORS.length] }))
+  })
+  const [nextId,           setNextId]           = useState(() => buildInitialQueries(repository, search, queryStrings).length + 1)
+  const [hasSearched,      setHasSearched]      = useState(() => buildInitialQueries(repository, search, queryStrings).some(q => !!q.queryString))
+  const [showSettings,     setShowSettings]     = useState(false)
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false)
+  const [panelHash,        setPanelHash]        = useState(
+    () => new URLSearchParams(window.location.search).get('h') || null
+  )
+  // Bump to force re-read of mutated config object after settings are saved.
+  const [, setConfigVersion] = useState(0)
+
+  // ── Navigation helpers ────────────────────────────────────────────────────────
+  const navigateFromQueries = useCallback((nonEmpty) => {
+    if (nonEmpty.length === 0) {
+      navigate(hasSearched ? ROUTE_SEARCH : ROUTE_HOME)
+    } else {
+      const params = new URLSearchParams()
+      nonEmpty.forEach(q => params.append('q', q.queryString))
+      navigate(`${ROUTE_SEARCH}?${params.toString()}`)
     }
+  }, [hasSearched, navigate])
+
+  // ── Query management ──────────────────────────────────────────────────────────
+  const updateResults = (id, newQueryString) => {
+    const updated = queries.map(q =>
+      q.id === id
+        ? { ...q, queryString: newQueryString, queryResults: repository.getFromQueryString(newQueryString, config.searchUseRegex) }
+        : q
+    )
+    setQueries(updated)
+    setHasSearched(true)
+    navigateFromQueries(updated.filter(q => !!q.queryString))
   }
 
-  updateResults(id, newQueryString) {
-    this.setState(s => {
-      const queries = s.queries.map(q =>
-        q.id === id
-          ? { ...q, queryString: newQueryString, queryResults: this.props.repository.getFromQueryString(newQueryString, this.props.config.searchUseRegex) }
-          : q
-      )
-      const nonEmpty = queries.filter(q => !!q.queryString)
-      if (nonEmpty.length === 0) {
-        if (s.hasSearched) {
-          this.props.history(ROUTE_SEARCH)
-        } else {
-          this.props.history(ROUTE_HOME)
-        }
-      } else {
-        const params = new URLSearchParams()
-        nonEmpty.forEach(q => params.append('q', q.queryString))
-        this.props.history(`${ROUTE_SEARCH}?${params.toString()}`)
-      }
-      return {
-        queries,
-        displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
-        displayTitle: (this.props.config.resultsTitle === 'always') || (this.props.config.resultsTitle === 'search' && nonEmpty.length > 0),
-        hasSearched: true,
-      }
-    })
+  const addQuery = () => {
+    if (queries.length >= MAX_QUERIES) return
+    setQueries(q => [...q, { id: nextId, queryString: '', queryResults: [], color: QUERY_COLORS[q.length % QUERY_COLORS.length] }])
+    setNextId(n => n + 1)
+    setHasSearched(true)
   }
 
-  addQuery() {
-    this.setState(s => {
-      if (s.queries.length >= MAX_QUERIES) return null
-      return {
-        queries: [...s.queries, { id: s.nextId, queryString: '', queryResults: [], color: QUERY_COLORS[s.queries.length % QUERY_COLORS.length] }],
-        nextId: s.nextId + 1,
-        hasSearched: true,
-      }
-    })
+  const removeQuery = (id) => {
+    const updated = queries.filter(q => q.id !== id)
+    setQueries(updated)
+    navigateFromQueries(updated.filter(q => !!q.queryString))
   }
 
-  removeQuery(id) {
-    this.setState(s => {
-      const queries = s.queries.filter(q => q.id !== id)
-      const nonEmpty = queries.filter(q => !!q.queryString)
-      if (nonEmpty.length === 0) {
-        if (s.hasSearched) {
-          this.props.history(ROUTE_SEARCH)
-        } else {
-          this.props.history(ROUTE_HOME)
-        }
-      } else {
-        const params = new URLSearchParams()
-        nonEmpty.forEach(q => params.append('q', q.queryString))
-        this.props.history(`${ROUTE_SEARCH}?${params.toString()}`)
-      }
-      return {
-        queries,
-        displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && nonEmpty.length > 0),
-        displayTitle: (this.props.config.resultsTitle === 'always') || (this.props.config.resultsTitle === 'search' && nonEmpty.length > 0),
-      }
-    })
-  }
-
-  openPanel(hash) {
+  // ── Panel ──────────────────────────────────────────────────────────────────────
+  const openPanel = useCallback((hash) => {
     const url = new URL(window.location.href)
     url.searchParams.set('h', hash)
     window.history.pushState(null, '', url.toString())
-    this.setState({ panelHash: hash, hasSearched: true })
-  }
+    setPanelHash(hash)
+    setHasSearched(true)
+  }, [])
 
-  closePanel() {
+  const closePanel = useCallback(() => {
     const url = new URL(window.location.href)
     url.searchParams.delete('h')
     window.history.pushState(null, '', url.toString())
-    this.setState({ panelHash: null })
-  }
+    setPanelHash(null)
+  }, [])
 
-  handleMapZoomed() {
-    if (!this.state.hasSearched) this.setState({ hasSearched: true })
-  }
+  // ── Derived display flags (re-read from config on every render) ────────────────
+  const hasQuery      = queries.some(q => !!q.queryString)
+  const displayTags   = config.resultsTags   === 'always' || (config.resultsTags   === 'search' && hasQuery)
+  const displayTitle  = config.resultsTitle  === 'always' || (config.resultsTitle  === 'search' && hasQuery)
+  const displayLines  = config.resultsTypes.includes('line')
+  const displayPolys  = config.resultsTypes.includes('poly')
+  const displayPoints = config.resultsTypes.includes('point')
 
-  handleSettingsUpdated() {
-    this.setState({
-      displayTags: (this.props.config.resultsTags === 'always') || (this.props.config.resultsTags === 'search' && this.state.queries.some(q => !!q.queryString)),
-      displayTitle: (this.props.config.resultsTitle === 'always') || (this.props.config.resultsTitle === 'search' && this.state.queries.some(q => !!q.queryString)),
-      displayLines: (this.props.config.resultsTypes.includes('line')),
-      displayPolys: (this.props.config.resultsTypes.includes('poly')),
-      displayPoints: (this.props.config.resultsTypes.includes('point')),
-      useRegex: this.props.config.searchUseRegex
+  // ── Build per-entry color arrays for multi-query mode ─────────────────────────
+  const colorsByHash = new Map()
+  queries.forEach(q => {
+    q.queryResults.forEach(r => {
+      if (!colorsByHash.has(r.hash)) colorsByHash.set(r.hash, { result: r, colors: [] })
+      colorsByHash.get(r.hash).colors.push(q.color)
     })
-  }
+  })
+  const allResults = Array.from(colorsByHash.values()).map(({ result, colors }) => ({
+    ...result, colors, color: colors[0],
+  }))
 
-  render() {
-    const colorsByHash = new Map()
-    this.state.queries.forEach(q => {
-      q.queryResults.forEach(r => {
-        if (!colorsByHash.has(r.hash)) colorsByHash.set(r.hash, { result: r, colors: [] })
-        colorsByHash.get(r.hash).colors.push(q.color)
-      })
-    })
-    const allResults = Array.from(colorsByHash.values()).map(({ result, colors }) => ({
-      ...result, colors, color: colors[0],
-    }))
+  const points      = displayPoints ? allResults.filter(r => r.type === 'point') : []
+  const polys       = displayPolys  ? allResults.filter(r => r.type === 'poly')  : []
+  const lines       = displayLines  ? allResults.filter(r => r.type === 'line')  : []
+  const multiSearch = queries.length > 1
+  const canAddMore  = hasSearched && queries.length < MAX_QUERIES
 
-    const points = this.state.displayPoints ? allResults.filter(r => r.type === 'point') : []
-    const polys  = this.state.displayPolys  ? allResults.filter(r => r.type === 'poly')  : []
-    const lines  = this.state.displayLines  ? allResults.filter(r => r.type === 'line')  : []
-    const searching = this.state.queries.some(q => !!q.queryString)
-    const multiSearch = this.state.queries.length > 1
-    const canAddMore = this.state.hasSearched && this.state.queries.length < MAX_QUERIES
-
-    return (
-      <>
+  return (
+    <>
       <Container>
         <Navbar fixed="top" bg="dark" variant="dark">
           <div className="navbar-brand-center">
-            <Navbar.Brand className={'main-brand'}><span className="brand-el">El </span>Toponomasticon</Navbar.Brand>
+            <Navbar.Brand className="main-brand"><span className="brand-el">El </span>Toponomasticon</Navbar.Brand>
           </div>
-          <button
-            className="settings-toggle ms-auto"
-            onClick={() => this.setState(s => ({showSettings: !s.showSettings}))}
-          >
+          <button className="settings-toggle ms-auto" onClick={() => setShowSettings(s => !s)}>
             <List/>
           </button>
         </Navbar>
-        {this.state.showSettings && (
+
+        {showSettings && (
           <NavMenu
-            loc={this.props.loc}
-            onClose={() => this.setState({ showSettings: false })}
+            loc={loc}
+            onClose={() => setShowSettings(false)}
             onNavigate={route => {
-              if (route === 'etymologies') this.props.history(ROUTE_ETYMOLOGIES)
-              else if (route === 'toponyms') this.props.history(ROUTE_TOPONYMS)
-              else if (route === 'about') this.props.history(ROUTE_ABOUT)
+              if (route === 'etymologies') navigate(ROUTE_ETYMOLOGIES)
+              else if (route === 'toponyms') navigate(ROUTE_TOPONYMS)
+              else if (route === 'about') navigate(ROUTE_ABOUT)
             }}
-            onOpenSettings={() => this.setState({ showSettingsPanel: true })}
+            onOpenSettings={() => setShowSettingsPanel(true)}
           />
         )}
-        {this.state.showSettingsPanel && (
+
+        {showSettingsPanel && (
           <SettingsPanel
-            loc={this.props.loc}
-            config={this.props.config}
-            onSettingsUpdated={this.handleSettingsUpdated.bind(this)}
-            onClose={() => this.setState({ showSettingsPanel: false })}
+            loc={loc}
+            config={config}
+            onSettingsUpdated={() => setConfigVersion(v => v + 1)}
+            onClose={() => setShowSettingsPanel(false)}
             onNavigate={route => {
-              this.setState({ showSettingsPanel: false })
-              if (route === 'about') this.props.history(ROUTE_ABOUT)
+              setShowSettingsPanel(false)
+              if (route === 'about') navigate(ROUTE_ABOUT)
             }}
           />
         )}
 
-        <div className={`search-wrapper${this.state.hasSearched ? '' : ' search-centered'}${this.state.panelHash ? ' panel-open' : ''}`}>
+        <div className={`search-wrapper${hasSearched ? '' : ' search-centered'}${panelHash ? ' panel-open' : ''}`}>
           {multiSearch ? (
             <div className="search-row">
               <div className="search-chips-bar">
-                {this.state.queries.map((q, i) => (
+                {queries.map((q, i) => (
                   <React.Fragment key={q.id}>
                     {i > 0 && <span className="search-chip-sep">/</span>}
                     <div className={`search-chip${!q.queryString ? ' search-chip--new' : ''}`}>
@@ -213,37 +173,37 @@ export default class ResultsPage extends Component {
                         : <input
                             autoFocus
                             className="search-chip-input"
-                            placeholder={this.props.loc.get("search_placeholder")}
+                            placeholder={loc.get('search_placeholder')}
                             onKeyDown={e => {
                               if (e.key === 'Enter') {
                                 e.preventDefault()
-                                this.updateResults(q.id, e.target.value.trim())
+                                updateResults(q.id, e.target.value.trim())
                               }
                             }}
                           />
                       }
-                      <button className="search-chip-remove" onClick={() => this.removeQuery(q.id)}>×</button>
+                      <button className="search-chip-remove" onClick={() => removeQuery(q.id)}>×</button>
                     </div>
                   </React.Fragment>
                 ))}
               </div>
-              {canAddMore && this.state.queries.every(q => !!q.queryString) && (
-                <button className="search-addon-btn" onClick={this.addQuery.bind(this)}>+</button>
+              {canAddMore && queries.every(q => !!q.queryString) && (
+                <button className="search-addon-btn" onClick={addQuery}>+</button>
               )}
             </div>
           ) : (
             <div className="search-row">
               <SearchBar
-                onSearch={newQuery => this.updateResults(this.state.queries[0].id, newQuery)}
-                value={this.state.queries[0].queryString}
-                color={this.state.hasSearched ? this.state.queries[0].color : undefined}
-                tags={this.props.repository.getAllTags()}
-                regex={this.state.useRegex}
-                config={this.props.config}
-                loc={this.props.loc}
+                onSearch={newQuery => updateResults(queries[0]?.id, newQuery)}
+                value={queries[0]?.queryString ?? ''}
+                color={hasSearched ? queries[0]?.color : undefined}
+                tags={repository.getAllTags()}
+                regex={config.searchUseRegex}
+                config={config}
+                loc={loc}
               />
               {canAddMore && (
-                <button className="search-addon-btn" onClick={this.addQuery.bind(this)}>+</button>
+                <button className="search-addon-btn" onClick={addQuery}>+</button>
               )}
             </div>
           )}
@@ -255,20 +215,27 @@ export default class ResultsPage extends Component {
             <button onClick={reset} style={{ padding: '0.3rem 0.8rem', cursor: 'pointer' }}>Reintentar</button>
           </div>
         )}>
-          <ResultsMap points={points} lines={lines} polys={polys} displayTags={this.state.displayTags} displayTitle={this.state.displayTitle} loc={this.props.loc} searching={searching} markerSize={this.props.config.markerSize} onMarkerClick={this.openPanel.bind(this)} onZoomed={this.handleMapZoomed.bind(this)} flyToHash={this.state.panelHash}/>
+          <ResultsMap
+            points={points} lines={lines} polys={polys}
+            displayTags={displayTags} displayTitle={displayTitle}
+            loc={loc} searching={hasQuery} markerSize={config.markerSize}
+            onMarkerClick={openPanel}
+            onZoomed={() => { if (!hasSearched) setHasSearched(true) }}
+            flyToHash={panelHash}
+          />
         </ErrorBoundary>
       </Container>
-      {this.state.panelHash && (
+
+      {panelHash && (
         <TopoDetailPanel
-          hash={this.state.panelHash}
-          repository={this.props.repository}
-          etymologyStore={this.props.etymologyStore}
-          loc={this.props.loc}
-          onClose={this.closePanel.bind(this)}
-          onNavigateToEtym={id => this.props.history(`${ROUTE_ETYMOLOGIES}?focus=${id}`)}
+          hash={panelHash}
+          repository={repository}
+          etymologyStore={etymologyStore}
+          loc={loc}
+          onClose={closePanel}
+          onNavigateToEtym={id => navigate(`${ROUTE_ETYMOLOGIES}?focus=${id}`)}
         />
       )}
-      </>
-    );
-  }
+    </>
+  )
 }

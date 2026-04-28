@@ -3,13 +3,25 @@ import { persist } from 'zustand/middleware'
 import { scheduleDriveSync } from './driveSync'
 
 // Custom storage keeps the existing localStorage key names so Drive sync is unaffected.
+function migrateAttestation(att) {
+  if (att.occurrences) return att
+  const { highlight = '', quote = '', ...rest } = att
+  return { ...rest, occurrences: [{ highlight, quote }] }
+}
+
 const legacyStorage = {
-  getItem: () => ({
-    state: {
-      drafts:            JSON.parse(localStorage.getItem('draftToponyms')    ?? '[]'),
-      draftEtymologies:  JSON.parse(localStorage.getItem('draftEtymologies') ?? '[]'),
-    },
-  }),
+  getItem: () => {
+    const rawDrafts = JSON.parse(localStorage.getItem('draftToponyms') ?? '[]')
+    return {
+      state: {
+        drafts: rawDrafts.map(d => ({
+          ...d,
+          attestations: (d.attestations || []).map(migrateAttestation),
+        })),
+        draftEtymologies: JSON.parse(localStorage.getItem('draftEtymologies') ?? '[]'),
+      },
+    }
+  },
   setItem: (_, { state }) => {
     localStorage.setItem('draftToponyms',    JSON.stringify(state.drafts))
     localStorage.setItem('draftEtymologies', JSON.stringify(state.draftEtymologies))

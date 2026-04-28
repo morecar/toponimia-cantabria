@@ -12,7 +12,7 @@ const EXPIRY_KEY = 'gd_token_expiry'
 const FILE_ID_KEY = 'gd_file_id'
 
 function clientId() {
-  return process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID
+  return import.meta.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID
 }
 
 // ── Token storage ─────────────────────────────────────────────────────────────
