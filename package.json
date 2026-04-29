@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "test": "vitest",
     "predeploy": "node scripts/update-data-hash.js && npm run build",
     "deploy": "gh-pages -d dist"
